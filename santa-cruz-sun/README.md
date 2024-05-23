@@ -12,14 +12,21 @@ Authorization/Authentication
 UserProfiles with Auth0
 Gallery
 Home Page
-Contact Info
+About/Contact Info
 Google Maps Integration to show location
 Color Scheme
+Deployment for Website
+
+
+
 
 Nice To Have!!
 
 Chat functionality
 Database with Images for Gallery
+
+
+
 
 Hex Code
 #F7BD33 Warm Yellow
