@@ -1,8 +1,7 @@
 Santa Cruz Sun Construction Website
 
-Contractors License Number 
+Contractors License Number
 CCB#249418
-
 
 Must Have!!
 
@@ -17,11 +16,12 @@ Contact Info
 Google Maps Integration to show location
 Color Scheme
 
-
-
-
-
 Nice To Have!!
 
 Chat functionality
 Database with Images for Gallery
+
+Hex Code
+#F7BD33 Warm Yellow
+#ED6F33 Warm Orange
+#4FBBEB Light Blue
