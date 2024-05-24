@@ -26,7 +26,6 @@ Database with Images for Gallery
 
 
 
-
 Hex Code
 #F7BD33 Warm Yellow
 #ED6F33 Warm Orange
