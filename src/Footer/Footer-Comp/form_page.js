@@ -1,17 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
+import emailjs from "@emailjs/browser";
 
 export default function App() {
-  const [formData, setFormData] = useState({});
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    },
+  });
 
   const onSubmit = (data) => {
+    sendEmail(data);
     reset();
   };
 
@@ -20,93 +27,131 @@ export default function App() {
     if (!emailRegex.test(value)) {
       return "Invalid email address";
     }
-    return null;
+    return true;
   };
 
-  const handleFormChange = (event) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [event.target.name]: event.target.value,
-    }));
+  // Function to send email using EmailJS
+  const sendEmail = (data) => {
+    const serviceID = "service_rv66zp1"; // replace with your service ID
+    const templateID = "template_uxnv0gx"; // replace with your template ID
+    const userID = "hohx4dG5zc1Gehn9H"; // replace with your user ID
+
+    emailjs.init({
+      publicKey: "hohx4dG5zc1Gehn9H",
+      // Do not allow headless browsers
+      blockHeadless: true,
+      blockList: {
+        // Block the suspended emails
+        list: [],
+        // The variable contains the email address
+        watchVariable: "userEmail",
+      },
+      limitRate: {
+        // Set the limit rate for the application
+        id: "app",
+        // Allow 1 request per 10s
+        throttle: 10000,
+      },
+    });
+
+    // Here you would send the email using an emailjs.
+    emailjs
+      .send(
+        serviceID,
+        templateID,
+        {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          message: data.message,
+        },
+        userID
+      )
+      .then((response) => {
+        console.log("Email sent successfully!", response.status, response.text);
+      })
+      .catch((error) => {
+        console.error("Failed to send email:", error);
+      });
+
+    console.log("Sending email with the data.");
   };
-
-  /*Trying to work out how to get email working*/
-
-  //   const onSubmit = (data) => {
-  //     // data.preventDefault();
-  //     // Send the form data to your email function
-  //     // sendEmail(data);
-  //   };
-
-  //   //   function sendEmail(data) {
-  //   //     // Send the form data to email service
-  //   //     // For example, you can use a library like nodemailer
-  //   //     const mailOptions = {
-  //   //       from: "your-email@example.com",
-  //   //       to: "recipient-email@example.com",
-  //   //       subject: "Form Submission",
-  //   //       text: `Name: ${data.name}, Email: ${data.email}`,
-  //   //     };
-  //   //     // Send the email
-  //   //   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <label htmlFor="firstName">First Name:</label>
+      <label htmlFor="name">First Name:</label>
       <input
-        name="firstName"
+        id="name"
+        name="name"
         type="text"
-        value={formData.firstName}
-        onChange={handleFormChange}
-        placeholder="First name"
-        {...register("First Name", { required: true, maxLength: 80 })}
+        placeholder="Full Name"
+        {...register("name", {
+          required: "First name is required.",
+          minLength: {
+            value: 2,
+            message: "First name must be at least 2 characters long.",
+          },
+          maxLength: {
+            value: 32,
+            message: "First name cannot exceed 32 characters.",
+          },
+        })}
       />
-      {errors.firstName && <p role="alert">First name is required.</p>}
-      <label htmlFor="lastName">Last Name:</label>
-      <input
-        name="lastName"
-        type="text"
-        value={formData.lastName}
-        onChange={handleFormChange}
-        placeholder="Last Name"
-        {...register("Last name", { required: true, maxLength: 100 })}
-      />
-      {errors.lastName && <p role="alert">Last name is required.</p>}
+      {errors.name && <p role="alert">{errors.name.message}</p>}
+
       <label htmlFor="email">Email:</label>
       <input
+        id="email"
         name="email"
         type="email"
-        value={formData.email}
-        onChange={handleFormChange}
-        placeholder="Email "
-        {...register("Email", {
-          required: true,
-          min: 7,
-          maxLength: 29,
+        placeholder="Email"
+        {...register("email", {
+          required: "Email is required.",
+          minLength: {
+            value: 7,
+            message: "Email must be at least 7 characters long.",
+          },
+          maxLength: {
+            value: 29,
+            message: "Email cannot exceed 29 characters.",
+          },
           validate: validateEmail,
         })}
       />
-      {errors.email && <p role="alert">Email is required and must be valid.</p>}
-      <label htmlFor="tel">Phone Number:</label>
+      {errors.email && <p role="alert">{errors.email.message}</p>}
+
+      <label htmlFor="phone">Phone Number:</label>
       <input
-        name="number"
+        id="phone"
+        name="phone"
         type="tel"
-        value={formData.number}
-        onChange={handleFormChange}
-        placeholder="Mobile number"
-        {...register("Mobile number", {
-          required: false,
-          minLength: 6,
-          maxLength: 12,
+        placeholder="Mobile Number"
+        {...register("phone", {
+          minLength: {
+            value: 6,
+            message: "Phone number must be at least 6 characters long.",
+          },
+          maxLength: {
+            value: 12,
+            message: "Phone number cannot exceed 12 characters.",
+          },
         })}
       />
+      {errors.phone && <p role="alert">{errors.phone.message}</p>}
+
       <label htmlFor="message">Message:</label>
       <textarea
         id="message"
         name="message"
-        value={formData.message}
-        onChange={handleFormChange}
+        {...register("message", {
+          maxLength: {
+            value: 120,
+            message: "Message cannot exceed 120 characters.",
+          },
+        })}
       />
+      {errors.message && <p role="alert">{errors.message.message}</p>}
+
       <input type="submit" />
     </form>
   );
