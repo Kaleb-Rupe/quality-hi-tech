@@ -1,7 +1,13 @@
+import React from "react";
 import "./Home.css";
+import Footer from "./Footer/footer.js";
 
-function Home() {
-  return <div></div>;
-}
+const Home = () => {
+  return (
+    <>
+      <Footer />
+    </>
+  );
+};
 
 export default Home;
