@@ -4,7 +4,7 @@ const Details = () => {
   return (
     <>
       <h1>Santa Cruz Sun</h1>
-      <p>Constractor</p>
+      <p>Contractor</p>
       <div>
         <nav>
           <address>
