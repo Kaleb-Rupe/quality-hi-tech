@@ -7,6 +7,11 @@ const Details = () => {
       <p>Constractor</p>
       <div>
         <nav>
+          <address>
+            219 B St.
+            <br />
+            Coos Bay, OR 97420
+          </address>
           <a href="mailto:kalebrupe17@gmail.com?subject=Inquiry here!&body=Put your inquiries or questions here. We will get back to you asap.">
             Send Email
           </a>
