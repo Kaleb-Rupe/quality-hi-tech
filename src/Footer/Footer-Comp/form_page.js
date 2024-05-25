@@ -33,19 +33,13 @@ export default function App() {
   // Function to send email using EmailJS
   const sendEmail = (data) => {
     const serviceID = "service_rv66zp1"; // replace with your service ID
-    const templateID = "template_uxnv0gx"; // replace with your template ID
-    const userID = "hohx4dG5zc1Gehn9H"; // replace with your user ID
+    const templateID = "template_o0s4yot"; // replace with your template ID
+    // const userID = "hohx4dG5zc1Gehn9H"; // replace with your user ID
 
     emailjs.init({
       publicKey: "hohx4dG5zc1Gehn9H",
       // Do not allow headless browsers
-      blockHeadless: true,
-      blockList: {
-        // Block the suspended emails
-        list: [],
-        // The variable contains the email address
-        watchVariable: "userEmail",
-      },
+      blockHeadless: false,
       limitRate: {
         // Set the limit rate for the application
         id: "app",
@@ -64,8 +58,8 @@ export default function App() {
           email: data.email,
           phone: data.phone,
           message: data.message,
-        },
-        userID
+        }
+        // userID
       )
       .then((response) => {
         console.log("Email sent successfully!", response.status, response.text);
