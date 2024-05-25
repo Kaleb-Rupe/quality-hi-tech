@@ -34,7 +34,7 @@ export default function App() {
   const sendEmail = (data) => {
     const serviceID = "service_rv66zp1"; // replace with your service ID
     const templateID = "template_o0s4yot"; // replace with your template ID
-    // const userID = "hohx4dG5zc1Gehn9H"; // replace with your user ID (If you want customer profiles.)
+    // const userID = "hohx4dG5zc1Gehn9H"; // replace with your user ID
 
     emailjs.init({
       publicKey: "hohx4dG5zc1Gehn9H",
@@ -53,14 +53,13 @@ export default function App() {
       .send(
         serviceID,
         templateID,
-        //Use this for the template integration on www.emailjs.com using object => {{}}.
         {
           name: data.name,
           email: data.email,
           phone: data.phone,
           message: data.message,
         }
-        // userID (Remove note if you are integrating customer profiles.)
+        // userID
       )
       .then((response) => {
         console.log("Email sent successfully!", response.status, response.text);
@@ -69,7 +68,7 @@ export default function App() {
         console.error("Failed to send email:", error);
       });
 
-    // console.log("Sending email with the data."); Used for testing.
+    console.log("Sending email with the data.");
   };
 
   return (
