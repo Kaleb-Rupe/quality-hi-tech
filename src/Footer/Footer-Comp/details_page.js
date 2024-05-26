@@ -4,7 +4,7 @@ const Details = () => {
   return (
     <>
       <h1>Santa Cruz Sun</h1>
-      <p>Constractor</p>
+      <p>Contractor</p>
       <div>
         <nav>
           <a href="mailto:kalebrupe17@gmail.com?subject=Inquiry here!&body=Put your inquiries or questions here. We will get back to you asap.">
