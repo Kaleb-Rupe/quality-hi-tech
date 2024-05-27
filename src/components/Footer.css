@@ -22,3 +22,9 @@
 .footer-contact {
     text-align: right;
 }
+
+.component-title {
+    text-align: center;
+    font-size: x-large;
+    font-style: italic;
+}

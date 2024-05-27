@@ -8,15 +8,15 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-section footer-nav">
-        <h3>Links</h3>
+        <h3 className="component-title">Links</h3>
         <Nav />
       </div>
       <div className="footer-section footer-form">
-        <h3>Contact Us</h3>
+        <h3 className="component-title">Contact Us</h3>
         <Form />
       </div>
       <div className="footer-section footer-contact">
-        <h3>Contact Info</h3>
+        <h3 className="component-title">Contact Info</h3>
         <Details />
       </div>
     </footer>
