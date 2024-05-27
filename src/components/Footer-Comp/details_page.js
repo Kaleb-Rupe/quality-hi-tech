@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import MobileDetect from "mobile-detect";
+import { FaEnvelope, FaPhone } from "react-icons/fa";
+import { GrLocation } from "react-icons/gr";
+import "./details_page.css";
 
 const Details = () => {
   const [mapsLink, setMapsLink] = useState("");
@@ -63,50 +66,35 @@ const Details = () => {
 
   return (
     <>
-      <h1>Santa Cruz Sun</h1>
-      <p>Contractor</p>
-      <div>
-        <nav>
-          <address style={{ padding: "20px" }}>
-            <a
-              href={mapsLink || "#"}
-              onClick={(e) => {
-                if (!mapsLink) {
-                  e.preventDefault();
-                  handleClick();
-                }
-              }}
-              style={{ color: "blue", textDecoration: "underline" }}
-            >
-              219 B Street
-              <br />
-              Coos Bay, OR 97420
-            </a>
-          </address>
+      <h1 className="center">Santa Cruz Sun</h1>
+      <p className="center">Contractor</p>
+      <div className="details-container">
+        <address className="center">
           <a
-            style={{
-              padding: "20px",
-              color: "blue",
-              textDecoration: "underline",
+            href={mapsLink || "#"}
+            onClick={(e) => {
+              if (!mapsLink) {
+                e.preventDefault();
+                handleClick();
+              }
             }}
-            target="_blank"
-            href={href}
-            rel="noopener noreferrer"
           >
+            <GrLocation className="icon" />
+            219 B Street
+            <br />
+            Coos Bay, OR 97420
+          </a>
+        </address>
+        <div className="contact-links">
+          <a href={href} target="_blank" rel="noopener noreferrer">
+            <FaEnvelope className="icon" />
             Send Email
           </a>
-          <a
-            style={{
-              padding: "20px",
-              color: "blue",
-              textDecoration: "underline",
-            }}
-            href="tel:555-555-5555"
-            rel="noreopener noreferrer"
-          >
+          <a href="tel:555-555-5555" rel="noreopener noreferrer">
+            <FaPhone className="icon" />
             Phone
           </a>
-        </nav>
+        </div>
       </div>
     </>
   );
