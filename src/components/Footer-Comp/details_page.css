@@ -11,7 +11,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2em 5em;
+    padding: 1em 5em;
 }
 
 .icon {
@@ -31,7 +31,7 @@ address a:hover {
     display: flex;
     color: white;
     text-decoration: none;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .contact-links a:hover {

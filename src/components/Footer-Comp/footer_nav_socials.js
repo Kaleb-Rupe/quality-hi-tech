@@ -23,7 +23,7 @@ const Nav = () => {
         </ul>
       </div>
 
-      <p>Check Us Out On Social!</p>
+      <p className="social-title">Check Us Out On Social!</p>
       <div className="nav-social">
         <a
           href="https://facebook.com"

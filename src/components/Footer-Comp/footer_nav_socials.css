@@ -21,7 +21,7 @@
 }
 
 .nav-links a:hover {
-    color: #007bff;
+    color: #4FBBEB;
 }
 
 .nav-social {
@@ -43,8 +43,13 @@
     color: #4FBBEB;
 }
 
+.social-title {
+    text-decoration: underline;
+}
+
 .hours-of-operation h3 {
     font-size: large;
+    text-decoration: underline;
 }
 
 .hours-of-operation p {
