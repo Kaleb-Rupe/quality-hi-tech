@@ -71,7 +71,7 @@ const Form = () => {
   };
 
   return (
-    <div>
+    <>
       {submissionStatus === "success" ? (
         <div className="success-message">
           <h2>Thank you!</h2>
@@ -182,7 +182,7 @@ const Form = () => {
           </button>
         </form>
       )}
-    </div>
+    </>
   );
 };
 
