@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import Gallery from "./pages/Gallery";
 import Login from "./pages/Login";
 import "./App.css";
+import Header from "./components/Header";
 
 const App = () => {
   return (
