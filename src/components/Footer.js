@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import "./Footer.css";
 import Form from "./Footer-Comp/form_page";
 import Details from "./Footer-Comp/details_page";
