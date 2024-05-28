@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
 import "./footer_nav_socials.css";
@@ -22,6 +22,8 @@ const Nav = () => {
           </li>
         </ul>
       </div>
+
+      <p className="social-title">Check Us Out On Social!</p>
       <div className="nav-social">
         <a
           href="https://facebook.com"
@@ -41,8 +43,16 @@ const Nav = () => {
           <FaInstagram />
         </a>
       </div>
+
+      <div className="hours-of-operation">
+        <h3>Hours of Operation:</h3>
+        <p>Monday-Friday: 9:00 AM - 5:00 PM</p>
+        <p>Saturday: 9:00 AM - 2:00 PM</p>
+        <p>Sunday: Closed</p>
+      </div>
+
       <div className="footer-copy">
-        <p>&copy; 2024 Your Company. All rights reserved.</p>
+        <p>&copy; 2024 Santa Cruz Sun Construction. All rights reserved.</p>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MobileDetect from "mobile-detect";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
+import Logo from "/Users/kalebrupe/Desktop/Zachs Project/santa-cruz-sun/src/assets/images/logo.JPG";
 import "./details_page.css";
 
 const Details = () => {
@@ -66,33 +67,46 @@ const Details = () => {
 
   return (
     <>
-      <h1 className="center">Santa Cruz Sun</h1>
-      <p className="center">Contractor</p>
+      <div className="center">
+        <img alt="Sun Setting with the Ocean" className="photo" src={Logo} />
+        <h1>Santa Cruz Sun</h1>
+        <p>Contractor</p>
+      </div>
+
       <div className="details-container">
-        <address className="center">
-          <a
-            href={mapsLink || "#"}
-            onClick={(e) => {
-              if (!mapsLink) {
-                e.preventDefault();
-                handleClick();
-              }
-            }}
-          >
-            <GrLocation className="icon" />
-            219 B Street
-            <br />
-            Coos Bay, OR 97420
-          </a>
-        </address>
         <div className="contact-links">
+          <h3>Physical Address:</h3>
+          <address>
+            <a
+              href={mapsLink || "#"}
+              onClick={(e) => {
+                if (!mapsLink) {
+                  e.preventDefault();
+                  handleClick();
+                }
+              }}
+            >
+              <GrLocation className="icon" />
+              219 B Street
+              <br />
+              Coos Bay, OR 97420
+            </a>
+          </address>
+
+          <h3>Email:</h3>
           <a href={href} target="_blank" rel="noopener noreferrer">
             <FaEnvelope className="icon" />
-            Send Email
+            <span>
+              <p>Send Email</p>
+            </span>
           </a>
+
+          <h3>Phone:</h3>
           <a href="tel:555-555-5555" rel="noreopener noreferrer">
             <FaPhone className="icon" />
-            Phone
+            <span>
+              <p>(555) 555-5555</p>
+            </span>
           </a>
         </div>
       </div>

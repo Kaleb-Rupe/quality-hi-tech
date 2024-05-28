@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
 import "./form_page.css";
@@ -17,6 +17,8 @@ const Form = () => {
       message: "",
     },
   });
+
+  const [submissionStatus, setSubmissionStatus] = useState("");
 
   const onSubmit = (data) => {
     sendEmail(data);
@@ -58,118 +60,129 @@ const Form = () => {
       })
       .then((response) => {
         console.log("Email sent successfully!", response.status, response.text);
+        setSubmissionStatus("success");
       })
       .catch((error) => {
         console.error("Failed to send email:", error);
+        setSubmissionStatus("error");
       });
 
     console.log("Sending email with the data.");
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="form-wrapper">
-      <div className="form-group">
-        <label htmlFor="name">First Name:</label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          placeholder="Full Name"
-          {...register("name", {
-            required: "First name is required.",
-            minLength: {
-              value: 2,
-              message: "First name must be at least 2 characters long.",
-            },
-            maxLength: {
-              value: 32,
-              message: "First name cannot exceed 32 characters.",
-            },
-          })}
-        />
-        {errors.name && (
-          <p role="alert" className="error-message">
-            {errors.name.message}
-          </p>
-        )}
-      </div>
+    <div>
+      {submissionStatus === "success" ? (
+        <div className="success-message">
+          <h2>Thank you!</h2>
+          <p>Your message has been sent successfully.</p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)} className="form-wrapper">
+          <div className="form-group">
+            <label htmlFor="name">First Name:</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Full Name"
+              {...register("name", {
+                required: "First name is required.",
+                minLength: {
+                  value: 2,
+                  message: "First name must be at least 2 characters long.",
+                },
+                maxLength: {
+                  value: 32,
+                  message: "First name cannot exceed 32 characters.",
+                },
+              })}
+            />
+            {errors.name && (
+              <p role="alert" className="error-message">
+                {errors.name.message}
+              </p>
+            )}
+          </div>
 
-      <div className="form-group">
-        <label htmlFor="email">Email:</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="Email"
-          {...register("email", {
-            required: "Email is required.",
-            minLength: {
-              value: 7,
-              message: "Email must be at least 7 characters long.",
-            },
-            maxLength: {
-              value: 29,
-              message: "Email cannot exceed 29 characters.",
-            },
-            validate: validateEmail,
-          })}
-        />
-        {errors.email && (
-          <p role="alert" className="error-message">
-            {errors.email.message}
-          </p>
-        )}
-      </div>
+          <div className="form-group">
+            <label htmlFor="email">Email:</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Email"
+              {...register("email", {
+                required: "Email is required.",
+                minLength: {
+                  value: 7,
+                  message: "Email must be at least 7 characters long.",
+                },
+                maxLength: {
+                  value: 29,
+                  message: "Email cannot exceed 29 characters.",
+                },
+                validate: validateEmail,
+              })}
+            />
+            {errors.email && (
+              <p role="alert" className="error-message">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
 
-      <div className="form-group">
-        <label htmlFor="phone">Phone Number:</label>
-        <input
-          id="phone"
-          name="phone"
-          type="tel"
-          placeholder="Mobile Number"
-          {...register("phone", {
-            minLength: {
-              value: 6,
-              message: "Phone number must be at least 6 characters long.",
-            },
-            maxLength: {
-              value: 12,
-              message: "Phone number cannot exceed 12 characters.",
-            },
-          })}
-        />
-        {errors.phone && (
-          <p role="alert" className="error-message">
-            {errors.phone.message}
-          </p>
-        )}
-      </div>
+          <div className="form-group">
+            <label htmlFor="phone">Phone Number:</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="Mobile Number"
+              {...register("phone", {
+                minLength: {
+                  value: 6,
+                  message: "Phone number must be at least 6 characters long.",
+                },
+                maxLength: {
+                  value: 12,
+                  message: "Phone number cannot exceed 12 characters.",
+                },
+              })}
+            />
+            {errors.phone && (
+              <p role="alert" className="error-message">
+                {errors.phone.message}
+              </p>
+            )}
+          </div>
 
-      <div className="form-group">
-        <label htmlFor="message">Message:</label>
-        <textarea
-          id="message"
-          name="message"
-          placeholder="Your message..."
-          {...register("message", {
-            maxLength: {
-              value: 120,
-              message: "Message cannot exceed 120 characters.",
-            },
-          })}
-        />
-        {errors.message && (
-          <p role="alert" className="error-message">
-            {errors.message.message}
-          </p>
-        )}
-      </div>
+          <div className="form-group">
+            <label htmlFor="message">Message:</label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Your message..."
+              {...register("message", {
+                maxLength: {
+                  value: 120,
+                  message: "Message cannot exceed 120 characters.",
+                },
+              })}
+            />
+            {errors.message && (
+              <p role="alert" className="error-message">
+                {errors.message.message}
+              </p>
+            )}
+          </div>
 
-      <button type="submit" className="submit-button">
-        Submit
-      </button>
-    </form>
+          <button type="submit" className="submit-button">
+            Submit
+          </button>
+        </form>
+      )}
+    </div>
   );
 };
 

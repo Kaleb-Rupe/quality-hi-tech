@@ -1,11 +1,17 @@
 .center {
     text-align: center;
+    font-size: x-large;
+}
+
+.photo {
+    height: 80px;
 }
 
 .details-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 1em 5em;
 }
 
 .icon {
@@ -13,18 +19,21 @@
 }
 
 address a {
-    color: blue;
-    text-decoration: underline;
+    color: white;
+    text-decoration: none;
 }
 
-.contact-links {
-    margin-top: 20px;
+address a:hover {
+    color: #4FBBEB;
 }
 
 .contact-links a {
     display: flex;
-    align-items: center;
-    color: blue;
-    text-decoration: underline;
-    margin-bottom: 10px;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 15px;
+}
+
+.contact-links a:hover {
+    color: #4FBBEB;
 }

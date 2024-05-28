@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import "./Footer.css";
 import Form from "./Footer-Comp/form_page";
 import Details from "./Footer-Comp/details_page";
@@ -8,15 +8,15 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-section footer-nav">
-        <h3 className="component-title">Links</h3>
+        <h2 className="component-title">What can we build for you?</h2>
         <Nav />
       </div>
       <div className="footer-section footer-form">
-        <h3 className="component-title">Contact Us</h3>
+        <h2 className="component-title">Contact Us</h2>
         <Form />
       </div>
       <div className="footer-section footer-contact">
-        <h3 className="component-title">Contact Info</h3>
+        <h2 className="component-title">Contact Info</h2>
         <Details />
       </div>
     </footer>
