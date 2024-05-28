@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import Logo from "/Users/kalebrupe/Desktop/Zachs Project/santa-cruz-sun/src/assets/images/logo.JPG";
+import Logo from "../assets/images/logo.JPG";
 import "./Header.css";
 
 const Header = () => {
