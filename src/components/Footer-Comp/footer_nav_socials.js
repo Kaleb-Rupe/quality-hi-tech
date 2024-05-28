@@ -27,7 +27,7 @@ const Nav = () => {
         <p className="social-title">Check Us Out On Social!</p>
         <div className="nav-social">
           <a
-            href="https://facebook.com"
+            href="https://www.facebook.com/profile.php?id=100092280827323"
             target="_blank"
             rel="noopener noreferrer"
           >
