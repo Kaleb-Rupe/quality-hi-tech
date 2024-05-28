@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import MobileDetect from "mobile-detect";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
-import Logo from "../assets/images/logo.JPG";
+import Logo from "../../assets/images/logo.JPG";
 import "./details_page.css";
 
 const Details = () => {
