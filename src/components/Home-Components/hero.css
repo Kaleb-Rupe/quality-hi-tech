@@ -1,8 +1,22 @@
 .hero {
     text-align: center;
     padding: 4rem 2rem;
-    background: url('#') center/cover no-repeat;
-    color:black;
+    background: url('/Users/kalebrupe/Desktop/Zachs Project/santa-cruz-sun/src/assets/images/FB_IMG_1609818258950_Original.jpeg') center no-repeat;
+    background-size: cover;
+    color: black;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.contrast-element {
+    background-color: rgb(255, 255, 255, 0.75);
+    background-size: cover;
+    border-radius: 6px;
+    padding: 2rem 4rem;
+    margin: 15vh;
 }
 
 .hero h1 {
@@ -16,14 +30,21 @@
 }
 
 .hero button {
+    width: 10rem;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    background-color: #333;
-    color: white;
+    background-color: #ED6F33;
     border: none;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#link {
+    color: white;
+    text-decoration: none;
 }
 
 .hero button:hover {
-    background-color: #555;
+    background-color: #4FBBEB;
 }
