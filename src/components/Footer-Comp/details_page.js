@@ -69,8 +69,8 @@ const Details = () => {
     <>
       <div className="center">
         <img alt="Sun Setting with the Ocean" className="photo" src={Logo} />
-        <h1>Santa Cruz Sun</h1>
-        <p>Contractor</p>
+        <h1>Santa Cruz Sun LLC,</h1>
+        <p> CCB#249418</p>
       </div>
 
       <div className="details-container">
