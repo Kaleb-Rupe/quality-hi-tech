@@ -1,7 +1,6 @@
 import React from "react";
 
-
-const Gallery = () => {
+export const Gallery = () => {
   return (
     <>
       <h1>Gallery Page</h1>
@@ -9,6 +8,3 @@ const Gallery = () => {
     </>
   );
 };
-
-export default Gallery;
-

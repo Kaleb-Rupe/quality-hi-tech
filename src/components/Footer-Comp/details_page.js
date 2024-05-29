@@ -5,7 +5,7 @@ import { GrLocation } from "react-icons/gr";
 import Logo from "../../assets/images/logo.JPG";
 import "./details_page.css";
 
-const Details = () => {
+export const Details = () => {
   const [mapsLink, setMapsLink] = useState("");
 
   // Saved info for email link.
@@ -70,7 +70,13 @@ const Details = () => {
       <div className="center">
         <img alt="Sun Setting with the Ocean" className="photo" src={Logo} />
         <h1>Santa Cruz Sun LLC,</h1>
-        <p> CCB#249418</p>
+        <a
+          href="https://search.ccb.state.or.us/search/search_result.aspx"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Click to View: CCB#249418
+        </a>
       </div>
 
       <div className="details-container">
@@ -113,5 +119,3 @@ const Details = () => {
     </>
   );
 };
-
-export default Details;
