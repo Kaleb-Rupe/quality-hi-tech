@@ -1,0 +1,25 @@
+.gallery {
+    padding: 2rem;
+}
+
+.gallery h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.gallery-images {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.gallery-image {
+    flex: 1 1 30%;
+    margin: 1rem;
+    background: #eee;
+    height: 200px;
+    /* Placeholder height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
