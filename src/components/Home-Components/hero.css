@@ -1,7 +1,7 @@
 .hero {
     text-align: center;
     padding: 4rem 2rem;
-    background: url('/Users/kalebrupe/Desktop/Zachs Project/santa-cruz-sun/src/assets/images/FB_IMG_1609818258950_Original.jpeg') center no-repeat;
+    background: url('../../assets/images/FB_IMG_1609818258950_Original.jpeg') center no-repeat;
     background-size: cover;
     color: black;
 }
