@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from "../assets/images/logo.JPG";
 import "./Header.css";
 
-const Header = () => {
+export const Header = () => {
   return (
     <>
       <header className="header">
@@ -37,5 +37,3 @@ const Header = () => {
     </>
   );
 };
-
-export default Header;

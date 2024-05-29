@@ -3,6 +3,11 @@
     font-size: x-large;
 }
 
+.center a {
+    color: white;
+    font-size: medium;
+}
+
 .photo {
     height: 80px;
 }

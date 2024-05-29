@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./Footer.css";
 import Form from "./Footer-Comp/form_page";
-import Details from "./Footer-Comp/details_page";
+import { Details } from "./Footer-Comp/details_page";
 import Nav from "./Footer-Comp/footer_nav_socials";
 
 const Footer = () => {

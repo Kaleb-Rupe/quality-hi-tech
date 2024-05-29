@@ -1,7 +1,7 @@
 import React from "react";
 import "./hero.css";
 
-const Hero = () => {
+export const Hero = () => {
   return (
     <section className="hero">
       <h1>Welcome to Construction Co.</h1>
@@ -10,5 +10,3 @@ const Hero = () => {
     </section>
   );
 };
-
-export default Hero;
