@@ -18,9 +18,6 @@ const Nav = () => {
             <li>
               <Link to="/services">Services</Link>
             </li>
-            <li>
-              <Link to="/contact">Contact</Link>
-            </li>
           </ul>
         </div>
 
@@ -50,6 +47,7 @@ const Nav = () => {
         </div>
 
         <div className="hours-of-operation">
+          <p>Contractors License: CCB#249418</p>
           <h3>Hours of Operation:</h3>
           <p>Monday-Friday: 9:00 AM - 5:00 PM</p>
           <p>Saturday: 9:00 AM - 2:00 PM</p>

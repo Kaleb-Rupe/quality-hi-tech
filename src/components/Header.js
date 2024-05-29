@@ -9,7 +9,7 @@ const Header = () => {
       <header className="header">
         <div className="header-logo">
           <img src={Logo} alt="Logo" />
-          <h1>Santa Cruz Sun Contractor CCB#249418</h1>
+          <h1>Santa Cruz Sun Contractor</h1>
         </div>
         <nav className="header-nav">
           <ul>
