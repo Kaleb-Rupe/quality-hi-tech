@@ -1,12 +1,21 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./hero.css";
 
 export const Hero = () => {
   return (
     <section className="hero">
-      <h1>Welcome to Construction Co.</h1>
-      <p>Building your dreams into reality</p>
-      <button>Get Started</button>
+      <div className="wrapper">
+        <div className="contrast-element">
+          <h1>Santa Cruz Sun</h1>
+          <p>Building Your Dreams Into Reality</p>
+          <button>
+            <Link id="link" to="/contact">
+              Get Started
+            </Link>
+          </button>
+        </div>
+      </div>
     </section>
   );
 };

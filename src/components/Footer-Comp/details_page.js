@@ -48,13 +48,17 @@ export const Details = () => {
 
     let link;
     if (os === "Macintosh" || "mac") {
-      link = `https://maps.apple.com/?ll=${latitude},${longitude}&q=${encodeURIComponent(
+      link =
+        await `https://maps.apple.com/?ll=${latitude},${longitude}&q=${encodeURIComponent(
+          address
+        )}`;
+    } else if (os === "Windows" || "windows") {
+      link = await `geo:${latitude},${longitude}?q=${encodeURIComponent(
         address
       )}`;
-    } else if (os === "Windows" || "windows") {
-      link = `geo:${latitude},${longitude}?q=${encodeURIComponent(address)}`;
     } else {
-      link = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+      link =
+        await `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     }
 
     setMapsLink(link);
