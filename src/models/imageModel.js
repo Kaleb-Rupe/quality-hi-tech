@@ -1,7 +1,7 @@
 const db = require('../db.json')
 
 function get() {
-    return db('images')
+    return db()
 }
 
 module.exports = {get}

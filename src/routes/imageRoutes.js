@@ -3,7 +3,7 @@ const Image = require('../models/imageModel');
 
 const router = express.Router();
 
-router.get('/gallery', (req, res, next) => {
+router.get('/', (req, res, next) => {
     Image.get()
     .then(image => {
         res.json(image)
