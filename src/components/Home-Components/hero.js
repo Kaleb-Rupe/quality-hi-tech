@@ -11,7 +11,7 @@ export const Hero = () => {
           <p>Building Your Dreams Into Reality</p>
           <button>
             <Link id="link" to="/contact">
-              Get Started
+              Free Estimate
             </Link>
           </button>
         </div>

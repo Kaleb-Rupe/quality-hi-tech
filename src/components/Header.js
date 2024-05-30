@@ -6,7 +6,7 @@ import "./Header.css";
 export const Header = () => {
   return (
     <>
-      <header className="header">
+      <header id="masthead" className="site-header">
         <div className="header-logo">
           <img src={Logo} alt="Logo" />
           <h1>Santa Cruz Sun LLC, CCB#249418</h1>

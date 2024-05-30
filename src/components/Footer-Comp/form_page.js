@@ -87,14 +87,14 @@ const Form = () => {
               type="text"
               placeholder="Full Name"
               {...register("name", {
-                required: "First name is required.",
+                required: "Name is required.",
                 minLength: {
                   value: 2,
-                  message: "First name must be at least 2 characters long.",
+                  message: "Name must be at least 2 characters long.",
                 },
                 maxLength: {
                   value: 32,
-                  message: "First name cannot exceed 32 characters.",
+                  message: "Name cannot exceed 32 characters.",
                 },
               })}
             />
