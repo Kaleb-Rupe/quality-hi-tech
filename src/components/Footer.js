@@ -1,10 +1,10 @@
 import * as React from "react";
 import "./Footer.css";
-import Form from "./Footer-Comp/form_page";
+import { Form } from "./Footer-Comp/form_page";
 import { Details } from "./Footer-Comp/details_page";
 import Nav from "./Footer-Comp/footer_nav_socials";
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <>
       <footer className="footer">
@@ -24,5 +24,3 @@ const Footer = () => {
     </>
   );
 };
-
-export default Footer;

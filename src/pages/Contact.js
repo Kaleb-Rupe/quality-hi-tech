@@ -55,7 +55,8 @@ export const ContactForm = () => {
     // Here you would send the email using an emailjs.
     emailjs
       .send(serviceID, templateID, {
-        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName,
         email: data.email,
         phone: data.phone,
         message: data.message,
@@ -75,7 +76,7 @@ export const ContactForm = () => {
   return (
     <>
       {submissionStatus === "success" ? (
-        <div className="success-message">
+        <div className="success-message-contact">
           <h2>Thank you!</h2>
           <p>Your message has been sent successfully.</p>
         </div>

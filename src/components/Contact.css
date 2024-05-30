@@ -70,7 +70,7 @@
     font-size: 0.875rem;
 }
 
-.success-message {
+.success-message-contact {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -89,10 +89,10 @@
     background-color: #f9f9f9;
 }
 
-.success-message h2 {
+.success-message-contact h2 {
     color: black;
 }
 
-.success-message p {
+.success-message-contact p {
     margin-top: 10px;
 }
