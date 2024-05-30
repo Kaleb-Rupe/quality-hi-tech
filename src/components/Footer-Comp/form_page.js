@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
 import "./form_page.css";
 
-const Form = () => {
+export const Form = () => {
   const {
     register,
     handleSubmit,
@@ -185,5 +185,3 @@ const Form = () => {
     </>
   );
 };
-
-export default Form;
