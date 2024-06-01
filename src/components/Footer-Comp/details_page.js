@@ -115,7 +115,7 @@ export const Details = () => {
           <a href="tel:555-555-5555" rel="noreopener noreferrer">
             <FaPhone className="icon" />
             <span>
-              <p>(555) 555-5555</p>
+              <p>(385) 204-9488</p>
             </span>
           </a>
         </div>
