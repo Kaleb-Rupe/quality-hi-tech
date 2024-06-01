@@ -20,7 +20,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "server": "nodemon index.js",
     "build": "react-scripts build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
