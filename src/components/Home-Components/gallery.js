@@ -6,6 +6,9 @@ import Image3 from "../../assets/images/FB_IMG_1609818328585_Original.jpeg";
 import Image4 from "../../assets/images/FB_IMG_1606604883160_Original.jpeg";
 import Image5 from "../../assets/images/FB_IMG_1609818199940_Original.jpeg";
 import Image6 from "../../assets/images/FB_IMG_1609818315477_Original.jpeg";
+import Image7 from "../../assets/images/20210707_155857_Original.jpeg";
+import Image8 from "../../assets/images/FB_IMG_1606604670891_Original.jpeg";
+
 
 const images = [
   {
@@ -32,6 +35,15 @@ const images = [
     src: Image6,
     alt: "Description 6",
   },
+  {
+    src: Image7,
+    alt: "Description 7"
+  }, 
+  {
+    src: Image8,
+    alt: "Description 8"
+  },
+  
   // Add more images as needed
 ];
 
