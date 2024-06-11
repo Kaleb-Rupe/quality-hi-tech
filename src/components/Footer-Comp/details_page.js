@@ -72,7 +72,9 @@ export const Details = () => {
   return (
     <>
       <div className="center">
-        <img alt="Sun Setting with the Ocean" className="photo" src={Logo} />
+        <a href="/" id="bottle" onclick="document.location=/home'.html';return false;" >
+           <img src={Logo} alt="logo" className="photo"/>
+        </a>
         <h1>Santa Cruz Sun LLC,</h1>
         <a
           href="https://search.ccb.state.or.us/search/search_result.aspx"
