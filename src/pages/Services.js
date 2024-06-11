@@ -1,10 +1,26 @@
 import React from "react";
+import "../components/Home-Components/services.css";
 
 export const Services = () => {
   return (
-    <>
-      <h1>Services Page</h1>
-      <p>Welcome to the services page!</p>
-    </>
+    <section className="services">
+      <h2>Our Services</h2>
+      <div className="service-cards">
+        <div className="service-card">
+          <h3>Renovations</h3>
+          <p>High-quality renovations to transform your space.</p>
+        </div>
+        <div className="service-card">
+          <h3>New Construction</h3>
+          <p>Building new structures with precision and expertise.</p>
+        </div>
+        <div className="service-card">
+          <h3>Project Management</h3>
+          <p>End-to-end project management for a seamless experience.</p>
+        </div>
+      </div>
+    </section>
   );
 };
+
+

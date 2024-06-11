@@ -47,7 +47,7 @@ const images = [
   // Add more images as needed
 ];
 
-export const Gallery = () => {
+export const FeaturedGallery = () => {
   return (
     <div className="gallery">
       {images.map((image, index) => (
