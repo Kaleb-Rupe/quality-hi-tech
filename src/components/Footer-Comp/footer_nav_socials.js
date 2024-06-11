@@ -41,7 +41,7 @@ const Nav = () => {
         </div>
 
         <div className="footer-copy">
-          <p>&copy; 2024 Santa Cruz Sun Construction. All rights reserved.</p>
+          <p>&copy; 2024 Santa Cruz Sun LLC. All rights reserved.</p>
         </div>
       </div>
     </>

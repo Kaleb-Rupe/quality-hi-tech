@@ -8,7 +8,9 @@ export const Header = () => {
     <>
       <header id="masthead" className="site-header">
         <div className="header-logo">
-          <img src={Logo} alt="Logo" />
+        <a href="/" id="bottle" onclick="document.location=/home'.html';return false;" >
+          <img src={Logo} alt="logo" />
+        </a>
           <h1>Santa Cruz Sun LLC, CCB#249418</h1>
         </div>
         <nav className="header-nav">
@@ -28,12 +30,13 @@ export const Header = () => {
             <li>
               <Link to="/contact">Contact</Link>
             </li>
-            <li className="login-button">
+            {/* <li className="login-button">
               <Link to="/login">Login</Link>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </header>
     </>
   );
 };
+
