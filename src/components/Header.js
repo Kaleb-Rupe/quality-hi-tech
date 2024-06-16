@@ -8,7 +8,7 @@ export const Header = () => {
     <>
       <header id="masthead" className="site-header">
         <div className="header-logo">
-        <a href="/" id="bottle" onclick="document.location=/home'.html';return false;" >
+        <a href="/" id="logo" onclick="document.location=/home'.html';return false;" >
           <img src={Logo} alt="logo" />
         </a>
           <h1>Santa Cruz Sun LLC, CCB#249418</h1>
