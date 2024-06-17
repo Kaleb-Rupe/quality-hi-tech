@@ -6,17 +6,17 @@ const featuredServices = () => {
     <section className="services">
       <h2>Our Services</h2>
       <div className="service-cards">
-        <div className="service-card">
-          <h3>Renovations</h3>
-          <p>High-quality renovations to transform your space.</p>
+      <div className="service-card">
+          <h3>Kitchen Remodels</h3>
+          <p>Update your kitchen with a custom hood and new cabinets!</p>
         </div>
         <div className="service-card">
-          <h3>New Construction</h3>
-          <p>Building new structures with precision and expertise.</p>
+          <h3>Decks</h3>
+          <p>BBQ season is here! Let us build an outdoor haven for your family!</p>
         </div>
         <div className="service-card">
-          <h3>Project Management</h3>
-          <p>End-to-end project management for a seamless experience.</p>
+          <h3>She-Sheds/Mancaves</h3>
+          <p>Let us build a private retreat!</p>
         </div>
       </div>
     </section>
