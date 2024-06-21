@@ -49,7 +49,7 @@ export const services = [
     description: "Looking for a getaway? We can build one for you!",
   },
   {
-    title: "She-Sheds/Mancaves",
+    title: "She-Sheds / Mancaves",
     description: "Let us build a private retreat!",
   },
 ];
