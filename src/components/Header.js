@@ -34,11 +34,6 @@ export const Header = () => {
               </Link>
             </li>
             <li>
-              <Link to="/services" onClick={() => setMenuOpen(false)}>
-                Services
-              </Link>
-            </li>
-            <li>
               <Link to="/gallery" onClick={() => setMenuOpen(false)}>
                 Gallery
               </Link>
