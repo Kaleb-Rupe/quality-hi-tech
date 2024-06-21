@@ -1,23 +1,128 @@
-.gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    padding: 1rem;
+/* gallery.css */
+
+/* Gallery container styles */
+.gallery-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 }
 
+/* Navigation button styles */
+.nav-button {
+    background: none;
+    border: none;
+    color: rgb(2, 2, 2);
+    font-size: 2rem;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.nav-button.left {
+    left: 10px;
+}
+
+.nav-button.right {
+    right: 10px;
+}
+
+.nav-button:disabled {
+    color: rgb(255, 255, 255);
+    cursor: not-allowed;
+}
+
+/* Gallery styles */
+.gallery {
+    display: flex;
+    flex-wrap: nowrap;
+    /* Allow items to wrap to next row */
+    gap: 1rem;
+    padding: 1rem;
+    justify-content: center;
+    /* Center items horizontally */
+}
+
+/* Gallery item styles */
 .gallery-item {
+    width: 25%;
+    /* Each item takes up 25% of the container width for 4 items in a row */
+    min-width: 250px;
+    /* Minimum width to prevent items from becoming too small */
+    height: 300px;
+    /* Set a fixed height for uniformity */
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
 
 .gallery-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.2s;
+    /* Maintain aspect ratio and cover the container */
+    border-radius: 8px;
 }
 
 .gallery-item img:hover {
     transform: scale(1.05);
+}
+
+/* Modal styles */
+.image-modal {
+    position: relative;
+    width: auto;
+    /* Auto width to fit the content */
+    max-width: 90vw;
+    /* Maximum width relative to the viewport width */
+    max-height: 90vh;
+    /* Maximum height relative to the viewport height */
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    /* Ensures images are contained within the modal */
+}
+
+.modal-image {
+    width: 100%;
+    height: auto;
+    /* Auto height to maintain aspect ratio */
+    max-width: 100%;
+    /* Ensure image does not exceed modal width */
+    max-height: calc(90vh - 80px);
+    /* Adjusted max height for modal content */
+    object-fit: contain;
+    /* Maintain aspect ratio without cropping */
+    border-radius: 8px;
+}
+
+.close-button {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    background: none;
+    color: black;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    /* Dark semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
 }

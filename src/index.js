@@ -1,7 +1,8 @@
 import * as React from "react";
-import { createRoot } from "react-dom/client"; // Import from 'react-dom/client'
+import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import { App } from "./App";
+import Modal from "react-modal";
 import "./index.css";
 
 // Get the root element
@@ -11,6 +12,9 @@ const rootElement = document.getElementById("root");
 if (!rootElement) {
   throw new Error("Root element not found");
 }
+
+// Set the app element for react-modal
+Modal.setAppElement(rootElement);
 
 // Create a root
 const root = createRoot(rootElement);
