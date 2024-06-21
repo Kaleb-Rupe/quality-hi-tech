@@ -53,15 +53,11 @@ export const FeaturedGallery = () => {
 
   return (
     <div className="gallery-container">
-      {/* Left navigation button */}
-      <button
-        className="nav-button left"
-        onClick={prevImages}
-        disabled={visibleStart === 0}
-      >
-        &#10094;
-      </button>
-      {/* Gallery */}
+      {visibleStart > 0 && ( // Show left arrow if not at the beginning
+        <button className="nav-button left" onClick={prevImages}>
+          &#10094;
+        </button>
+      )}
       <div className="gallery">
         {images
           .slice(visibleStart, visibleStart + visibleCount)
@@ -75,16 +71,12 @@ export const FeaturedGallery = () => {
             </div>
           ))}
       </div>
-      {/* Right navigation button */}
-      <button
-        className="nav-button right"
-        onClick={nextImages}
-        disabled={visibleStart + visibleCount >= images.length}
-      >
-        &#10095;
-      </button>
+      {visibleStart + visibleCount < images.length && ( // Show right arrow if more images available
+        <button className="nav-button right" onClick={nextImages}>
+          &#10095;
+        </button>
+      )}
 
-      {/* Modal */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -93,11 +85,9 @@ export const FeaturedGallery = () => {
       >
         {currentImage && (
           <div>
-            {/* Close button */}
             <button className="close-button" onClick={closeModal}>
               &times;
             </button>
-            {/* Modal image */}
             <img
               src={currentImage.src}
               alt={currentImage.alt}

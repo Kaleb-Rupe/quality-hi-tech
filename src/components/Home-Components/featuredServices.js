@@ -1,7 +1,7 @@
 import React from "react";
 import "./services.css";
 
-const featuredServices = () => {
+export const FeaturedServices = () => {
   return (
     <section className="services">
       <h2>Our Services</h2>
@@ -22,5 +22,3 @@ const featuredServices = () => {
     </section>
   );
 };
-
-export default featuredServices;
