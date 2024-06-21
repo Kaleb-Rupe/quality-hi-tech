@@ -12,6 +12,8 @@
 .nav-button {
     background: none;
     border: none;
+    border-radius: 10%;
+    background: rgba(255, 255, 255, 0.5);
     color: rgb(2, 2, 2);
     font-size: 2rem;
     cursor: pointer;
@@ -22,11 +24,11 @@
 }
 
 .nav-button.left {
-    left: 10px;
+    left: 20px;
 }
 
 .nav-button.right {
-    right: 10px;
+    right: 20px;
 }
 
 .nav-button:disabled {
@@ -49,8 +51,8 @@
     width: calc(50% - 20px);
     /* Adjust width for responsive grid */
     min-width: 150px;
-    max-width: 300px;
-    height: auto;
+    max-width: 400px;
+    height: 400px;
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -135,6 +137,7 @@
         width: calc(33.33% - 20px);
         min-width: 100px;
         max-width: 200px;
+        height: auto;
     }
 }
 
