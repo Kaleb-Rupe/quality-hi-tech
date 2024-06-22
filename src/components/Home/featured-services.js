@@ -1,5 +1,5 @@
 import React from "react";
-import "./services.css";
+import "../../css/featured-services.css";
 
 const FeaturedServices = () => {
   return (

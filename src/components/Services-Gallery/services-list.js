@@ -1,5 +1,3 @@
-// services.js
-
 export const services = [
   {
     title: "Renovations",

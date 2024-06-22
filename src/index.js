@@ -1,9 +1,9 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
-import { App } from "./App";
+import App from "./App";
 import Modal from "react-modal";
-import "./index.css";
+import "./css/index.css";
 
 const rootElement = document.getElementById("root");
 

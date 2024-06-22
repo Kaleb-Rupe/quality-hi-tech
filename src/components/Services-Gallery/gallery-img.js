@@ -1,7 +1,7 @@
-import  importAll  from "../utils/imageImporter";
+import importAll from "../../utils/imageImporter";
 
 const imageContext = require.context(
-  "../assets/images",
+  "../../assets/images",
   false,
   /\.(png|jpe?g|svg)$/
 );

@@ -44,18 +44,10 @@
 .header-nav ul {
     list-style: none;
     display: flex;
-    gap: 20px;
+    gap: 80px;
     padding: 0;
-    margin: 0;
+    margin: 0 24px 0 24px;
     justify-content: flex-end;
-}
-
-.header-nav ul {
-    display: flex;
-    gap: 20px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
 }
 
 .header-nav a {
@@ -104,7 +96,7 @@
     transform: translateY(-8px) rotate(-45deg);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 888px) {
     .header-content {
         padding: 10px;
         width: 100%;
@@ -148,7 +140,7 @@
 
 @media (min-width: 769px) and (max-width: 1024px) {
     .header-nav ul {
-        gap: 15px;
+        gap: 40px;
     }
 
     .header-logo {

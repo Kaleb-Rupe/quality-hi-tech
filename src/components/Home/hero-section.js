@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./hero.css";
+import "../../css/hero-section.css";
 
 const Hero = () => {
   return (

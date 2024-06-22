@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
 import Logo from "../../assets/images/logo.JPG";
-import "./details_page.css";
+import "../../css/details-page.css";
 
 const Details = () => {
   const email = "kalebrupe17@gmail.com";

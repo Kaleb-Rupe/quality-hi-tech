@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useMemo } from "react";
 import Modal from "react-modal";
-import "../pages/gallery.css";
-import { images } from "./gallery-img";
-import { services } from "./Services-list";
-import Services from "./Services";
-import ImageGallery from "./ImageGallery";
+import "../css/services-gallery.css";
+import { images } from "../components/Services-Gallery/gallery-img";
+import { services } from "../components/Services-Gallery/services-list";
+import Services from "../components/Services-Gallery/services";
+import ImageGallery from "../components/Services-Gallery/image-gallery";
 
 Modal.setAppElement("#root");
 

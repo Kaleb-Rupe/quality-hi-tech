@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaFacebook } from "react-icons/fa";
-import "./footer_nav_socials.css";
+import "../../css/footer-nav-socials.css";
 
 const Nav = () => {
   return (

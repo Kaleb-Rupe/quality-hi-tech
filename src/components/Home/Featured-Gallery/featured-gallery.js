@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import "./featured-gallery.css";
+import "../../../css/featured-gallery.css";
 
-import { images } from "./galleryData";
+import { images } from "./gallery-data";
 
 Modal.setAppElement("#root"); // This is important for accessibility reasons
 

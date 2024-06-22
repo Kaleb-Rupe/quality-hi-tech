@@ -1,9 +1,9 @@
 import React, { lazy, Suspense } from "react";
-import "./Footer.css";
-import Details from "./Footer-Comp/details_page";
-import Nav from "./Footer-Comp/footer_nav_socials";
+import "../css/footer.css";
+import Details from "./Footer/details-page";
+import Nav from "./Footer/footer-nav-socials";
 
-const LazyForm = lazy(() => import("./Footer-Comp/form_page"));
+const LazyForm = lazy(() => import("./Footer/contact-form-page"));
 
 const Footer = React.memo(() => {
   return (
