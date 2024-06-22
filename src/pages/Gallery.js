@@ -1,24 +1,18 @@
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import Modal from "react-modal";
 import "../pages/gallery.css";
 import { images } from "./gallery-img";
 import { services } from "./Services-list";
+import Services from "./Services";
+import ImageGallery from "./ImageGallery";
 
 Modal.setAppElement("#root");
 
-export const Gallery = () => {
+const Gallery = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
   const [visibleStart, setVisibleStart] = useState(0);
-  const [expandedService, setExpandedService] = useState(null);
   const visibleCount = 4;
-  const servicesSectionRef = useRef(null);
 
   const openModal = useCallback((image) => {
     setCurrentImage(image);
@@ -45,87 +39,26 @@ export const Gallery = () => {
     [visibleStart]
   );
 
-  const toggleService = (index) => {
-    setExpandedService(expandedService === index ? null : index);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        servicesSectionRef.current &&
-        !servicesSectionRef.current.contains(event.target)
-      ) {
-        setExpandedService(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
     <div className="page-wrapper">
       <header className="page-header">
-        <h1>Elite Construction & Renovations</h1>
+        <h1>Construction & Renovations</h1>
         <p>Transforming Spaces, Building Dreams</p>
       </header>
 
-      <section className="services-section" ref={servicesSectionRef}>
-        <h2>Our Services</h2>
-        <div className="services-grid">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              className={`service-item ${
-                expandedService === index ? "expanded" : ""
-              }`}
-              onClick={() => toggleService(index)}
-            >
-              <div className="service-header">
-                <h3>{service.title}</h3>
-                <span className="service-arrow">&#9656;</span>
-              </div>
-              <div className="service-description">
-                <p>{service.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <Services services={services} />
 
       <section className="gallery-section">
         <h2>Our Work</h2>
-        <div className="image-gallery-wrapper">
-          {visibleStart > 0 && (
-            <button
-              className="navigation-btn navigation-btn-prev"
-              onClick={prevImages}
-            >
-              &#10094;
-            </button>
-          )}
-          <div className="image-grid">
-            {visibleImages.map((image) => (
-              <div
-                key={image.id}
-                className="image-tile"
-                onClick={() => openModal(image)}
-              >
-                <img src={image.src} alt={image.alt} loading="lazy" />
-              </div>
-            ))}
-          </div>
-          {visibleStart + visibleCount < images.length && (
-            <button
-              className="navigation-btn navigation-btn-next"
-              onClick={nextImages}
-            >
-              &#10095;
-            </button>
-          )}
-        </div>
+        <ImageGallery
+          images={visibleImages}
+          visibleStart={visibleStart}
+          totalImages={images.length}
+          visibleCount={visibleCount}
+          onPrev={prevImages}
+          onNext={nextImages}
+          onImageClick={openModal}
+        />
       </section>
 
       <Modal
@@ -136,7 +69,11 @@ export const Gallery = () => {
       >
         {currentImage && (
           <div>
-            <button className="modal-close-btn" onClick={closeModal}>
+            <button
+              className="modal-close-btn"
+              onClick={closeModal}
+              aria-label="Close modal"
+            >
               &times;
             </button>
             <img
@@ -150,3 +87,5 @@ export const Gallery = () => {
     </div>
   );
 };
+
+export default React.memo(Gallery);

@@ -1,3 +1,7 @@
+:root {
+    --footer-height: 60px;
+}
+
 .app-container {
     display: flex;
     flex-direction: column;
@@ -6,6 +10,5 @@
 
 .app-container .main-content {
     flex: 1;
-    padding-bottom: 60px;
-    /* Height of the footer */
+    padding-bottom: var(--footer-height);
 }

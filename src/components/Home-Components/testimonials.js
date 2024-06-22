@@ -1,7 +1,7 @@
 import React from "react";
 import "./testimonials.css";
 
-export const Testimonials = () => {
+const Testimonials = () => {
   return (
     <section className="testimonials">
       <h2>What Our Clients Say</h2>
@@ -22,3 +22,5 @@ export const Testimonials = () => {
     </section>
   );
 };
+
+export default Testimonials;

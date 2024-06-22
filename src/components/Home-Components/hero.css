@@ -1,8 +1,15 @@
+:root {
+    --primary-color: #ED6F33;
+    --hover-color: #4FBBEB;
+    --text-color: black;
+    --bg-opacity: 0.75;
+}
+
 .hero {
     text-align: center;
     padding: 4rem 2rem;
     background: url('../../assets/images/FB_IMG_1609818258950_Original.jpeg') center/cover no-repeat;
-    color: black;
+    color: var(--text-color);
 }
 
 .wrapper {
@@ -11,11 +18,11 @@
 }
 
 .contrast-element {
-    background-color: rgb(255, 255, 255, 0.75);
-    background-size: cover;
-    border-radius: 6px;
+    background-color: rgba(255, 255, 255, var(--bg-opacity));
+    border-radius: 0.375rem;
     padding: 2rem 4rem;
-    margin: 15vh;
+    margin: 15vh auto;
+    max-width: 90%;
 }
 
 .hero h1 {
@@ -32,9 +39,9 @@
     width: 10rem;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    background-color: #ED6F33;
+    background-color: var(--primary-color);
     border: none;
-    border-radius: 4px;
+    border-radius: 0.25rem;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -45,5 +52,19 @@
 }
 
 .hero button:hover {
-    background-color: #4FBBEB;
+    background-color: var(--hover-color);
+}
+
+@media (max-width: 768px) {
+    .contrast-element {
+        padding: 1.5rem 2rem;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
 }

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
 import "./form_page.css";
 
-export const Form = () => {
+const Form = () => {
   const {
     register,
     handleSubmit,
@@ -20,44 +20,26 @@ export const Form = () => {
 
   const [submissionStatus, setSubmissionStatus] = useState("");
 
-  const onSubmit = (data) => {
-    sendEmail(data);
-    reset();
-  };
-
-  const validateEmail = (value) => {
+  const validateEmail = useCallback((value) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(value)) {
-      return "Invalid email address";
-    }
-    return true;
-  };
+    return emailRegex.test(value) || "Invalid email address";
+  }, []);
 
-  // Function to send email using EmailJS
-  const sendEmail = (data) => {
-    const serviceID = "service_rv66zp1"; // replace with your service ID
-    const templateID = "template_o0s4yot"; // replace with your template ID
+  const sendEmail = useCallback((data) => {
+    const serviceID = "service_rv66zp1";
+    const templateID = "template_o0s4yot";
 
     emailjs.init({
       publicKey: "hohx4dG5zc1Gehn9H",
-      // Do not allow headless browsers
       blockHeadless: false,
       limitRate: {
-        // Set the limit rate for the application
         id: "app",
-        // Allow 1 request per 10s
         throttle: 10000,
       },
     });
 
-    // Here you would send the email using an emailjs.
     emailjs
-      .send(serviceID, templateID, {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        message: data.message,
-      })
+      .send(serviceID, templateID, data)
       .then((response) => {
         console.log("Email sent successfully!", response.status, response.text);
         setSubmissionStatus("success");
@@ -66,122 +48,114 @@ export const Form = () => {
         console.error("Failed to send email:", error);
         setSubmissionStatus("error");
       });
+  }, []);
 
-    console.log("Sending email with the data.");
-  };
+  const onSubmit = useCallback(
+    (data) => {
+      sendEmail(data);
+      reset();
+    },
+    [reset, sendEmail]
+  );
+
+  if (submissionStatus === "success") {
+    return (
+      <div className="success-message">
+        <h2>Thank you!</h2>
+        <p>Your message has been sent successfully.</p>
+      </div>
+    );
+  }
 
   return (
-    <>
-      {submissionStatus === "success" ? (
-        <div className="success-message">
-          <h2>Thank you!</h2>
-          <p>Your message has been sent successfully.</p>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="form-wrapper">
-          <div className="form-group">
-            <label htmlFor="name">First Name:</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              placeholder="Full Name"
-              {...register("name", {
-                required: "Name is required.",
-                minLength: {
-                  value: 2,
-                  message: "Name must be at least 2 characters long.",
-                },
-                maxLength: {
-                  value: 32,
-                  message: "Name cannot exceed 32 characters.",
-                },
-              })}
-            />
-            {errors.name && (
-              <p role="alert" className="error-message">
-                {errors.name.message}
-              </p>
-            )}
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="form-wrapper">
+      <div className="form-group">
+        <label htmlFor="name">Full Name:</label>
+        <input
+          id="name"
+          {...register("name", {
+            required: "Name is required.",
+            minLength: {
+              value: 2,
+              message: "Name must be at least 2 characters long.",
+            },
+            maxLength: {
+              value: 50,
+              message: "Name cannot exceed 50 characters.",
+            },
+          })}
+          placeholder="Your Full Name"
+        />
+        {errors.name && (
+          <p role="alert" className="error-message">
+            {errors.name.message}
+          </p>
+        )}
+      </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Email"
-              {...register("email", {
-                required: "Email is required.",
-                minLength: {
-                  value: 7,
-                  message: "Email must be at least 7 characters long.",
-                },
-                maxLength: {
-                  value: 29,
-                  message: "Email cannot exceed 29 characters.",
-                },
-                validate: validateEmail,
-              })}
-            />
-            {errors.email && (
-              <p role="alert" className="error-message">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
+      <div className="form-group">
+        <label htmlFor="email">Email:</label>
+        <input
+          id="email"
+          type="email"
+          {...register("email", {
+            required: "Email is required.",
+            validate: validateEmail,
+          })}
+          placeholder="Your Email Address"
+        />
+        {errors.email && (
+          <p role="alert" className="error-message">
+            {errors.email.message}
+          </p>
+        )}
+      </div>
 
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number:</label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder="Mobile Number"
-              {...register("phone", {
-                minLength: {
-                  value: 6,
-                  message: "Phone number must be at least 6 characters long.",
-                },
-                maxLength: {
-                  value: 12,
-                  message: "Phone number cannot exceed 12 characters.",
-                },
-              })}
-            />
-            {errors.phone && (
-              <p role="alert" className="error-message">
-                {errors.phone.message}
-              </p>
-            )}
-          </div>
+      <div className="form-group">
+        <label htmlFor="phone">Phone Number:</label>
+        <input
+          id="phone"
+          type="tel"
+          {...register("phone", {
+            pattern: {
+              value: /^[0-9]{6,15}$/,
+              message: "Please enter a valid phone number.",
+            },
+          })}
+          placeholder="Your Phone Number (optional)"
+        />
+        {errors.phone && (
+          <p role="alert" className="error-message">
+            {errors.phone.message}
+          </p>
+        )}
+      </div>
 
-          <div className="form-group">
-            <label htmlFor="message">Message:</label>
-            <textarea
-              id="message"
-              name="message"
-              placeholder="Your message..."
-              {...register("message", {
-                maxLength: {
-                  value: 120,
-                  message: "Message cannot exceed 120 characters.",
-                },
-              })}
-            />
-            {errors.message && (
-              <p role="alert" className="error-message">
-                {errors.message.message}
-              </p>
-            )}
-          </div>
+      <div className="form-group">
+        <label htmlFor="message">Message:</label>
+        <textarea
+          id="message"
+          {...register("message", {
+            required: "Message is required.",
+            maxLength: {
+              value: 500,
+              message: "Message cannot exceed 500 characters.",
+            },
+          })}
+          placeholder="Your message..."
+        />
+        {errors.message && (
+          <p role="alert" className="error-message">
+            {errors.message.message}
+          </p>
+        )}
+      </div>
 
-          <button type="submit" className="submit-button">
-            Submit
-          </button>
-        </form>
-      )}
-    </>
+      <button type="submit" className="submit-button">
+        Submit
+      </button>
+    </form>
   );
 };
+
+export default React.memo(Form);

@@ -1,19 +1,18 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Home } from "./pages/Home";
-import { About } from "./pages/About";
-import { ContactForm } from "./pages/Contact";
-import { ErrorPage } from "./pages/ErrorPage";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
-import { Gallery } from "./pages/Gallery";
-import { Login } from "./pages/Login";
+import Layout from "./components/Layout";
 import "./App.css";
 
-export const App = () => {
-  return (
-    <>
-      <Header />
+const Home = lazy(() => import("./pages/Home"));
+const Gallery = lazy(() => import("./pages/Gallery"));
+const About = lazy(() => import("./pages/About"));
+const ContactForm = lazy(() => import("./pages/Contact"));
+const Login = lazy(() => import("./pages/Login"));
+const ErrorPage = lazy(() => import("./pages/ErrorPage"));
+
+export const App = () => (
+  <Layout>
+    <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/gallery" element={<Gallery />} />
@@ -22,7 +21,6 @@ export const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
-      <Footer />
-    </>
-  );
-};
+    </Suspense>
+  </Layout>
+);
