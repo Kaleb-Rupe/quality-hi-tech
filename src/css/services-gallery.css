@@ -173,10 +173,6 @@
     transition: transform 0.3s ease;
 }
 
-.image-tile:hover {
-    transform: scale(1.05);
-}
-
 .image-tile img {
     width: 100%;
     height: 100%;
@@ -184,10 +180,14 @@
     border-radius: 8px;
 }
 
+.image-tile:hover {
+    transform: scale(1.05);
+}
+
 .modal-content {
     position: relative;
-    width: 90vw;
-    max-width: 1200px;
+    width: auto;
+    max-width: 90vw;
     max-height: 90vh;
     margin: auto;
     background: white;
@@ -263,7 +263,7 @@
     }
 
     .navigation-btn svg {
-       display: none;
+        display: none;
     }
 
     .image-grid {
