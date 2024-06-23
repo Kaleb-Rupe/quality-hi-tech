@@ -64,6 +64,9 @@ const ImageGallery = React.memo(
       };
     }, [visibleStart, totalImages, visibleCount, onPrev, onNext]);
 
+    const totalDots = Math.ceil(totalImages / visibleCount);
+    const currentDot = Math.floor(visibleStart / visibleCount);
+
     return (
       <div className="image-gallery-wrapper" ref={galleryRef}>
         <button
@@ -97,6 +100,15 @@ const ImageGallery = React.memo(
         >
           <ArrowRight />
         </button>
+        <div className="gallery-dots">
+          {Array.from({ length: totalDots }).map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === currentDot ? "active" : ""}`}
+              onClick={() => onImageClick(images[index * visibleCount])}
+            />
+          ))}
+        </div>
       </div>
     );
   }

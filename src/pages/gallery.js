@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import Modal from "react-modal";
 import "../css/services-gallery.css";
 import { images } from "../components/Services-Gallery/gallery-img";
@@ -12,7 +12,18 @@ const Gallery = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
   const [visibleStart, setVisibleStart] = useState(0);
-  const visibleCount = 4;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const visibleCount = !isMobile ? 4 : 2;
 
   const openModal = useCallback((image) => {
     setCurrentImage(image);
@@ -28,15 +39,15 @@ const Gallery = () => {
     setVisibleStart((prev) =>
       Math.min(prev + visibleCount, images.length - visibleCount)
     );
-  }, []);
+  }, [visibleCount]);
 
   const prevImages = useCallback(() => {
     setVisibleStart((prev) => Math.max(prev - visibleCount, 0));
-  }, []);
+  }, [visibleCount]);
 
   const visibleImages = useMemo(
     () => images.slice(visibleStart, visibleStart + visibleCount),
-    [visibleStart]
+    [visibleCount, visibleStart]
   );
 
   return (

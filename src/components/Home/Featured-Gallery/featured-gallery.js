@@ -1,29 +1,70 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import Modal from "react-modal";
 import "../../../css/featured-gallery.css";
-
 import { images } from "./gallery-data";
 
 Modal.setAppElement("#root");
 
-const ArrowLeft = () => (
+const ArrowLeft = React.memo(() => (
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
   </svg>
-);
+));
 
-const ArrowRight = () => (
+const ArrowRight = React.memo(() => (
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
   </svg>
-);
+));
 
 const FeaturedGallery = React.memo(() => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
   const [visibleStart, setVisibleStart] = useState(0);
-  const visibleCount = 4;
+  const [visibleCount, setVisibleCount] = useState(4);
   const galleryRef = useRef(null);
+
+  const openModal = useCallback((image) => {
+    setCurrentImage(image);
+    setModalIsOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setModalIsOpen(false);
+    setCurrentImage(null);
+  }, []);
+
+  const nextImages = useCallback(() => {
+    setVisibleStart((prev) =>
+      Math.min(prev + visibleCount, images.length - visibleCount)
+    );
+  }, [visibleCount]);
+
+  const prevImages = useCallback(() => {
+    setVisibleStart((prev) => Math.max(prev - visibleCount, 0));
+  }, [visibleCount]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 480) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 768) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(4);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const gallery = galleryRef.current;
@@ -54,8 +95,8 @@ const FeaturedGallery = React.memo(() => {
       isSwiping = false;
     };
 
-    gallery.addEventListener("touchstart", handleTouchStart);
-    gallery.addEventListener("touchmove", handleTouchMove);
+    gallery.addEventListener("touchstart", handleTouchStart, { passive: true });
+    gallery.addEventListener("touchmove", handleTouchMove, { passive: true });
     gallery.addEventListener("touchend", handleTouchEnd);
 
     return () => {
@@ -63,27 +104,15 @@ const FeaturedGallery = React.memo(() => {
       gallery.removeEventListener("touchmove", handleTouchMove);
       gallery.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [visibleStart]);
+  }, [visibleStart, prevImages, nextImages, visibleCount]);
 
-  const openModal = (image) => {
-    setCurrentImage(image);
-    setModalIsOpen(true);
-  };
+  const visibleImages = useMemo(
+    () => images.slice(visibleStart, visibleStart + visibleCount),
+    [visibleStart, visibleCount]
+  );
 
-  const closeModal = () => {
-    setModalIsOpen(false);
-    setCurrentImage(null);
-  };
-
-  const nextImages = () => {
-    setVisibleStart((prev) =>
-      Math.min(prev + visibleCount, images.length - visibleCount)
-    );
-  };
-
-  const prevImages = () => {
-    setVisibleStart((prev) => Math.max(prev - visibleCount, 0));
-  };
+  const totalDots = Math.ceil(images.length / visibleCount);
+  const currentDot = Math.floor(visibleStart / visibleCount);
 
   return (
     <div className="gallery-container" ref={galleryRef}>
@@ -96,21 +125,19 @@ const FeaturedGallery = React.memo(() => {
         <ArrowLeft />
       </button>
       <div className="gallery">
-        {images
-          .slice(visibleStart, visibleStart + visibleCount)
-          .map((image, index) => (
-            <div
-              key={index}
-              className="gallery-item"
-              onClick={() => openModal(image)}
-              tabIndex={0}
-              role="button"
-              aria-label={`View larger image of ${image.alt}`}
-              onKeyDown={(e) => e.key === "Enter" && openModal(image)}
-            >
-              <img src={image.src} alt={image.alt} loading="lazy" />
-            </div>
-          ))}
+        {visibleImages.map((image, index) => (
+          <div
+            key={index}
+            className="gallery-item"
+            onClick={() => openModal(image)}
+            tabIndex={0}
+            role="button"
+            aria-label={`View larger image of ${image.alt}`}
+            onKeyDown={(e) => e.key === "Enter" && openModal(image)}
+          >
+            <img src={image.src} alt={image.alt} loading="lazy" />
+          </div>
+        ))}
       </div>
       <button
         className="nav-button right"
@@ -120,6 +147,16 @@ const FeaturedGallery = React.memo(() => {
       >
         <ArrowRight />
       </button>
+
+      <div className="gallery-dots">
+        {Array.from({ length: totalDots }).map((_, index) => (
+          <span
+            key={index}
+            className={`dot ${index === currentDot ? "active" : ""}`}
+            onClick={() => setVisibleStart(index * visibleCount)}
+          />
+        ))}
+      </div>
 
       <Modal
         isOpen={modalIsOpen}

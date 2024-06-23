@@ -8,14 +8,14 @@
     position: relative;
     max-width: 1200px;
     margin: 0 auto;
+    padding-bottom: 30px;
 }
 
 /* Navigation button styles */
 .nav-button {
-    background: none;
+    background: rgba(255, 255, 255, 0.5);
     border: none;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
     color: rgb(2, 2, 2);
     font-size: 2rem;
     cursor: pointer;
@@ -149,8 +149,43 @@
     z-index: 1000;
 }
 
-/* Tablet Styles */
+/* Gallery dots styles */
+.gallery-dots {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(87, 70, 70, 0.5);
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active {
+    background-color: #050505;
+}
+
+/* Responsive styles */
+@media (min-width: 769px) {
+    .gallery {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
 @media (min-width: 481px) and (max-width: 768px) {
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .nav-button {
         font-size: 1.5rem;
         width: 35px;
@@ -158,30 +193,21 @@
     }
 
     .gallery-item {
-        min-width: 100px;
-        max-width: 200px;
-        height: auto;
+        height: 300px;
     }
-
-        .gallery {
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-        }
 }
 
-/* Mobile Styles */
 @media screen and (max-width: 480px) {
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+
     .nav-button {
         display: none;
     }
 
-    .gallery {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 10px;
-    }
-
     .gallery-item {
-        height: 200px;
+        height: 250px;
     }
 
     .close-button {
