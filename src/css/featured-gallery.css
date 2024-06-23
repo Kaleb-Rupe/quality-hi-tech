@@ -162,6 +162,11 @@
         max-width: 200px;
         height: auto;
     }
+
+        .gallery {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
 }
 
 /* Mobile Styles */
@@ -171,7 +176,7 @@
     }
 
     .gallery {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 10px;
     }
 
@@ -180,6 +185,8 @@
     }
 
     .close-button {
-        display: none;
+        font-size: 1.2rem;
+        width: 25px;
+        height: 25px;
     }
 }
