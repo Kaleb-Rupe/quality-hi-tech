@@ -20,15 +20,21 @@ const Details = () => {
     const userAgent = navigator.userAgent.toLowerCase();
     let mapsUrl;
 
-    if (userAgent.includes("mac os x") || userAgent.includes("iphone") || userAgent.includes("ipad")) {
-      mapsUrl = `https://maps.apple.com/?ll=${latitude},${longitude}&q=${encodeURIComponent(address)}`;
+    if (
+      userAgent.includes("mac os x") ||
+      userAgent.includes("iphone") ||
+      userAgent.includes("ipad")
+    ) {
+      mapsUrl = `https://maps.apple.com/?ll=${latitude},${longitude}&q=${encodeURIComponent(
+        address
+      )}`;
     } else if (userAgent.includes("android")) {
       mapsUrl = `geo:${latitude},${longitude}?q=${encodeURIComponent(address)}`;
     } else {
       mapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     }
 
-    window.open(mapsUrl, '_blank');
+    window.open(mapsUrl, "_blank");
   }, [address, latitude, longitude]);
 
   return (
@@ -37,13 +43,15 @@ const Details = () => {
         <a href="/" id="bottle">
           <img src={Logo} alt="Santa Cruz Sun LLC Logo" className="photo" />
         </a>
+
         <h1>Santa Cruz Sun LLC</h1>
+        <p>Contractors License:</p>
         <a
           href="https://search.ccb.state.or.us/search/search_result.aspx"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Click to View: CCB#249418
+          <p>Click to View: CCB#249418</p>
         </a>
       </div>
 
@@ -52,7 +60,8 @@ const Details = () => {
         <address>
           <a href="/" onClick={handleMapClick}>
             <GrLocation className="icon" />
-            219 B Street<br />
+            219 B Street
+            <br />
             Coos Bay, OR 97420
           </a>
         </address>

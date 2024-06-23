@@ -8,7 +8,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1em;
+    padding: 0 1em 1em 1em;
 }
 
 .nav-links ul {
@@ -18,7 +18,7 @@
 }
 
 .nav-links li {
-    margin-bottom: 15px;
+    margin: 25px 0;
 }
 
 .nav-links a {
@@ -52,6 +52,7 @@
 .social-title {
     text-decoration: underline;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .hours-of-operation {
@@ -62,27 +63,27 @@
 .hours-of-operation h3 {
     font-size: 1.2rem;
     text-decoration: underline;
-    margin-bottom: 10px;
 }
 
 .hours-of-operation p {
     margin-bottom: 5px;
 }
 
-.footer-copy {
-    text-align: center;
-    color: #777;
-    font-size: 0.9rem;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     .nav-links ul {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
     }
 
     .nav-links li {
-        margin: 0 10px 10px;
+        margin: 15px 0;
+    }
+
+    .hours-of-operation {
+        font-size: 0.9rem;
+    }
+
+    .footer-copy {
+        font-size: 0.8rem;
     }
 }

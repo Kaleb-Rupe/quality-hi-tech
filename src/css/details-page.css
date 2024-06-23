@@ -3,9 +3,21 @@
     --details-text-color: #ffffff;
 }
 
+
 .center {
+    display: flex;
     text-align: center;
     font-size: clamp(1rem, 3vw, 1.5rem);
+    flex-direction: column;
+}
+
+.center h1 {
+    font-size: 1em;
+    margin: 0.25em 0;
+}
+
+.center p {
+    margin: 0;
 }
 
 .center a {
@@ -35,8 +47,7 @@
 }
 
 .contact-links {
-    width: 100%;
-    max-width: 300px;
+    width: auto;
 }
 
 .contact-links h3 {
@@ -58,8 +69,23 @@
     color: var(--details-secondary-color);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 844px) {
     .details-container {
-        padding: 1em 2em;
+        padding: 0.5em 1em;
+    }
+}
+
+@media (max-width: 504px) {
+
+    .details-container {
+        padding: 0.5em 0.75em;
+    }
+    .contact-links h3 {
+        text-align: start;
+        font-size: 1rem;
+    }
+
+    .contact-links a {
+        font-size: 0.8rem;
     }
 }

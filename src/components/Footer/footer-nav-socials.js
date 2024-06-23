@@ -33,18 +33,11 @@ const Nav = () => {
       </div>
 
       <div className="hours-of-operation">
-        <p>Contractors License: CCB#249418</p>
         <h3>Hours of Operation:</h3>
         <p>Monday-Friday: 9:00 AM - 6:00 PM</p>
         <p>Saturday & Sunday: By Appointment Only</p>
       </div>
 
-      <div className="footer-copy">
-        <p>
-          &copy; {new Date().getFullYear()} Santa Cruz Sun LLC. All rights
-          reserved.
-        </p>
-      </div>
     </div>
   );
 };
