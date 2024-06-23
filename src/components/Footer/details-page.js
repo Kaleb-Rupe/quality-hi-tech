@@ -58,7 +58,7 @@ const Details = () => {
       <div className="contact-links">
         <h3>Physical Address:</h3>
         <address>
-          <a href="/" onClick={handleMapClick}>
+          <a href onClick={handleMapClick}>
             <GrLocation className="icon" />
             219 B Street
             <br />
