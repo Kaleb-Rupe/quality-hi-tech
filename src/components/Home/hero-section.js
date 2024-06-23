@@ -10,7 +10,7 @@ const Hero = () => {
           <h1>Santa Cruz Sun</h1>
           <p>Building Your Dreams Into Reality</p>
           <button aria-label="Get a free estimate">
-            <Link id="link" to="/contact">
+            <Link id="link" to="/contact" onClick={() => window.scrollTo(0, 0)}>
               Free Estimate
             </Link>
           </button>

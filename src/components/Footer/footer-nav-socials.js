@@ -4,18 +4,27 @@ import { FaFacebook } from "react-icons/fa";
 import "../../css/footer-nav-socials.css";
 
 const Nav = () => {
+
+ const onClick = () => window.scrollTo(0, 0)
+
   return (
     <div className="nav-container">
       <nav className="nav-links">
         <ul>
           <li>
-            <Link to="/">Home</Link>
+            <Link to="/" onClick={onClick}>
+              Home
+            </Link>
           </li>
           <li>
-            <Link to="/about">About</Link>
+            <Link to="/gallery" onClick={onClick}>
+              Services & Photos
+            </Link>
           </li>
           <li>
-            <Link to="/services">Services</Link>
+            <Link to="/about" onClick={onClick}>
+              About
+            </Link>
           </li>
         </ul>
       </nav>
@@ -37,7 +46,6 @@ const Nav = () => {
         <p>Monday-Friday: 9:00 AM - 6:00 PM</p>
         <p>Saturday & Sunday: By Appointment Only</p>
       </div>
-
     </div>
   );
 };

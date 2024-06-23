@@ -23,11 +23,16 @@ const Header = () => {
     };
   }, []);
 
+  const onClick = () => {
+    setMenuOpen(false);
+    window.scrollTo(0, 0);
+  };
+
   return (
     <header id="masthead" className={`site-header ${isSticky ? "sticky" : ""}`}>
       <div className="header-content">
         <div className="header-logo">
-          <Link to="/" id="logo">
+          <Link to="/" id="logo" onClick={() => window.scrollTo(0, 0)}>
             <img src={Logo} alt="Santa Cruz Sun LLC Logo" />
           </Link>
           <h1 className="site-title">Santa Cruz Sun</h1>
@@ -46,22 +51,22 @@ const Header = () => {
       <nav className={`header-nav ${menuOpen ? "open" : ""}`}>
         <ul>
           <li>
-            <Link to="/" onClick={() => setMenuOpen(false)}>
+            <Link to="/" onClick={onClick}>
               Home
             </Link>
           </li>
           <li>
-            <Link to="/gallery" onClick={() => setMenuOpen(false)}>
+            <Link to="/gallery" onClick={onClick}>
               Services & Photos
             </Link>
           </li>
           <li>
-            <Link to="/about" onClick={() => setMenuOpen(false)}>
+            <Link to="/about" onClick={onClick}>
               About
             </Link>
           </li>
           <li>
-            <Link to="/contact" onClick={() => setMenuOpen(false)}>
+            <Link to="/contact" onClick={onClick}>
               Contact
             </Link>
           </li>
