@@ -12,18 +12,7 @@ const Gallery = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
   const [visibleStart, setVisibleStart] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 480);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  const visibleCount = !isMobile ? 4 : 1;
+  const [visibleCount, setVisibleCount] = useState(4);
 
   const openModal = useCallback((image) => {
     setCurrentImage(image);
@@ -45,9 +34,25 @@ const Gallery = () => {
     setVisibleStart((prev) => Math.max(prev - visibleCount, 0));
   }, [visibleCount]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 480) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 768) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(4);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const visibleImages = useMemo(
     () => images.slice(visibleStart, visibleStart + visibleCount),
-    [visibleCount, visibleStart]
+    [visibleStart, visibleCount]
   );
 
   return (
