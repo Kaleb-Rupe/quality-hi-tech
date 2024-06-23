@@ -61,6 +61,7 @@
 }
 
 .hours-of-operation h3 {
+    margin-top: 0;
     font-size: 1.2rem;
     text-decoration: underline;
 }

@@ -4,8 +4,7 @@ import { FaFacebook } from "react-icons/fa";
 import "../../css/footer-nav-socials.css";
 
 const Nav = () => {
-
- const onClick = () => window.scrollTo(0, 0)
+  const onClick = () => window.scrollTo(0, 0);
 
   return (
     <div className="nav-container">
@@ -43,8 +42,16 @@ const Nav = () => {
 
       <div className="hours-of-operation">
         <h3>Hours of Operation:</h3>
-        <p>Monday-Friday: 9:00 AM - 6:00 PM</p>
-        <p>Saturday & Sunday: By Appointment Only</p>
+        <p>
+          Monday-Friday:
+          <br />
+          9:00 AM - 6:00 PM
+        </p>
+        <p>
+          Saturday & Sunday:
+          <br />
+          By Appointment Only
+        </p>
       </div>
     </div>
   );

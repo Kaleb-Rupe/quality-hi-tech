@@ -1,10 +1,29 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
 import Logo from "../../assets/images/logo.JPG";
 import "../../css/details-page.css";
 
+const useMediaQuery = (query) => {
+  const [matches, setMatches] = useState(window.matchMedia(query).matches);
+
+  useEffect(() => {
+    const mediaQueryList = window.matchMedia(query);
+    const documentChangeHandler = () => setMatches(mediaQueryList.matches);
+
+    mediaQueryList.addEventListener("change", documentChangeHandler);
+
+    return () => {
+      mediaQueryList.removeEventListener("change", documentChangeHandler);
+    };
+  }, [query]);
+
+  return matches;
+};
+
 const Details = () => {
+  const isMobile = useMediaQuery("(max-width: 844px)");
   const email = "kalebrupe17@gmail.com";
   const subject = encodeURIComponent("Inquiry here!");
   const body = encodeURIComponent(
@@ -49,6 +68,14 @@ const Details = () => {
         <a href="/" id="bottle">
           <img src={Logo} alt="Santa Cruz Sun LLC Logo" className="photo" />
         </a>
+
+        {isMobile && (
+          <button aria-label="Get a free estimate">
+            <Link id="link" to="/contact" onClick={() => window.scrollTo(0, 0)}>
+              Free Estimate
+            </Link>
+          </button>
+        )}
 
         <h1>Santa Cruz Sun LLC</h1>
         <p>Contractors License:</p>

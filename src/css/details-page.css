@@ -1,5 +1,6 @@
 :root {
     --details-secondary-color: #4FBBEB;
+    --details-button-color: #ED6F33;
     --details-text-color: #ffffff;
 }
 
@@ -42,6 +43,23 @@
     padding: 1em;
 }
 
+.details-container button {
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    background-color: var(--details-button-color);
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.details-container button:hover {
+    background-color: var(--details-secondary-color);
+}
+
 .icon {
     margin-right: 10px;
 }
@@ -80,6 +98,7 @@
     .details-container {
         padding: 0.5em 0.75em;
     }
+
     .contact-links h3 {
         text-align: start;
         font-size: 1rem;
