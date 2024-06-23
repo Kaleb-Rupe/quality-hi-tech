@@ -16,26 +16,32 @@ const Details = () => {
   const latitude = 43.36725;
   const longitude = -124.19758;
 
-  const handleMapClick = useCallback(() => {
-    const userAgent = navigator.userAgent.toLowerCase();
-    let mapsUrl;
+  const handleMapClick = useCallback(
+    (event) => {
+      event.preventDefault();
+      const userAgent = navigator.userAgent.toLowerCase();
+      let mapsUrl;
 
-    if (
-      userAgent.includes("mac os x") ||
-      userAgent.includes("iphone") ||
-      userAgent.includes("ipad")
-    ) {
-      mapsUrl = `https://maps.apple.com/?ll=${latitude},${longitude}&q=${encodeURIComponent(
-        address
-      )}`;
-    } else if (userAgent.includes("android")) {
-      mapsUrl = `geo:${latitude},${longitude}?q=${encodeURIComponent(address)}`;
-    } else {
-      mapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-    }
+      if (
+        userAgent.includes("mac os x") ||
+        userAgent.includes("iphone") ||
+        userAgent.includes("ipad")
+      ) {
+        mapsUrl = `maps://maps.apple.com/?ll=${latitude},${longitude}&q=${encodeURIComponent(
+          address
+        )}`;
+      } else if (userAgent.includes("android")) {
+        mapsUrl = `geo:${latitude},${longitude}?q=${encodeURIComponent(
+          address
+        )}`;
+      } else {
+        mapsUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+      }
 
-    window.open(mapsUrl, "_blank");
-  }, [address, latitude, longitude]);
+      window.location.href = mapsUrl;
+    },
+    [address, latitude, longitude]
+  );
 
   return (
     <div className="details-container">
@@ -58,7 +64,7 @@ const Details = () => {
       <div className="contact-links">
         <h3>Physical Address:</h3>
         <address>
-          <a href onClick={handleMapClick}>
+          <a href="/" onClick={handleMapClick} rel="noopener noreferrer">
             <GrLocation className="icon" />
             219 B Street
             <br />
