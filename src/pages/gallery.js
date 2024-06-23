@@ -23,7 +23,7 @@ const Gallery = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const visibleCount = !isMobile ? 4 : 2;
+  const visibleCount = !isMobile ? 4 : 1;
 
   const openModal = useCallback((image) => {
     setCurrentImage(image);
