@@ -71,94 +71,96 @@ const ContactForm = () => {
   }
 
   return (
-    <div className="contact-container">
-      <h2>Leave Us A Message</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="contact-form">
-        <div className="form-group-container">
-          <div className="form-group">
-            <label htmlFor="firstName">First Name:</label>
-            <input
-              id="firstName"
-              {...register("firstName", {
-                required: "First name is required",
-                minLength: {
-                  value: 2,
-                  message: "First name must be at least 2 characters long.",
-                },
-                maxLength: {
-                  value: 32,
-                  message: "First name cannot exceed 32 characters.",
-                },
-              })}
-              placeholder="First Name"
-            />
-            {errors.firstName && <p>{errors.firstName.message}</p>}
+    <div className="wrapper">
+      <div className="contact-container">
+        <h2>Leave Us A Message</h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="contact-form">
+          <div className="form-group-container">
+            <div className="form-group">
+              <label htmlFor="firstName">First Name:</label>
+              <input
+                id="firstName"
+                {...register("firstName", {
+                  required: "First name is required",
+                  minLength: {
+                    value: 2,
+                    message: "First name must be at least 2 characters long.",
+                  },
+                  maxLength: {
+                    value: 32,
+                    message: "First name cannot exceed 32 characters.",
+                  },
+                })}
+                placeholder="First Name"
+              />
+              {errors.firstName && <p>{errors.firstName.message}</p>}
+            </div>
+            <div className="form-group">
+              <label htmlFor="lastName">Last Name:</label>
+              <input
+                id="lastName"
+                {...register("lastName", {
+                  required: "Last name is required",
+                  minLength: {
+                    value: 2,
+                    message: "Last name must be at least 2 characters long.",
+                  },
+                  maxLength: {
+                    value: 32,
+                    message: "Last name cannot exceed 32 characters.",
+                  },
+                })}
+                placeholder="Last Name"
+              />
+              {errors.lastName && <p>{errors.lastName.message}</p>}
+            </div>
           </div>
           <div className="form-group">
-            <label htmlFor="lastName">Last Name:</label>
+            <label htmlFor="email">Email:</label>
             <input
-              id="lastName"
-              {...register("lastName", {
-                required: "Last name is required",
-                minLength: {
-                  value: 2,
-                  message: "Last name must be at least 2 characters long.",
-                },
-                maxLength: {
-                  value: 32,
-                  message: "Last name cannot exceed 32 characters.",
+              id="email"
+              type="email"
+              {...register("email", {
+                required: "Email is required",
+                validate: validateEmail,
+              })}
+              placeholder="Email"
+            />
+            {errors.email && <p>{errors.email.message}</p>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="phone">Phone Number:</label>
+            <input
+              id="phone"
+              type="tel"
+              {...register("phone", {
+                pattern: {
+                  value: /^[0-9]{6,12}$/,
+                  message: "Please enter a valid phone number (6-12 digits)",
                 },
               })}
-              placeholder="Last Name"
+              placeholder="Phone Number"
             />
-            {errors.lastName && <p>{errors.lastName.message}</p>}
+            {errors.phone && <p>{errors.phone.message}</p>}
           </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            id="email"
-            type="email"
-            {...register("email", {
-              required: "Email is required",
-              validate: validateEmail,
-            })}
-            placeholder="Email"
-          />
-          {errors.email && <p>{errors.email.message}</p>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="phone">Phone Number:</label>
-          <input
-            id="phone"
-            type="tel"
-            {...register("phone", {
-              pattern: {
-                value: /^[0-9]{6,12}$/,
-                message: "Please enter a valid phone number (6-12 digits)",
-              },
-            })}
-            placeholder="Phone Number"
-          />
-          {errors.phone && <p>{errors.phone.message}</p>}
-        </div>
-        <div className="form-group">
-          <label htmlFor="message">Message:</label>
-          <textarea
-            id="message"
-            {...register("message", {
-              required: "Message is required",
-              maxLength: {
-                value: 500,
-                message: "Message cannot exceed 500 characters.",
-              },
-            })}
-            placeholder="Your message..."
-          />
-          {errors.message && <p>{errors.message.message}</p>}
-        </div>
-        <button type="submit">Send</button>
-      </form>
+          <div className="form-group">
+            <label htmlFor="message">Message:</label>
+            <textarea
+              id="message"
+              {...register("message", {
+                required: "Message is required",
+                maxLength: {
+                  value: 500,
+                  message: "Message cannot exceed 500 characters.",
+                },
+              })}
+              placeholder="Your message..."
+            />
+            {errors.message && <p>{errors.message.message}</p>}
+          </div>
+          <button type="submit">Send</button>
+        </form>
+      </div>
     </div>
   );
 };
