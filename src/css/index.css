@@ -19,6 +19,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
     margin: 0;
+    padding-top: 80px;
 }
 
 a {

@@ -53,8 +53,10 @@ const ImageGallery = React.memo(
         isSwiping = false;
       };
 
-      gallery.addEventListener("touchstart", handleTouchStart);
-      gallery.addEventListener("touchmove", handleTouchMove);
+      gallery.addEventListener("touchstart", handleTouchStart, {
+        passive: true,
+      });
+      gallery.addEventListener("touchmove", handleTouchMove, { passive: true });
       gallery.addEventListener("touchend", handleTouchEnd);
 
       return () => {

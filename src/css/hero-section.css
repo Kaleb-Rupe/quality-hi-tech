@@ -1,15 +1,15 @@
 :root {
-    --primary-color: #ED6F33;
-    --hover-color: #4FBBEB;
-    --text-color: black;
-    --bg-opacity: 0.75;
+    --hero-section-primary-color: #ED6F33;
+    --hero-section-hover-color: #4FBBEB;
+    --hero-section-text-color: #333;
+    --hero-section-bg-opacity: 0.75;
 }
 
 .hero {
     text-align: center;
     padding: 4rem 2rem;
     background: url('../assets/images/FB_IMG_1609818258950_Original.jpeg') center/cover no-repeat;
-    color: var(--text-color);
+    color: var(--hero-section-text-color);
 }
 
 .wrapper {
@@ -18,7 +18,7 @@
 }
 
 .contrast-element {
-    background-color: rgba(255, 255, 255, var(--bg-opacity));
+    background-color: rgba(255, 255, 255, var(--hero-section-bg-opacity));
     border-radius: 0.375rem;
     padding: 2rem 4rem;
     margin: 15vh auto;
@@ -39,7 +39,7 @@
     width: 10rem;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    background-color: var(--primary-color);
+    background-color: var(--hero-section-primary-color);
     border: none;
     border-radius: 0.25rem;
     cursor: pointer;
@@ -52,7 +52,7 @@
 }
 
 .hero button:hover {
-    background-color: var(--hover-color);
+    background-color: var(--hero-section-hover-color);
 }
 
 @media (max-width: 768px) {

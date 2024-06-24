@@ -22,7 +22,7 @@ const useMediaQuery = (query) => {
   return matches;
 };
 
-const Footer = React.memo(() => {
+const Footer = () => {
   const isMobile = useMediaQuery("(max-width: 844px)");
 
   return (
@@ -53,6 +53,6 @@ const Footer = React.memo(() => {
       </div>
     </footer>
   );
-});
+};
 
-export default Footer;
+export default React.memo(Footer);
