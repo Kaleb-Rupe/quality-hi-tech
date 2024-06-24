@@ -5,7 +5,7 @@ import Image4 from "../../../assets/images/FB_IMG_1606604883160_Original.jpeg";
 import Image5 from "../../../assets/images/FB_IMG_1609818199940_Original.jpeg";
 import Image6 from "../../../assets/images/FB_IMG_1609818315477_Original.jpeg";
 import Image7 from "../../../assets/images/20210707_155857_Original.jpeg";
-import Image8 from "../../../assets/images/Resized-Hero-Image.png";
+import Image8 from "../../../assets/images/resized_img_1.png";
 
 export const images = [
   { src: Image1, alt: "Exterior view of a modern house with large windows" },

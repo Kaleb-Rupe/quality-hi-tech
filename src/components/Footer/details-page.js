@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
-import Logo from "../../assets/images/logo.JPG";
+import Logo from "../../assets/logos/Santa-Cruz-Construction-font-large.png";
 import "../../css/details-page.css";
 
 const useMediaQuery = (query) => {
@@ -77,7 +77,7 @@ const Details = () => {
           </button>
         )}
 
-        <h1>Santa Cruz Sun LLC</h1>
+        {/* <h1>Santa Cruz Sun LLC</h1> */}
         <p>Contractors License:</p>
         <a
           href="https://search.ccb.state.or.us/search/search_result.aspx"

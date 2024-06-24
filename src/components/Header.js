@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Logo from "../assets/images/logo.JPG";
+import Logo from "../assets/logos/Santa-Cruz-Construction-font-large-bold.png";
 import "../css/header.css";
 
 const useMediaQuery = (query) => {
@@ -63,7 +63,7 @@ const Header = () => {
           <Link to="/" id="logo" onClick={() => window.scrollTo(0, 0)}>
             <img src={Logo} alt="Santa Cruz Sun LLC Logo" />
           </Link>
-          <h1 className="site-title">Santa Cruz Sun</h1>
+          {/* <h1 className="site-title">Santa Cruz Sun</h1> */}
         </div>
 
         <nav className={`header-nav ${menuOpen ? "open" : ""}`}>

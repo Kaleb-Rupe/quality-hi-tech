@@ -26,12 +26,15 @@
 }
 
 .hero h1 {
-    font-size: 2.5rem;
     margin-bottom: 1rem;
 }
 
+.hero img {
+    max-height: 220px;
+}
+
 .hero p {
-    font-size: 1.25rem;
+    font-size: 1.75rem;
     margin-bottom: 2rem;
 }
 
