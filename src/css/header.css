@@ -126,7 +126,7 @@
 
     .header-nav {
         position: fixed;
-        top: 60px;
+        top: 78px;
         left: -100%;
         height: calc(100vh - 60px);
         background-color: var(--header-bg-color);

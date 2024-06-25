@@ -1,8 +1,15 @@
 @import 'normalize.css';
 
 /* Custom global styles */
+:root {
+    --font-size-base: 16px;
+    --line-height-base: 1.5;
+}
+
 html {
     box-sizing: border-box;
+    font-size: var(--font-size-base);
+    scroll-behavior: smooth;
 }
 
 *,
@@ -17,9 +24,11 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    line-height: 1.5;
+    line-height: var(--line-height-base);
     margin: 0;
     padding-top: 80px;
+    font-size: 1rem;
+    overflow-x: hidden;
 }
 
 a {
@@ -30,4 +39,53 @@ a {
 img {
     max-width: 100%;
     height: auto;
+    display: block;
+}
+
+/* Responsive typography */
+@media screen and (max-width: 768px) {
+    :root {
+        --font-size-base: 14px;
+    }
+}
+
+/* Improve touch targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+
+    button,
+    input,
+    select,
+    textarea,
+    a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Responsive padding adjustment */
+@media screen and (max-width: 600px) {
+    body {
+        padding-top: 60px;
+        /* Adjust if your header is smaller on mobile */
+    }
+}
+
+/* High-resolution screens */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    body {
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        padding-top: 0;
+    }
+
+    a {
+        text-decoration: underline;
+    }
 }

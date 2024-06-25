@@ -12,11 +12,13 @@ const Hero = () => {
             <img src={heroImg} alt="Santa Cruz Sun LLC Logo" />
           </h1>
           <p>Building Your Dreams Into Reality</p>
-          <button aria-label="Get a free estimate">
-            <Link id="link" to="/contact" onClick={() => window.scrollTo(0, 0)}>
-              Free Estimate
-            </Link>
-          </button>
+          <Link
+            to="/contact"
+            className="cta-button"
+            onClick={() => window.scrollTo(0, 0)}
+          >
+            Free Estimate
+          </Link>
         </div>
       </div>
     </header>

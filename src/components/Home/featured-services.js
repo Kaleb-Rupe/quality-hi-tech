@@ -1,25 +1,33 @@
 import React from "react";
 import "../../css/featured-services.css";
 
+const services = [
+  {
+    title: "Kitchen Remodels",
+    description: "Update your kitchen with a custom hood and new cabinets!",
+  },
+  {
+    title: "Decks",
+    description:
+      "BBQ season is here! Let us build an outdoor haven for your family!",
+  },
+  {
+    title: "She-Sheds/Mancaves",
+    description: "Let us build a private retreat!",
+  },
+];
+
 const FeaturedServices = () => {
   return (
     <section className="services">
       <h2>Our Services</h2>
       <div className="service-cards">
-        <div className="service-card">
-          <h3>Kitchen Remodels</h3>
-          <p>Update your kitchen with a custom hood and new cabinets!</p>
-        </div>
-        <div className="service-card">
-          <h3>Decks</h3>
-          <p>
-            BBQ season is here! Let us build an outdoor haven for your family!
-          </p>
-        </div>
-        <div className="service-card">
-          <h3>She-Sheds/Mancaves</h3>
-          <p>Let us build a private retreat!</p>
-        </div>
+        {services.map((service, index) => (
+          <div key={index} className="service-card">
+            <h3>{service.title}</h3>
+            <p>{service.description}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

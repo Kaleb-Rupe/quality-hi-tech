@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../assets/logos/Santa-Cruz-Construction-font-large-bold.png";
 import "../css/header.css";
@@ -24,6 +24,8 @@ const Header = () => {
   const isMobile = useMediaQuery("(max-width: 1180px)");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const toggleMenu = useCallback(() => {
     setMenuOpen((prev) => !prev);
@@ -34,12 +36,25 @@ const Header = () => {
       setIsSticky(window.scrollY > 0);
     };
 
+    const handleClickOutside = (event) => {
+      if (
+        menuOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [menuOpen]);
 
   const onClick = () => {
     setMenuOpen(false);
@@ -54,6 +69,7 @@ const Header = () => {
           onClick={toggleMenu}
           aria-expanded={menuOpen}
           aria-label="Toggle navigation menu"
+          ref={buttonRef}
         >
           <span className="hamburger"></span>
           <span className="hamburger"></span>
@@ -66,7 +82,7 @@ const Header = () => {
           {/* <h1 className="site-title">Santa Cruz Sun</h1> */}
         </div>
 
-        <nav className={`header-nav ${menuOpen ? "open" : ""}`}>
+        <nav ref={menuRef} className={`header-nav ${menuOpen ? "open" : ""}`}>
           <ul>
             <li>
               <Link to="/" onClick={onClick}>
