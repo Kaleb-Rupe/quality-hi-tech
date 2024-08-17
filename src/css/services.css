@@ -23,9 +23,6 @@
     transition: all 0.3s ease;
     cursor: pointer;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 .service-header {
@@ -45,10 +42,10 @@
 }
 
 .service-description {
+    max-height: 0;
     opacity: 0;
-    transition: opacity 0.3s ease;
     overflow: hidden;
-    height: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
 }
 
 .service-item.expanded {
@@ -56,8 +53,7 @@
 }
 
 .service-item.expanded h3,
-.service-item.expanded .service-arrow,
-.service-item.expanded .service-description {
+.service-item.expanded .service-arrow {
     color: var(--gallery-secondary-color);
 }
 
@@ -66,7 +62,8 @@
 }
 
 .service-item.expanded .service-description {
+    max-height: 1000px; /* Adjust this value based on your content */
     opacity: 1;
-    height: auto;
     margin-top: 10px;
+    color: var(--gallery-secondary-color);
 }

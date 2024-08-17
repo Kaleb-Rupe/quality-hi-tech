@@ -7,8 +7,9 @@
     --form-error-color: var(--error-color);
 }
 
-.wrapper {
-    margin: 2rem;
+.wrapper-contact {
+    padding: 4rem 2rem;
+    background: url('../assets/images/quality-hi-tech-home.png') center/cover no-repeat;
 }
 
 .contact-container {

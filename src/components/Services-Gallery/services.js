@@ -14,18 +14,18 @@ const ServiceItem = React.memo(({ service, isExpanded, onClick }) => (
       <h3>{service.title}</h3>
       <span className="service-arrow">&#9656;</span>
     </div>
-    <div className="service-description">
+    <div className="service-description" aria-hidden={!isExpanded}>
       <p>{service.description}</p>
     </div>
   </div>
 ));
 
 const Services = ({ services }) => {
-  const [expandedService, setExpandedService] = useState(null);
+  const [expandedServiceId, setExpandedServiceId] = useState(null);
   const servicesSectionRef = useRef(null);
 
-  const toggleService = (index) => {
-    setExpandedService(expandedService === index ? null : index);
+  const toggleService = (id) => {
+    setExpandedServiceId(prevId => prevId === id ? null : id);
   };
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const Services = ({ services }) => {
         servicesSectionRef.current &&
         !servicesSectionRef.current.contains(event.target)
       ) {
-        setExpandedService(null);
+        setExpandedServiceId(null);
       }
     };
 
@@ -48,12 +48,12 @@ const Services = ({ services }) => {
     <section className="services-section" ref={servicesSectionRef}>
       <h2>Our Services</h2>
       <div className="services-grid">
-        {services.map((service, index) => (
+        {services.map((service) => (
           <ServiceItem
-            key={index}
+            key={service.id}
             service={service}
-            isExpanded={expandedService === index}
-            onClick={() => toggleService(index)}
+            isExpanded={expandedServiceId === service.id}
+            onClick={() => toggleService(service.id)}
           />
         ))}
       </div>

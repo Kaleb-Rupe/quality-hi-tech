@@ -13,49 +13,63 @@ const About = () => {
   return (
     <div className="about-page">
       <section className="about-intro">
-        <h1>About Santa Cruz Sun LLC</h1>
+        <h1>About Quality Hi Tech Carpet Cleaning</h1>
         <p>
-          Santa Cruz Sun LLC is a leading construction and renovation company
-          serving the Santa Cruz area. With years of experience and a commitment
-          to quality, we transform spaces and build dreams for our clients.
+          Since 1993, Quality Hi Tech Carpet Cleaning has been the trusted name
+          in carpet cleaning and restoration services for both residential and
+          commercial clients in Pasco County, FL. With nearly three decades of
+          experience, we've built a reputation for excellence, reliability, and
+          customer satisfaction.
         </p>
       </section>
 
       <section className="our-mission">
         <h2>Our Mission</h2>
         <p>
-          Our mission is to provide top-quality construction and renovation
-          services that exceed our clients' expectations. We are dedicated to
-          using sustainable practices and innovative techniques to create
-          beautiful, functional spaces that stand the test of time.
+          We are dedicated to providing top-quality carpet cleaning and
+          restoration services that exceed our clients' expectations. By using
+          cutting-edge technology and eco-friendly practices, we deliver
+          exceptional results for both homes and businesses, ensuring a
+          healthier and more comfortable environment for all our customers.
         </p>
+      </section>
+
+      <section className="our-services">
+        <h2>Our Services</h2>
+        <p>
+          We offer a comprehensive range of services for both residential and
+          commercial clients:
+        </p>
+        <ul>
+          <li>Carpet cleaning and maintenance</li>
+          <li>Upholstery cleaning</li>
+          <li>Tile and grout cleaning</li>
+          <li>Pet odor removal</li>
+          <li>Water damage restoration</li>
+          <li>Commercial carpet cleaning solutions</li>
+        </ul>
       </section>
 
       <section className="our-team">
         <h2>Our Team</h2>
         <div className="team-members">
           <TeamMember
-            name="John Doe"
-            role="Founder & Lead Contractor"
-            description="John has over 20 years of experience in the construction industry and is passionate about creating beautiful, functional spaces."
+            name="Mike Messenger"
+            role="Founder & Lead Technician"
+            description="With over 30 years of experience in the industry, Mike founded Quality Hi Tech in 1993 and continues to lead our team with his expertise and commitment to quality."
           />
-          <TeamMember
-            name="Jane Smith"
-            role="Interior Designer"
-            description="Jane brings a keen eye for design and helps our clients visualize their dream spaces before we bring them to life."
-          />
-          {/* Add more team members as needed */}
         </div>
       </section>
 
       <section className="our-values">
         <h2>Our Values</h2>
         <ul>
-          <li>Quality craftsmanship</li>
-          <li>Customer satisfaction</li>
-          <li>Sustainable practices</li>
-          <li>Innovation in design and construction</li>
-          <li>Integrity in all our dealings</li>
+          <li>Quality craftsmanship in every job</li>
+          <li>Customer satisfaction as our top priority</li>
+          <li>Eco-friendly and safe cleaning practices</li>
+          <li>Continuous learning and improvement</li>
+          <li>Integrity and transparency in all our dealings</li>
+          <li>Commitment to both residential and commercial excellence</li>
         </ul>
       </section>
     </div>

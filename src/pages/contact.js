@@ -71,7 +71,7 @@ const ContactForm = () => {
   }
 
   return (
-    <div className="wrapper">
+    <div className="wrapper-contact">
       <div className="contact-container">
         <h2>Leave Us A Message</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="contact-form">

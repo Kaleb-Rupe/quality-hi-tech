@@ -67,8 +67,8 @@ const Gallery = () => {
   return (
     <div className="page-wrapper">
       <header className="page-header">
-        <h1>Construction & Renovations</h1>
-        <p>Transforming Spaces, Building Dreams</p>
+        <h1>Carpet & Tile Cleaning</h1>
+        <p>Professional Solutions for Every Space</p>
       </header>
 
       <Suspense fallback={<LoadingFallback />}>
