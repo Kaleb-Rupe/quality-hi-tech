@@ -6,8 +6,9 @@ import React, {
   useMemo,
 } from "react";
 import Modal from "react-modal";
-import "../../../css/featured-gallery.css";
-import { images } from "./gallery-data";
+import { images } from "../../Services-Gallery/gallery-img";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "../../../css/gallery.css"
 
 Modal.setAppElement("#root");
 
@@ -49,6 +50,17 @@ const FeaturedGallery = React.memo(() => {
   const prevImages = useCallback(() => {
     setVisibleStart((prev) => Math.max(prev - visibleCount, 0));
   }, [visibleCount]);
+
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === "ArrowLeft") {
+        prevImages();
+      } else if (e.key === "ArrowRight") {
+        nextImages();
+      }
+    },
+    [prevImages, nextImages]
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -98,13 +110,14 @@ const FeaturedGallery = React.memo(() => {
     gallery.addEventListener("touchstart", handleTouchStart, { passive: true });
     gallery.addEventListener("touchmove", handleTouchMove, { passive: true });
     gallery.addEventListener("touchend", handleTouchEnd);
-
+    gallery.addEventListener("keydown", handleKeyDown);
     return () => {
       gallery.removeEventListener("touchstart", handleTouchStart);
       gallery.removeEventListener("touchmove", handleTouchMove);
       gallery.removeEventListener("touchend", handleTouchEnd);
+      gallery.removeEventListener("keydown", handleKeyDown);
     };
-  }, [visibleStart, prevImages, nextImages, visibleCount]);
+  }, [handleKeyDown, visibleStart, prevImages, nextImages, visibleCount]);
 
   const visibleImages = useMemo(
     () => images.slice(visibleStart, visibleStart + visibleCount),
@@ -115,7 +128,13 @@ const FeaturedGallery = React.memo(() => {
   const currentDot = Math.floor(visibleStart / visibleCount);
 
   return (
-    <div className="gallery-container" ref={galleryRef}>
+    <div
+      className="gallery-container"
+      ref={galleryRef}
+      tabIndex="0"
+      role="region"
+      aria-label="Featured Gallery"
+    >
       <button
         className="nav-button left"
         onClick={prevImages}
@@ -135,7 +154,13 @@ const FeaturedGallery = React.memo(() => {
             aria-label={`View larger image of ${image.alt}`}
             onKeyDown={(e) => e.key === "Enter" && openModal(image)}
           >
-            <img src={image.src} alt={image.alt} loading="lazy" />
+            <LazyLoadImage
+              src={image.src}
+              alt={image.alt}
+              effect="blur"
+              width="100%"
+              height="100%"
+            />
           </div>
         ))}
       </div>

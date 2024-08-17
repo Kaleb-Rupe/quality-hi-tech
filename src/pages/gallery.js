@@ -1,18 +1,18 @@
-import React, { useState, useCallback, useMemo } from "react";
-import Modal from "react-modal";
-import "../css/services-gallery.css";
-import { images } from "../components/Services-Gallery/gallery-img";
-import { services } from "../components/Services-Gallery/services-list";
-import Services from "../components/Services-Gallery/services";
-import ImageGallery from "../components/Services-Gallery/image-gallery";
+import React, { useState, useCallback, useMemo, lazy, Suspense } from 'react';
+import Modal from 'react-modal';
+import { images } from '../components/Services-Gallery/gallery-img';
+import { services } from '../components/Services-Gallery/services-list';
+import '../css/gallery.css';
 
-Modal.setAppElement("#root");
+const Services = lazy(() => import('../components/Services-Gallery/services'));
+const ImageGallery = lazy(() => import('../components/Services-Gallery/image-gallery'));
 
-const Gallery = () => {
+const LoadingFallback = () => <div aria-live="polite">Loading...</div>;
+
+const useGalleryState = (totalImages, visibleCount) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(null);
   const [visibleStart, setVisibleStart] = useState(0);
-  const visibleCount = 4;
 
   const openModal = useCallback((image) => {
     setCurrentImage(image);
@@ -26,18 +26,43 @@ const Gallery = () => {
 
   const nextImages = useCallback(() => {
     setVisibleStart((prev) =>
-      Math.min(prev + visibleCount, images.length - visibleCount)
+      Math.min(prev + visibleCount, totalImages - visibleCount)
     );
-  }, []);
+  }, [visibleCount, totalImages]);
 
   const prevImages = useCallback(() => {
     setVisibleStart((prev) => Math.max(prev - visibleCount, 0));
-  }, []);
+  }, [visibleCount]);
 
   const visibleImages = useMemo(
     () => images.slice(visibleStart, visibleStart + visibleCount),
-    [visibleStart]
+    [visibleStart, visibleCount]
   );
+
+  return {
+    modalIsOpen,
+    currentImage,
+    visibleStart,
+    visibleImages,
+    openModal,
+    closeModal,
+    nextImages,
+    prevImages,
+  };
+};
+
+const Gallery = () => {
+  const visibleCount = 4;
+  const {
+    modalIsOpen,
+    currentImage,
+    visibleStart,
+    visibleImages,
+    openModal,
+    closeModal,
+    nextImages,
+    prevImages,
+  } = useGalleryState(images.length, visibleCount);
 
   return (
     <div className="page-wrapper">
@@ -46,19 +71,23 @@ const Gallery = () => {
         <p>Transforming Spaces, Building Dreams</p>
       </header>
 
-      <Services services={services} />
+      <Suspense fallback={<LoadingFallback />}>
+        <Services services={services} />
+      </Suspense>
 
-      <section className="gallery-section">
-        <h2>Our Work</h2>
-        <ImageGallery
-          images={visibleImages}
-          visibleStart={visibleStart}
-          totalImages={images.length}
-          visibleCount={visibleCount}
-          onPrev={prevImages}
-          onNext={nextImages}
-          onImageClick={openModal}
-        />
+      <section className="gallery-section" aria-labelledby="gallery-title">
+        <h2 id="gallery-title">Our Work</h2>
+        <Suspense fallback={<LoadingFallback />}>
+          <ImageGallery
+            images={visibleImages}
+            visibleStart={visibleStart}
+            totalImages={images.length}
+            visibleCount={visibleCount}
+            onPrev={prevImages}
+            onNext={nextImages}
+            onImageClick={openModal}
+          />
+        </Suspense>
       </section>
 
       <Modal
@@ -66,6 +95,7 @@ const Gallery = () => {
         onRequestClose={closeModal}
         className="modal-content"
         overlayClassName="modal-overlay"
+        contentLabel="Image modal"
       >
         {currentImage && (
           <div>
@@ -88,4 +118,4 @@ const Gallery = () => {
   );
 };
 
-export default React.memo(Gallery);
+export default Gallery;

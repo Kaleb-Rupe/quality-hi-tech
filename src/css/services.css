@@ -1,0 +1,72 @@
+/* Services section styles */
+.services-section {
+    margin-bottom: 40px;
+}
+
+.services-section h2 {
+    font-size: xx-large;
+    margin-bottom: 40px;
+    text-align: center;
+    color: var(--services-gallery-text-color);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.service-item {
+    background-color: var(--services-gallery-background-color);
+    padding: 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.service-item h3 {
+    margin: 0;
+    color: var(--services-gallery-text-color);
+}
+
+.service-arrow {
+    font-size: 1.5em;
+    transition: transform 0.3s ease;
+}
+
+.service-description {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    overflow: hidden;
+    height: 0;
+}
+
+.service-item.expanded {
+    background-color: var(--services-gallery-primary-color);
+}
+
+.service-item.expanded h3,
+.service-item.expanded .service-arrow,
+.service-item.expanded .service-description {
+    color: var(--gallery-secondary-color);
+}
+
+.service-item.expanded .service-arrow {
+    transform: rotate(90deg);
+}
+
+.service-item.expanded .service-description {
+    opacity: 1;
+    height: auto;
+    margin-top: 10px;
+}

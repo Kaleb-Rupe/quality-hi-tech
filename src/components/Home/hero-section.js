@@ -1,28 +1,38 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../../css/hero-section.css";
-import heroImg from "../../assets/logos/Santa-Cruz-Construction-font-large.png";
+import heroImg from "../../assets/logos/quality-hi-tech-large.png";
 
 const Hero = () => {
   return (
-    <header className="hero">
+    <section className="hero" aria-labelledby="hero-title">
       <div className="wrapper">
         <div className="contrast-element">
-          <h1>
-            <img src={heroImg} alt="Santa Cruz Sun LLC Logo" />
+          <h1 id="hero-title" className="visually-hidden">
+            Quality Hi Tech Carpet Cleaning
           </h1>
-          <p>Building Your Dreams Into Reality</p>
+          <img
+            src={heroImg}
+            alt="Quality Hi Tech Logo"
+            loading="eager"
+            width="300"
+            height="100"
+          />
+          <p>
+            Transform Your Home Today! Book Now!
+          </p>
           <Link
             to="/contact"
             className="cta-button"
             onClick={() => window.scrollTo(0, 0)}
+            aria-label="Get a free estimate"
           >
             Free Estimate
           </Link>
         </div>
       </div>
-    </header>
+    </section>
   );
 };
 
-export default Hero;
+export default React.memo(Hero);

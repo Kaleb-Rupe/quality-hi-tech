@@ -1,7 +1,7 @@
 :root {
-    --footer-bg-color: #333;
-    --footer-text-color: #ED6F33;
-    --footer-secondary-color: #4FBBEB;
+    --footer-bg-color: var(--main-gray);
+    --footer-text-color: var(--main-black);
+    --footer-link-color: var(--main-red);
 }
 
 .footer {

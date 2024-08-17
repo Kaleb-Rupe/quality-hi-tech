@@ -1,4 +1,7 @@
 import React, { useRef, useEffect } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import "../../css/gallery.css";
 
 const ArrowLeft = () => (
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -53,16 +56,26 @@ const ImageGallery = React.memo(
         isSwiping = false;
       };
 
+      const handleKeyDown = (e) => {
+        if (e.key === "ArrowLeft") {
+          onPrev();
+        } else if (e.key === "ArrowRight") {
+          onNext();
+        }
+      };
+
       gallery.addEventListener("touchstart", handleTouchStart, {
         passive: true,
       });
       gallery.addEventListener("touchmove", handleTouchMove, { passive: true });
       gallery.addEventListener("touchend", handleTouchEnd);
+      document.addEventListener("keydown", handleKeyDown);
 
       return () => {
         gallery.removeEventListener("touchstart", handleTouchStart);
         gallery.removeEventListener("touchmove", handleTouchMove);
         gallery.removeEventListener("touchend", handleTouchEnd);
+        document.removeEventListener("keydown", handleKeyDown);
       };
     }, [visibleStart, totalImages, visibleCount, onPrev, onNext]);
 
@@ -70,7 +83,13 @@ const ImageGallery = React.memo(
     const currentDot = Math.floor(visibleStart / visibleCount);
 
     return (
-      <div className="image-gallery-wrapper" ref={galleryRef}>
+      <div
+        className="image-gallery-wrapper"
+        ref={galleryRef}
+        tabIndex="0"
+        role="region"
+        aria-label="Image gallery"
+      >
         <button
           className="navigation-btn navigation-btn-prev"
           onClick={onPrev}
@@ -80,17 +99,27 @@ const ImageGallery = React.memo(
           <ArrowLeft />
         </button>
         <div className="image-grid">
-          {images.map((image) => (
+          {images.map((image, index) => (
             <div
               key={image.id}
               className="image-tile"
               onClick={() => onImageClick(image)}
-              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  onImageClick(image);
+                }
+              }}
+              tabIndex="0"
               role="button"
               aria-label={`View larger image of ${image.alt}`}
-              onKeyDown={(e) => e.key === "Enter" && onImageClick(image)}
             >
-              <img src={image.src} alt={image.alt} loading="lazy" />
+              <LazyLoadImage
+                src={image.src}
+                alt={image.alt}
+                effect="blur"
+                width="100%"
+                height="100%"
+              />
             </div>
           ))}
         </div>
@@ -116,4 +145,4 @@ const ImageGallery = React.memo(
   }
 );
 
-export default ImageGallery;
+export default React.memo(ImageGallery);

@@ -10,5 +10,5 @@ const importedImages = importAll(imageContext);
 export const images = importedImages.map((src, index) => ({
   id: index + 1,
   src,
-  alt: `Gallery image ${index + 1}`,
+  alt: `Gallery image ${index + 1} - ${src.split('/').pop().split('.')[0].replace(/_/g, ' ')}`,
 }));

@@ -1,3 +1,5 @@
+@import './layout.css';
+
 :root {
     --footer-height: 60px;
 }
@@ -11,4 +13,5 @@
 .app-container .main-content {
     flex: 1;
     padding-bottom: var(--footer-height);
+    background-color: var(--background-color);
 }

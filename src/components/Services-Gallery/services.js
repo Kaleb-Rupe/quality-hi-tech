@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import "../../css/services.css";
 
 const ServiceItem = React.memo(({ service, isExpanded, onClick }) => (
   <div

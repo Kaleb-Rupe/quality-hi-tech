@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
-import Logo from "../../assets/logos/Santa-Cruz-Construction-font-large.png";
+import Logo from "../../assets/logos/quality-hi-tech-large.png";
 import "../../css/details-page.css";
 
 const useMediaQuery = (query) => {
@@ -24,16 +24,16 @@ const useMediaQuery = (query) => {
 
 const Details = () => {
   const isMobile = useMediaQuery("(max-width: 844px)");
-  const email = "kalebrupe17@gmail.com";
+  const email = "qhtm58@yahoo.com";
   const subject = encodeURIComponent("Inquiry here!");
   const body = encodeURIComponent(
     "Put your inquiries or questions here. We will get back to you asap."
   );
   const mailtoHref = `mailto:${email}?subject=${subject}&body=${body}`;
 
-  const address = "219 B St, Coos Bay, OR 97420, United States";
-  const latitude = 43.36725;
-  const longitude = -124.19758;
+  const address = "P.O. Box 1243, Land O' Lakes, FL 34639, United States";
+  const latitude = 28.2323;
+  const longitude = -82.4657;
 
   const handleMapClick = useCallback(
     (event) => {
@@ -63,55 +63,56 @@ const Details = () => {
   );
 
   return (
-    <div className="details-container">
+    <section className="details-container">
       <div className="center">
         <a href="/" id="bottle">
-          <img src={Logo} alt="Santa Cruz Sun LLC Logo" className="photo" />
+          <img src={Logo} alt="Quality Hi Tech Logo" className="photo" />
         </a>
 
         {isMobile && (
-          <button aria-label="Get a free estimate">
             <Link id="link" to="/contact" onClick={() => window.scrollTo(0, 0)}>
-              Free Estimate
+              <button aria-label="Get a free estimate">Free Estimate</button>
             </Link>
-          </button>
         )}
 
-        {/* <h1>Santa Cruz Sun LLC</h1> */}
-        <p>Contractors License:</p>
-        <a
-          href="https://search.ccb.state.or.us/search/search_result.aspx"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <p>Click to View: CCB#249418</p>
-        </a>
+        {/* <h1>Quality Hi-Tech</h1> */}
+        <p>Insured</p>
       </div>
 
       <div className="contact-links">
         <h3>Physical Address:</h3>
         <address>
-          <a href="/" onClick={handleMapClick} rel="noopener noreferrer">
+          <a
+            href="/"
+            onClick={handleMapClick}
+            rel="noopener noreferrer"
+            aria-label="View our location on map"
+          >
             <GrLocation className="icon" />
-            219 B Street
+            P.O. Box 1243
             <br />
-            Coos Bay, OR 97420
+            Land O' Lakes, FL 34639
           </a>
         </address>
 
         <h3>Email:</h3>
-        <a href={mailtoHref} target="_blank" rel="noopener noreferrer">
+        <a
+          href={mailtoHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Send us an email"
+        >
           <FaEnvelope className="icon" />
           <span>Send Email</span>
         </a>
 
         <h3>Phone:</h3>
-        <a href="tel:3852049488" rel="noopener noreferrer">
+        <a href="tel:8132256515" rel="noopener noreferrer" aria-label="Call us">
           <FaPhone className="icon" />
-          <span>(385) 204-9488</span>
+          <span>(813) 225-6515</span>
         </a>
       </div>
-    </div>
+    </section>
   );
 };
 

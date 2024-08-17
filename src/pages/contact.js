@@ -93,7 +93,9 @@ const ContactForm = () => {
                 })}
                 placeholder="First Name"
               />
-              {errors.firstName && <p>{errors.firstName.message}</p>}
+              {errors.firstName && (
+                <p className="error-message">{errors.firstName.message}</p>
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="lastName">Last Name:</label>
@@ -158,7 +160,9 @@ const ContactForm = () => {
             />
             {errors.message && <p>{errors.message.message}</p>}
           </div>
-          <button type="submit">Send</button>
+          <button type="submit" className="submit-button">
+            Send
+          </button>
         </form>
       </div>
     </div>

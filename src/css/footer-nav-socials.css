@@ -1,7 +1,7 @@
 :root {
-    --footer-nav-primary-color: #ED6F33;
-    --footer-nav-secondary-color: #4FBBEB;
-    --footer-nav-hover-color: #F7BD33;
+    --footer-nav-primary-color: var(--main-red);
+    --footer-nav-secondary-color: var(--link-red);
+    --footer-nav-hover-color: var(--link-red);
 }
 
 .nav-container {

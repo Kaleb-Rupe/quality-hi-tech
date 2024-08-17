@@ -1,7 +1,8 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { FaFacebook } from "react-icons/fa";
 import "../../css/footer-nav-socials.css";
+
+const LazyFacebookIcon = lazy(() => import("./FacebookIcon"));
 
 const Nav = () => {
   const onClick = () => window.scrollTo(0, 0);
@@ -16,7 +17,7 @@ const Nav = () => {
             </Link>
           </li>
           <li>
-            <Link to="/gallery" onClick={onClick}>
+            <Link to="/services" onClick={onClick}>
               Services & Photos
             </Link>
           </li>
@@ -36,7 +37,9 @@ const Nav = () => {
           rel="noopener noreferrer"
           aria-label="Facebook"
         >
-          <FaFacebook />
+          <Suspense fallback={<div>Loading...</div>}>
+            <LazyFacebookIcon />
+          </Suspense>
         </a>
       </div>
 

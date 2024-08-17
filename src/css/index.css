@@ -1,5 +1,15 @@
 @import 'normalize.css';
 
+:root {
+    --main-gray: #d9d9d9;
+    --main-red: #a23418;
+    --link-red: #e44820;
+    --main-black: #272727;
+    --background-color: #FFFFFF;
+    --main-white: #FFFFFF;
+    --error-color: #D32F2F;
+}
+
 /* Custom global styles */
 html {
     box-sizing: border-box;
@@ -19,15 +29,40 @@ body {
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.5;
     margin: 0;
-    padding-top: 90px;
+    color: var(--main-black);
+    background-color: var(--background-color);
+}
+
+.main-content {
+    background-color: var(--background-color);
 }
 
 a {
-    color: inherit;
     text-decoration: none;
+    color: var(--main-red);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--link-red);
 }
 
 img {
     max-width: 100%;
     height: auto;
+}
+
+.button,
+.submit-button {
+    background-color: var(--main-red);
+    color: var(--background-color);
+}
+
+.button:hover,
+.submit-button:hover {
+    background-color: var(--link-red);
+}
+
+.error-message {
+    color: var(--error-color);
 }

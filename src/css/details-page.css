@@ -1,7 +1,7 @@
 :root {
-    --details-secondary-color: #4FBBEB;
-    --details-button-color: #ED6F33;
-    --details-text-color: #ffffff;
+    --details-secondary-color: var(--link-red);
+    --details-button-color: var(--main-red);
+    --details-text-color: var(--main-black);
 }
 
 
@@ -22,7 +22,7 @@
 }
 
 .center a {
-    color: var(--details-text-color);
+    color: var(--details-button-color);
     font-size: clamp(0.8rem, 2vw, 1rem);
     transition: color 0.3s ease;
 }
@@ -50,6 +50,7 @@
     margin-bottom: 20px;
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
+    color: var(--background-color);
     background-color: var(--details-button-color);
     border: none;
     border-radius: 0.25rem;
@@ -59,6 +60,7 @@
 
 .details-container button:hover {
     background-color: var(--details-secondary-color);
+    color: var(--background-color);
 }
 
 .icon {
@@ -78,7 +80,7 @@
 .contact-links a {
     display: flex;
     align-items: center;
-    color: var(--details-text-color);
+    color: var(--details-button-color);
     text-decoration: none;
     margin-bottom: 15px;
     transition: color 0.3s ease;

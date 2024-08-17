@@ -1,15 +1,23 @@
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../shared/Header";
+import Footer from "../shared/Footer";
+import ErrorBoundary from "../shared/error-boundary";
 import PropTypes from "prop-types";
+import "../css/layout.css";
 
 const Layout = ({ children }) => (
-
-  <React.Fragment>
+  <div className="layout">
+    <a href="#main-content" className="skip-link">
+      Skip to main content
+    </a>
     <Header />
-    <main>{children}</main>
+    <ErrorBoundary>
+      <main id="main-content" className="main-content">
+        {children}
+      </main>
+    </ErrorBoundary>
     <Footer />
-  </React.Fragment>
+  </div>
 );
 
 Layout.propTypes = {

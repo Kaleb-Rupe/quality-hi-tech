@@ -7,6 +7,7 @@
     text-align: center;
     margin-bottom: 1.5rem;
     font-size: 2rem;
+    color: var(--main-black);
 }
 
 .testimonial-cards {
@@ -19,7 +20,7 @@
     flex: 1 1 30%;
     margin: 1rem;
     padding: 1.5rem;
-    background-color: white;
+    background-color: var(--background-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
@@ -34,8 +35,10 @@
 .testimonial-card p {
     font-style: italic;
     margin-bottom: 1rem;
+    color: var(--main-black);
 }
 
 .testimonial-card h3 {
     margin: 0;
+    color: var(--main-black);
 }
