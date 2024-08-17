@@ -1,4 +1,4 @@
-Santa Cruz Sun Construction Website
+Quality Hi Tech Carpet Cleaning Website
 
 Contractors License Number
 CCB#249418
@@ -40,3 +40,4 @@ Add yourself as a local business in apple maps takes some time to do
 Sign up on Fiverr
 
 
+# quality-hi-tech
