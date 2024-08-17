@@ -3,14 +3,20 @@
     --hero-section-hover-color: var(--link-red);
     --hero-section-text-color: var(--main-black);
     --main-white: #FFFFFF;
-    --hero-section-bg-opacity: 0.85;
+    --hero-section-bg-opacity: 0.9;
 }
 
 .hero {
+    min-height: 95vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    padding: 4rem 2rem;
+    padding: 0 3.125rem;
     background: url('../assets/images/quality-hi-tech-home.png') center/cover no-repeat;
-    color: var(--hero-section-text-color);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .wrapper {
@@ -23,7 +29,6 @@
     border-radius: 0.375rem;
     padding: 2rem 4rem;
     margin: 15vh auto;
-    max-width: 90%;
 }
 
 .hero h1 {

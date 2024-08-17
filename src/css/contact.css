@@ -8,14 +8,21 @@
 }
 
 .wrapper-contact {
-    padding: 4rem 2rem;
+    min-height: 95vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 3.125rem;
     background: url('../assets/images/quality-hi-tech-home.png') center/cover no-repeat;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .contact-container {
     width: 100%;
     max-width: 500px;
-    margin: 5rem auto;
     padding: 2rem;
     color: var(--form-text-color);
     border: 1px solid var(--form-border-color);
