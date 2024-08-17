@@ -62,7 +62,7 @@ const ContactForm = () => {
 
   if (submissionStatus === "success") {
     return (
-      <div className="success-message-contact">
+      <div className="success-message-contact" role="alert">
         <h2>Thank you!</h2>
         <p>Your message has been sent successfully.</p>
         <p>We will be in contact with you soon.</p>

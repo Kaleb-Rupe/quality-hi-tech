@@ -71,3 +71,14 @@
         margin-bottom: 15px;
     }
 }
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid var(--form-border-color);
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+    resize: none;
+}

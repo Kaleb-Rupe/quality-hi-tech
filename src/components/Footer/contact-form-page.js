@@ -86,6 +86,7 @@ const Form = () => {
           })}
           aria-invalid={errors["footer-name"] ? "true" : "false"}
           aria-describedby="footer-name-error"
+          placeholder="Full Name"
         />
         {errors["footer-name"] && (
           <p id="footer-name-error" role="alert" className="error-message">
@@ -105,6 +106,7 @@ const Form = () => {
           })}
           aria-invalid={errors["footer-email"] ? "true" : "false"}
           aria-describedby="footer-email-error"
+          placeholder="Email"
         />
         {errors["footer-email"] && (
           <p id="footer-email-error" role="alert" className="error-message">
@@ -126,6 +128,7 @@ const Form = () => {
           })}
           aria-invalid={errors["footer-phone"] ? "true" : "false"}
           aria-describedby="footer-phone-error"
+          placeholder="Phone Number"
         />
         {errors["footer-phone"] && (
           <p id="footer-phone-error" role="alert" className="error-message">
@@ -147,6 +150,7 @@ const Form = () => {
           })}
           aria-invalid={errors["footer-message"] ? "true" : "false"}
           aria-describedby="footer-message-error"
+          placeholder="Your message..."
         />
         {errors["footer-message"] && (
           <p id="footer-message-error" role="alert" className="error-message">
