@@ -70,13 +70,12 @@ const Details = () => {
         </a>
 
         {isMobile && (
-            <Link id="link" to="/contact" onClick={() => window.scrollTo(0, 0)}>
-              <button aria-label="Get a free estimate">Free Estimate</button>
-            </Link>
+          <Link id="link" to="/contact" onClick={() => window.scrollTo(0, 0)}>
+            <button aria-label="Get a free estimate">Free Estimate</button>
+          </Link>
         )}
-
-        {/* <h1>Quality Hi-Tech</h1> */}
-        <p>Insured</p>
+        <p>Licensed & Insured</p>
+        <p>Pasco & Hillsborough County</p>
       </div>
 
       <div className="contact-links">

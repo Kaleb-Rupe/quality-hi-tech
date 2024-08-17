@@ -37,14 +37,14 @@ const Footer = () => {
         )}
         <div className="footer-section footer-nav">
           <h2 className="component-title bottom-margin">
-            What can we build for you?
+            What can we clean for you?
           </h2>
           <Nav />
         </div>
       </div>
       <div className="footer-copy">
         <p>
-          &copy; {new Date().getFullYear()} Santa Cruz Sun LLC. All rights
+          &copy; {new Date().getFullYear()} Quality Hi Tech Carpet Cleaning. All rights
           reserved.
         </p>
       </div>

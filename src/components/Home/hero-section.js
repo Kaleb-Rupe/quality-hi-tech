@@ -19,7 +19,8 @@ const Hero = () => {
             height="100"
           />
           <p>
-            Transform Your Home Today! Book Now!
+            Clean your Carpet, Upholstery, and Tile & Grout with our
+            professional cleaning services.
           </p>
           <Link
             to="/contact"
