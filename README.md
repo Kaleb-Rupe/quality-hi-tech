@@ -38,9 +38,3 @@ Add yourself as a local business in google maps takes some time to do
 Add yourself as a local business in apple maps takes some time to do
 
 Sign up on Fiverr
-
-
-# quality-hi-tech
-# quality-hi-tech
-# quality-hi-tech
-# quality-hi-tech
