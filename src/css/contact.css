@@ -12,7 +12,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
     padding: 0 3.125rem;
     background: url('../assets/images/quality-hi-tech-home.png') center/cover no-repeat;
     position: relative;
@@ -164,7 +163,11 @@ button[type="submit"]:active,
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+    .wrapper-contact {
+        padding: 0;
+    }
+
     .form-group {
         flex: 1 1 100%;
     }
