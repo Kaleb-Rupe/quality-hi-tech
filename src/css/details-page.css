@@ -1,15 +1,10 @@
-:root {
-    --details-secondary-color: var(--link-red);
-    --details-button-color: var(--main-red);
-    --details-text-color: var(--main-black);
-}
-
-
 .center {
     display: flex;
     text-align: center;
     font-size: clamp(1rem, 3vw, 1.5rem);
     flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .center h1 {
@@ -22,19 +17,19 @@
 }
 
 .center a {
-    color: var(--details-button-color);
+    color: var(--main-red);
     font-size: clamp(0.8rem, 2vw, 1rem);
     transition: color 0.3s ease;
 }
 
 .center a:hover {
-    color: var(--details-secondary-color);
-    
+    color: var(--link-red);
 }
 
 .photo {
     max-height: 150px;
     width: auto;
+    transition: max-height 0.3s ease;
 }
 
 .details-container {
@@ -42,6 +37,8 @@
     flex-direction: column;
     align-items: center;
     padding: 1em;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .details-container button {
@@ -51,15 +48,20 @@
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     color: var(--background-color);
-    background-color: var(--details-button-color);
+    background-color: var(--main-red);
     border: none;
     border-radius: 0.25rem;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.details-container button:focus {
+    outline: 2px solid var(--link-red);
+    outline-offset: 2px;
+}
+
 .details-container button:hover {
-    background-color: var(--details-secondary-color);
+    background-color: var(--link-red);
     color: var(--background-color);
 }
 
@@ -80,14 +82,14 @@
 .contact-links a {
     display: flex;
     align-items: center;
-    color: var(--details-button-color);
+    color: var(--main-red);
     text-decoration: none;
     margin-bottom: 15px;
     transition: color 0.3s ease;
 }
 
 .contact-links a:hover {
-    color: var(--details-secondary-color);
+    color: var(--link-red);
 }
 
 @media (max-width: 844px) {
@@ -97,7 +99,6 @@
 }
 
 @media (max-width: 504px) {
-
     .details-container {
         padding: 0.5em 0.75em;
     }
@@ -109,5 +110,20 @@
 
     .contact-links a {
         font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .details-container {
+        padding: 0.5em;
+    }
+
+    .details-container button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .photo {
+        max-height: 120px;
     }
 }

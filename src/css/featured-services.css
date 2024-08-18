@@ -1,6 +1,8 @@
 .services {
     padding: 2rem;
-    background-color: #f9f9f9;
+    background-color: var(--background-color);
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
 .services h2 {
@@ -48,8 +50,12 @@
 }
 
 @media screen and (max-width: 768px) {
+    .service-cards {
+        flex-direction: column;
+    }
     
     .service-card {
-        flex: 1 1 100%;
+        flex: 1 1 auto;
+        margin: 1rem 0;
     }
 }

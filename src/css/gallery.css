@@ -4,13 +4,8 @@
     --gallery-accent-color: #a23418;
     --gallery-shadow-color: rgba(0, 0, 0, 0.1);
     --gallery-transition-duration: 0.3s;
-    --services-gallery-primary-color: var(--main-red);
-    --services-gallery-secondary-color: var(--link-red);
     --services-gallery-background-color: #ecf0f1;
-    --services-gallery-background-color-expanded: var(--background-color);
     --services-gallery-border-color: #7f8c8d;
-    --services-gallery-text-color: var(--main-black);
-    --services-gallery-error-color: var(--error-color);
 }
 
 /* Gallery container styles */
@@ -23,13 +18,18 @@
     max-width: 1200px;
     margin: 0 auto;
     padding-bottom: 30px;
+    background-color: var(--background-color);
+}
+
+.gallery-title {
+    color: var(--main-black);
 }
 
 /* Navigation button styles */
 .nav-button,
 .navigation-btn {
-    background: var(--gallery-primary-color);
-    color: var(--gallery-secondary-color);
+    background: var(--main-red);
+    color: var(--main-white);
     font-size: 24px;
     cursor: pointer;
     position: absolute;
@@ -49,7 +49,7 @@
 
 .nav-button:hover,
 .navigation-btn:hover{
-    background: var(--gallery-accent-color);
+    background: var(--link-red);
     opacity: 1;
     outline: none;
 }
@@ -257,6 +257,7 @@
 
 .service-item.expanded {
     background-color: #e0e0e0;
+    transition: background-color 0.3s ease;
 }
 
 .service-header {
@@ -284,7 +285,6 @@
 
 /* Responsive styles */
 @media screen and (max-width: 1180px) {
-
     .nav-button,
     .navigation-btn {
         width: 40px;
@@ -299,12 +299,8 @@
 }
 
 @media screen and (max-width: 844px) {
-
     .nav-button,
-    .navigation-btn {
-        display: none;
-    }
-
+    .navigation-btn,
     .nav-button svg,
     .navigation-btn svg {
         display: none;
@@ -312,7 +308,6 @@
 }
 
 @media screen and (max-width: 480px) {
-
     .gallery,
     .image-grid {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

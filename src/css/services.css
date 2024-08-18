@@ -1,18 +1,17 @@
 :root {
     --primary-color: var(--main-red);
     --secondary-color: var(--link-red);
-    --text-color: var(--main-black);
     --background-color: #f9f9f9;
     --card-background: #ffffff;
     --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .services-page {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 2rem;
     font-family: 'Arial', sans-serif;
-    color: var(--text-color);
+    color: var(--main-black);
     background-color: var(--background-color);
 }
 
@@ -29,23 +28,20 @@
 }
 
 .services-list li {
-    background-color: var(--card-background);
+    background-color: var(--main-white);
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .services-list li:hover {
     transform: translateY(-5px);
-}
-
-.our-services {
-    margin-bottom: 4rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .our-services h2 {
-    color: var(--primary-color);
+    color: var(--main-red);
     font-size: 2rem;
     margin-bottom: 1.5rem;
     position: relative;

@@ -66,6 +66,7 @@ const Form = () => {
       <div className="success-message" role="alert">
         <h2>Thank you!</h2>
         <p>Your message has been sent successfully.</p>
+        <p>We will get back to you shortly.</p>
       </div>
     );
   }
@@ -73,17 +74,15 @@ const Form = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form-wrapper">
       <h2>Contact Us</h2>
-      {/* <a
-        href="tel:8132256515"
-        rel="noopener noreferrer"
-        aria-label="Contact Us"
-        className="contact-info"
-      >
-        <FaPhone className="icon" />
-        <span>(813) 225-6515</span>
-      </a> */}
       <div className="form-group">
-        <label htmlFor="footer-name">Full Name:</label>
+        <div className="form-label">
+          <label htmlFor="footer-name">Full Name:</label>
+          {errors["footer-name"] && (
+            <p id="footer-name-error" role="alert" className="error-message">
+              {errors["footer-name"].message}
+            </p>
+          )}
+        </div>
         <input
           id="footer-name"
           {...register("footer-name", {
@@ -101,15 +100,17 @@ const Form = () => {
           aria-describedby="footer-name-error"
           placeholder="Full Name"
         />
-        {errors["footer-name"] && (
-          <p id="footer-name-error" role="alert" className="error-message">
-            {errors["footer-name"].message}
-          </p>
-        )}
       </div>
 
       <div className="form-group">
-        <label htmlFor="footer-email">Email:</label>
+        <div className="form-label">
+          <label htmlFor="footer-email">Email:</label>
+          {errors["footer-email"] && (
+            <p id="footer-email-error" role="alert" className="error-message">
+              {errors["footer-email"].message}
+            </p>
+          )}
+        </div>
         <input
           id="footer-email"
           type="email"
@@ -121,15 +122,17 @@ const Form = () => {
           aria-describedby="footer-email-error"
           placeholder="Email"
         />
-        {errors["footer-email"] && (
-          <p id="footer-email-error" role="alert" className="error-message">
-            {errors["footer-email"].message}
-          </p>
-        )}
       </div>
 
       <div className="form-group">
-        <label htmlFor="footer-phone">Phone Number:</label>
+        <div className="form-label">
+          <label htmlFor="footer-phone">Phone Number:</label>
+          {errors["footer-phone"] && (
+            <p id="footer-phone-error" role="alert" className="error-message">
+              {errors["footer-phone"].message}
+            </p>
+          )}
+        </div>
         <input
           id="footer-phone"
           type="tel"
@@ -143,19 +146,21 @@ const Form = () => {
           aria-describedby="footer-phone-error"
           placeholder="Phone Number"
         />
-        {errors["footer-phone"] && (
-          <p id="footer-phone-error" role="alert" className="error-message">
-            {errors["footer-phone"].message}
-          </p>
-        )}
       </div>
 
       <div className="form-group">
-        <label htmlFor="service">Service:</label>
+        <div className="form-label">
+          <label htmlFor="service">Service:</label>
+          {errors.service && (
+            <p id="service-error" role="alert" className="error-message">
+              {errors.service.message}
+            </p>
+          )}
+        </div>
         <select
           id="service"
           {...register("service", {
-            required: "Please select a service",
+            required: "Please select a service.",
           })}
         >
           <option value="" className="select-service">
@@ -167,11 +172,17 @@ const Form = () => {
             </option>
           ))}
         </select>
-        {errors.service && <p>{errors.service.message}</p>}
       </div>
 
       <div className="form-group">
-        <label htmlFor="footer-message">Message:</label>
+        <div className="form-label">
+          <label htmlFor="footer-message">Message:</label>
+          {errors["footer-message"] && (
+            <p id="footer-message-error" role="alert" className="error-message">
+              {errors["footer-message"].message}
+            </p>
+          )}
+        </div>
         <textarea
           className="message-input"
           id="footer-message"
@@ -186,11 +197,6 @@ const Form = () => {
           aria-describedby="footer-message-error"
           placeholder="Your message..."
         />
-        {errors["footer-message"] && (
-          <p id="footer-message-error" role="alert" className="error-message">
-            {errors["footer-message"].message}
-          </p>
-        )}
       </div>
 
       <button type="submit" className="submit-button">

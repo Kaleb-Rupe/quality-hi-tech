@@ -17,6 +17,7 @@
   color: var(--background-color);
   padding: 8px;
   z-index: 100;
+  /* Skip link is hidden by default and becomes visible on focus for accessibility */
 }
 
 .skip-link:focus {

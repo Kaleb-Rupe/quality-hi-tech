@@ -38,11 +38,11 @@
     max-width: 500px;
     padding: 2rem;
     margin: 1.5rem 2rem;
-    color: var(--form-text-color);
-    border: 1px solid var(--form-border-color);
+    color: var(--main-black);
+    border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: var(--form-background-color);
+    background-color: var(--background-color);
 }
 
 .form-wrapper {
@@ -100,6 +100,7 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
+    color: var(--main-black);
 }
 
 .form-group input,
@@ -107,28 +108,29 @@
     width: 100%;
     padding: 0.75rem;
     font-size: 1rem;
-    border: 1px solid var(--form-border-color);
+    border: 1px solid #ccc;
     border-radius: 4px;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
     resize: none;
+    color: var(--main-black);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--form-secondary-color);
+    border-color: var(--main-red);
     box-shadow: 0 0 5px rgba(79, 187, 235, 0.5);
+}
+
+.form-label {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .message-input {
     height: 100%;
-}
-
-.form-group p,
-.error-message {
-    color: var(--form-error-color);
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
 }
 
 button[type="submit"],
@@ -137,8 +139,8 @@ button[type="submit"],
     padding: 0.75rem 1.5rem;
     margin-top: 1.5rem;
     font-size: 1rem;
-    background-color: var(--form-primary-color);
-    color: white;
+    background-color: var(--main-red);
+    color: var(--main-white);
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -147,12 +149,18 @@ button[type="submit"],
 
 button[type="submit"]:hover,
 .submit-button:hover {
-    background-color: var(--form-secondary-color);
+    background-color: var(--link-red);
 }
 
 button[type="submit"]:active,
 .submit-button:active {
     transform: scale(0.98);
+}
+
+button[type="submit"]:focus,
+.submit-button:focus {
+    outline: 2px solid var(--form-secondary-color);
+    outline-offset: 2px;
 }
 
 .success-message,
@@ -223,4 +231,9 @@ button[type="submit"]:active,
 .select-service {
     color: var(--form-text-color);
     text-decoration: none;
+}
+
+.contact-form-container {
+    max-width: 800px;
+    margin: 0 auto;
 }
