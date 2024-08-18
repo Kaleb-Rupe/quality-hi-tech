@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
 import { services } from "../Services-Gallery/services-list";
-// import { FaPhone } from "react-icons/fa";
 import "../../css/contact.css";
 
 const Form = () => {
