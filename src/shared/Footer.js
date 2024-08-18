@@ -19,7 +19,6 @@ const Footer = () => {
         </div>
         {!isMobile && (
           <div className="footer-section footer-form">
-            <h2 className="component-title">Contact Us</h2>
             <ErrorBoundary
               fallback={
                 <div aria-live="polite">

@@ -29,13 +29,16 @@ const Hero = () => {
             <h3>Licensed & Insured Serving the Pasco & Hillsborough County</h3>
             <div className="hero-contact-links">
               {isMobile ? (
-              <a
-                href="tel:8132256515"
-                rel="noopener noreferrer"
-                aria-label="Contact Us"
-              >
-                <FaPhone className="icon" />
-                  <span>(813) 225-6515</span>
+                <a
+                  href="tel:8132256515"
+                  rel="noopener noreferrer"
+                  aria-label="Contact Us"
+                >
+                  <span>
+                    Contact Us:&emsp;
+                    <FaPhone className="icon" />
+                    (813) 225-6515
+                  </span>
                 </a>
               ) : (
                 <></>

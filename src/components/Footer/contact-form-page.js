@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
 import { services } from "../Services-Gallery/services-list";
+// import { FaPhone } from "react-icons/fa";
 import "../../css/contact.css";
 
 const Form = () => {
@@ -71,6 +72,16 @@ const Form = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form-wrapper">
+      <h2>Contact Us</h2>
+      {/* <a
+        href="tel:8132256515"
+        rel="noopener noreferrer"
+        aria-label="Contact Us"
+        className="contact-info"
+      >
+        <FaPhone className="icon" />
+        <span>(813) 225-6515</span>
+      </a> */}
       <div className="form-group">
         <label htmlFor="footer-name">Full Name:</label>
         <input
@@ -147,7 +158,9 @@ const Form = () => {
             required: "Please select a service",
           })}
         >
-          <option value="" className="select-service">Select a service</option>
+          <option value="" className="select-service">
+            Select a service
+          </option>
           {services.map((service) => (
             <option key={service.id} value={service.title}>
               {service.title}
