@@ -49,7 +49,8 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: -webkit-fill-available;
+    height: 100%;
+    min-height: 300px;
     max-width: 500px;
     margin: 0 auto;
     padding: 2rem;
@@ -203,5 +204,5 @@ button[type="submit"]:active,
 .form-group select:focus {
   outline: none;
   border-color: var(--form-secondary-color);
-  box-shadow: 0 0 5px rgba(79, 187, 235, 0.5);
+  box-shadow: var(--form-text-color);
 }
