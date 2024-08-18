@@ -147,7 +147,7 @@ const Form = () => {
             required: "Please select a service",
           })}
         >
-          <option value="">Select a service</option>
+          <option value="" className="select-service">Select a service</option>
           {services.map((service) => (
             <option key={service.id} value={service.title}>
               {service.title}
