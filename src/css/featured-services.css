@@ -43,10 +43,11 @@
     color: var(--main-black);
 }
 
+.service-card:nth-child(n+4) {
+    display: none;
+}
+
 @media screen and (max-width: 768px) {
-    .service-card:nth-child(n+4) {
-        display: none;
-    }
     
     .service-card {
         flex: 1 1 100%;

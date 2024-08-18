@@ -8,11 +8,11 @@ const Testimonials = () => {
       <div className="testimonial-cards">
         <div className="testimonial-card">
           <p>"Excellent work! Highly recommend."</p>
-          <h3>- John Doe</h3>
+          <h3>- Carlton Arms Management</h3>
         </div>
         <div className="testimonial-card">
           <p>"Professional and reliable service."</p>
-          <h3>- Jane Smith</h3>
+          <h3>- Kaleb Rupe</h3>
         </div>
         <div className="testimonial-card">
           <p>"Transformed our home beyond expectations."</p>

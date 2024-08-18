@@ -1,5 +1,5 @@
 import React from "react";
-import { featuredServices } from "../../data/services";
+import { services } from "../../components/Services-Gallery/services-list";
 import "../../css/featured-services.css";
 
 const FeaturedServices = () => {
@@ -7,7 +7,7 @@ const FeaturedServices = () => {
     <section className="services" aria-labelledby="services-title">
       <h2 id="services-title">Our Services</h2>
       <ul className="service-cards">
-        {featuredServices.map((service) => (
+        {services.map((service) => (
           <li key={service.id} className="service-card">
             <h3>{service.title}</h3>
             <p>{service.description}</p>

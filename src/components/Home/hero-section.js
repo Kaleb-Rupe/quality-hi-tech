@@ -7,7 +7,7 @@ import { FaPhone } from "react-icons/fa";
 const ContactForm = lazy(() => import("../Footer/contact-form-page"));
 
 const Hero = () => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 880px)");
 
   return (
     <section className="hero" aria-labelledby="hero-title">
