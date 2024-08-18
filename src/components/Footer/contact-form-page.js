@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
+import { services } from "../Services-Gallery/services-list";
 import "../../css/contact.css";
 
 const Form = () => {
@@ -14,6 +15,7 @@ const Form = () => {
       "footer-name": "",
       "footer-email": "",
       "footer-phone": "",
+      "footer-service": "",
       "footer-message": "",
     },
   });
@@ -138,8 +140,27 @@ const Form = () => {
       </div>
 
       <div className="form-group">
+        <label htmlFor="service">Service:</label>
+        <select
+          id="service"
+          {...register("service", {
+            required: "Please select a service",
+          })}
+        >
+          <option value="">Select a service</option>
+          {services.map((service) => (
+            <option key={service.id} value={service.title}>
+              {service.title}
+            </option>
+          ))}
+        </select>
+        {errors.service && <p>{errors.service.message}</p>}
+      </div>
+
+      <div className="form-group">
         <label htmlFor="footer-message">Message:</label>
         <textarea
+          className="message-input"
           id="footer-message"
           {...register("footer-message", {
             required: "Message is required.",

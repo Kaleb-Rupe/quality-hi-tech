@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
+import { services } from "../components/Services-Gallery/services-list";
 import "../css/contact.css";
 
 const ContactForm = () => {
@@ -145,6 +146,25 @@ const ContactForm = () => {
             />
             {errors.phone && <p>{errors.phone.message}</p>}
           </div>
+
+          <div className="form-group">
+            <label htmlFor="service">Service:</label>
+            <select
+              id="service"
+              {...register("service", {
+                required: "Please select a service",
+              })}
+            >
+              <option value="">Select a service</option>
+              {services.map((service) => (
+                <option key={service.id} value={service.title}>
+                  {service.title}
+                </option>
+              ))}
+            </select>
+            {errors.service && <p>{errors.service.message}</p>}
+          </div>
+
           <div className="form-group">
             <label htmlFor="message">Message:</label>
             <textarea

@@ -1,42 +1,65 @@
 export const services = [
   {
     id: 1,
-    title: "Carpet Patch",
-    description: "Expert repairs for damaged carpets, seamlessly blending with your existing flooring.",
+    title: "Carpet Cleaning and Maintenance",
+    icon: "fa-broom",
+    description:
+      "Our expert technicians use state-of-the-art equipment and eco-friendly cleaning solutions to leave your carpets looking like new.",
   },
   {
     id: 2,
-    title: "Pet Odor Removal",
-    description: "Eliminate stubborn pet odors, leaving your carpets fresh and your home smelling clean.",
+    title: "Upholstery Cleaning",
+    icon: "fa-couch",
+    description:
+      "We use specialized cleaning methods and products to gently remove dirt and stains from your upholstered furniture.",
   },
   {
     id: 3,
-    title: "Carpet Stretching",
-    description: "Restore your carpet's appearance and eliminate tripping hazards with our professional stretching service.",
+    title: "Tile and Grout Cleaning",
+    icon: "fa-tile",
+    description:
+      "Our advanced cleaning technology and specialized cleaning solutions make quick work of dirt and grime on your tile and grout.",
   },
   {
     id: 4,
-    title: "Spot Drying",
-    description: "Quick and effective drying for spills and wet spots, preventing mold and mildew growth.",
+    title: "Pet Odor Removal",
+    icon: "fa-paw",
+    description:
+      "We use a combination of specialized cleaning products and odor-neutralizing treatments to eliminate pet odors from your carpets and upholstery.",
   },
   {
     id: 5,
-    title: "Red Stain Removal",
-    description: "Specialized treatment for tough red stains from wine, juice, or other colorful spills.",
+    title: "Water Damage Restoration",
+    icon: "fa-water",
+    description:
+      "Our team is trained to quickly respond to water damage emergencies, extracting water and drying your property to prevent further damage.",
   },
   {
     id: 6,
-    title: "Furniture Cleaning",
-    description: "Revitalize your upholstery with our deep cleaning service, extending the life of your furniture.",
+    title: "Commercial Carpet Cleaning",
+    icon: "fa-building",
+    description:
+      "We offer customized commercial carpet cleaning solutions to meet the unique needs of your business, ensuring a clean and healthy environment for your employees and customers.",
   },
   {
     id: 7,
-    title: "Tile & Grout Cleaning",
-    description: "Restore the shine to your tiles and refresh your grout lines for a cleaner, brighter look.",
+    title: "Power Stretching Carpets",
+    icon: "fa-arrows-alt-h",
+    description:
+      "We use specialized equipment to stretch and re-tension your carpets, removing wrinkles and creases for a like-new appearance.",
   },
   {
     id: 8,
-    title: "Water Damage Cleanup",
-    description: "Comprehensive water damage cleanup to protect your home and belongings.",
+    title: "Repair & Patching Carpets",
+    icon: "fa-seedling",
+    description:
+      "Our skilled technicians can repair and patch damaged areas of your carpet, extending its lifespan and saving you money.",
+  },
+  {
+    id: 9,
+    title: "Stripping and Waxing Terrazzo Floors",
+    icon: "fa-hammer",
+    description:
+      "Our experienced technicians use specialized equipment and techniques to strip and wax your terrazzo floors, restoring their original shine and luster.",
   },
 ];

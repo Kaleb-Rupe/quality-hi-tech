@@ -23,7 +23,7 @@ const useMediaQuery = (query) => {
 };
 
 const Details = () => {
-  const isMobile = useMediaQuery("(max-width: 844px)");
+  const isMobile = useMediaQuery("(max-width: 1080px)");
   const email = "qhtm58@yahoo.com";
   const subject = encodeURIComponent("Inquiry here!");
   const body = encodeURIComponent(

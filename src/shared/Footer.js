@@ -8,7 +8,7 @@ import ErrorBoundary from "./error-boundary";
 const LazyForm = lazy(() => import("../components/Footer/contact-form-page"));
 
 const Footer = () => {
-  const isMobile = useMediaQuery("(max-width: 844px)");
+  const isMobile = useMediaQuery("(max-width: 1080px)");
 
   return (
     <footer className="footer" role="contentinfo">

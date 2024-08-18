@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../assets/logos/quality-hi-tech-main.png";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import { FaPhone } from "react-icons/fa";
 import "../css/header.css";
 
 const Header = () => {
@@ -60,9 +61,14 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/contact" data-testid="contact-link">
-                  Contact
-                </Link>
+                <a
+                  href="tel:8132256515"
+                  rel="noopener noreferrer"
+                  aria-label="Call us"
+                >
+                  <FaPhone className="icon" />
+                  <span>(813) 225-6515</span>
+                </a>
               </li>
             </ul>
           </nav>
@@ -91,15 +97,15 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              <Link to="/contact" onClick={toggleMenu}>
-                Contact
-              </Link>
+              <a
+                href="tel:8132256515"
+                rel="noopener noreferrer"
+                aria-label="Call us"
+              >
+                <FaPhone className="icon" />
+                <span>(813) 225-6515</span>
+              </a>
             </li>
-            {/* <li>
-              <Link to="/login" onClick={toggleMenu}>
-                Login
-              </Link>
-            </li> */}
           </ul>
         </nav>
       )}
