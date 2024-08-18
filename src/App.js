@@ -5,10 +5,10 @@ import LoadingFallback from "./shared/loading-fallback.jsx";
 import ErrorPage from "./pages/error-page.js";
 import "./css/app.css";
 
-const Home = lazy(() => import("./pages/Home.js"));
-const Services = lazy(() => import("./pages/gallery.js"));
-const About = lazy(() => import("./pages/about.js"));
-const ContactForm = lazy(() => import("./pages/contact.js"));
+const Home = lazy(() => import(/* webpackChunkName: "home" */ "./pages/Home.js"));
+const Services = lazy(() => import(/* webpackChunkName: "services" */ "./pages/gallery.js"));
+const About = lazy(() => import(/* webpackChunkName: "about" */ "./pages/about.js"));
+const ContactForm = lazy(() => import(/* webpackChunkName: "contact" */ "./pages/contact.js"));
 
 const App = () => (
   <Layout>

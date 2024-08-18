@@ -24,13 +24,14 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "test": "react-scripts test",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "serve": "serve -s build"
+    "serve": "serve -s build",
+    "analyze": "npm run build && serve -s build"
   },
   "eslintConfig": {
     "extends": [
@@ -54,7 +55,10 @@
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
     "gh-pages": "^6.0.0",
+    "imagemin-webpack-plugin": "^2.4.2",
     "jest": "^27.5.1",
-    "serve": "^14.2.3"
+    "react-app-rewired": "^2.2.1",
+    "serve": "^14.2.3",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }
