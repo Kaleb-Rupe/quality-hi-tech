@@ -2,7 +2,7 @@
     --header-bg-color: var(--main-gray);
     --header-text-color: var(--main-red);
     --header-hover-color: var(--link-red);
-    --header-height: 80px; /* Adjust this value as needed */
+    --header-height: 79px; /* Adjust this value as needed */
 }
 
 .site-header {
