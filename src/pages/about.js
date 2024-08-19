@@ -18,9 +18,9 @@ const About = () => {
         <p>
           Since 1993, Quality Hi Tech Carpet Cleaning has been the trusted name
           in carpet cleaning and restoration services for both residential and
-          commercial clients in Pasco County, FL. With nearly three decades of
-          experience, we've built a reputation for excellence, reliability, and
-          customer satisfaction.
+          commercial clients in Pasco & Hillsborough County Florida. With nearly
+          three decades of experience, we've built a reputation for excellence,
+          reliability, and customer satisfaction.
         </p>
       </section>
 
