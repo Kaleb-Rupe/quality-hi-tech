@@ -1,10 +1,9 @@
-import React, { lazy } from "react";
+import React from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "../../css/hero-section.css";
-import heroImg from "../../assets/logos/quality-hi-tech-large.png";
+import heroImg from "../../assets/logos/quality-hi-tech-large.svg";
 import { FaPhone } from "react-icons/fa";
-
-const ContactForm = lazy(() => import("../Footer/contact-form-page"));
+import ContactForm from "../Footer/contact-form-page";
 
 const Hero = () => {
   const isMobile = useMediaQuery("(max-width: 880px)");
@@ -23,6 +22,7 @@ const Hero = () => {
               loading="eager"
               width="300"
               height="100"
+              priority
             />
           </div>
           <div className="contrast-element hero-contact-info">

@@ -15,7 +15,6 @@ const ServiceItem = () => {
         <div className="services-grid">
           {services.map((service, index) => (
             <div key={index} className="service-item">
-              <i className={`fas ${service.icon}`}></i>
               <h3>{service.title}</h3>
               <p>{service.description}</p>
             </div>

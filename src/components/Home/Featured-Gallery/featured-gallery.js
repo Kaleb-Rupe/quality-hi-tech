@@ -4,11 +4,13 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  Suspense
 } from "react";
 import Modal from "react-modal";
 import { images } from "../../Services-Gallery/gallery-img";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "../../../css/gallery.css"
+import LoadingFallback from "../../../shared/loading-fallback";
 
 Modal.setAppElement("#root");
 
@@ -144,25 +146,27 @@ const FeaturedGallery = React.memo(() => {
         <ArrowLeft />
       </button>
       <div className="gallery">
-        {visibleImages.map((image, index) => (
-          <div
-            key={index}
-            className="gallery-item"
-            onClick={() => openModal(image)}
-            tabIndex={0}
-            role="button"
-            aria-label={`View larger image of ${image.alt}`}
-            onKeyDown={(e) => e.key === "Enter" && openModal(image)}
-          >
-            <LazyLoadImage
-              src={image.src}
-              alt={image.alt}
-              effect="blur"
-              width="100%"
-              height="100%"
-            />
-          </div>
-        ))}
+        <Suspense fallback={<LoadingFallback />}>
+          {visibleImages.map((image, index) => (
+            <div
+              key={index}
+              className="gallery-item"
+              onClick={() => openModal(image)}
+              tabIndex={0}
+              role="button"
+              aria-label={`View larger image of ${image.alt}`}
+              onKeyDown={(e) => e.key === "Enter" && openModal(image)}
+            >
+              <LazyLoadImage
+                src={image.src}
+                alt={image.alt}
+                effect="blur"
+                width="100%"
+                height="100%"
+              />
+            </div>
+          ))}
+        </Suspense>
       </div>
       <button
         className="nav-button right"

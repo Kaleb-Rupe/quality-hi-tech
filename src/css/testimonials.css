@@ -47,7 +47,7 @@
 
 @media (max-width: 1024px) {
     .testimonial-card {
-        flex: 1 1 45%;
+        flex: 1 1;
     }
 }
 

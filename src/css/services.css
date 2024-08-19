@@ -77,12 +77,6 @@
     transform: translateY(-5px);
 }
 
-.service-item i {
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
 .service-item h3 {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;

@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaEnvelope, FaPhone } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
-import Logo from "../../assets/logos/quality-hi-tech-large.png";
+import Logo from "../../assets/logos/quality-hi-tech-large.svg";
 import "../../css/details-page.css";
 
 const useMediaQuery = (query) => {
@@ -23,6 +23,7 @@ const useMediaQuery = (query) => {
 };
 
 const Details = () => {
+  const onClick = () => window.scrollTo(0, 0);
   const isMobile = useMediaQuery("(max-width: 1080px)");
   const email = "qhtm58@yahoo.com";
   const subject = encodeURIComponent("Inquiry here!");
@@ -65,7 +66,7 @@ const Details = () => {
   return (
     <section className="details-container">
       <div className="center">
-        <a href="/" id="bottle">
+        <a href="/" onClick={onClick} id="bottle">
           <img src={Logo} alt="Quality Hi Tech Logo" className="photo" />
         </a>
 

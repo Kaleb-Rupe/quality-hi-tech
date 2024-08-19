@@ -1,17 +1,19 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import Logo from "../assets/logos/quality-hi-tech-main.png";
+import Logo from "../assets/logos/quality-hi-tech-main.svg";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { FaPhone } from "react-icons/fa";
 import "../css/header.css";
 
 const Header = () => {
+  const onClick = () => window.scrollTo(0, 0);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef(null);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
+    window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
@@ -30,7 +32,12 @@ const Header = () => {
   return (
     <header className="site-header" ref={headerRef}>
       <div className="header-content">
-        <Link to="/" className="header-logo" aria-label="Home page">
+        <Link
+          to="/"
+          className="header-logo"
+          onClick={onClick}
+          aria-label="Home page"
+        >
           <img src={Logo} alt="Quality Hi-Tech Carpet Cleaning Logo" />
         </Link>
         {isMobile ? (
@@ -46,17 +53,21 @@ const Header = () => {
           <nav className="header-nav" aria-label="Main Navigation">
             <ul>
               <li>
-                <Link to="/" data-testid="home-link">
+                <Link to="/" onClick={onClick} data-testid="home-link">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/services" data-testid="services-link">
+                <Link
+                  to="/services"
+                  onClick={onClick}
+                  data-testid="services-link"
+                >
                   Services
                 </Link>
               </li>
               <li>
-                <Link to="/about" data-testid="about-link">
+                <Link to="/about" onClick={onClick} data-testid="about-link">
                   About
                 </Link>
               </li>

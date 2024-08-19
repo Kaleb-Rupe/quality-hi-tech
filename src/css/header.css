@@ -101,7 +101,11 @@
     }
 
     .mobile-nav li {
-        margin-bottom: 15px;
+        border-bottom: 1px solid var(--header-text-color);
+    }
+
+    .mobile-nav li:last-child {
+        border-bottom: none;
     }
 
     .mobile-nav a {
@@ -110,6 +114,8 @@
         font-weight: bold;
         font-size: 1.1rem;
         transition: color 0.3s ease;
+        display: block;
+        padding: 15px 0;
     }
 
     .mobile-nav a:hover {

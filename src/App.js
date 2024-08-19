@@ -1,26 +1,22 @@
-import React, { Suspense, lazy } from "react";
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout.js";
-import LoadingFallback from "./shared/loading-fallback.jsx";
 import ErrorPage from "./pages/error-page.js";
+import Home from "./pages/Home.js";
+import Services from "./pages/gallery.js";
+import About from "./pages/about.js";
+import ContactForm from "./pages/contact.js";
 import "./css/app.css";
-
-const Home = lazy(() => import(/* webpackChunkName: "home" */ "./pages/Home.js"));
-const Services = lazy(() => import(/* webpackChunkName: "services" */ "./pages/gallery.js"));
-const About = lazy(() => import(/* webpackChunkName: "about" */ "./pages/about.js"));
-const ContactForm = lazy(() => import(/* webpackChunkName: "contact" */ "./pages/contact.js"));
 
 const App = () => (
   <Layout>
-    <Suspense fallback={<LoadingFallback />}>
-      <Routes>
-        <Route path="/" element={<Home />} key="home" />
-        <Route path="/services" element={<Services />} key="services" />
-        <Route path="/about" element={<About />} key="about" />
-        <Route path="/contact" element={<ContactForm />} key="contact" />
-        <Route path="*" element={<ErrorPage />} key="error" />
-      </Routes>
-    </Suspense>
+    <Routes>
+      <Route path="/" element={<Home />} key="home" />
+      <Route path="/services" element={<Services />} key="services" />
+      <Route path="/about" element={<About />} key="about" />
+      <Route path="/contact" element={<ContactForm />} key="contact" />
+      <Route path="*" element={<ErrorPage />} key="error" />
+    </Routes>
   </Layout>
 );
 

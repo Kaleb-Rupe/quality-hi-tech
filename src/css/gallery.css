@@ -8,9 +8,12 @@
     --services-gallery-border-color: #7f8c8d;
 }
 
+.gallery-title {
+    color: var(--main-black);
+}
+
 /* Gallery container styles */
-.gallery-container,
-.image-gallery-wrapper {
+.gallery-container {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,13 +24,8 @@
     background-color: var(--background-color);
 }
 
-.gallery-title {
-    color: var(--main-black);
-}
-
 /* Navigation button styles */
-.nav-button,
-.navigation-btn {
+.nav-button {
     background: var(--main-red);
     color: var(--main-white);
     font-size: 24px;
@@ -47,38 +45,32 @@
     opacity: 0.7;
 }
 
-.nav-button:hover,
-.navigation-btn:hover{
+.nav-button:hover {
     background: var(--link-red);
     opacity: 1;
     outline: none;
 }
 
-.nav-button.left,
-.navigation-btn-prev {
+.nav-button.left {
     left: 10px;
 }
 
-.nav-button.right,
-.navigation-btn-next {
+.nav-button.right {
     right: 10px;
 }
 
-.nav-button:disabled,
-.navigation-btn:disabled {
+.nav-button:disabled {
     display: none;
 }
 
-.nav-button svg,
-.navigation-btn svg {
+.nav-button svg {
     width: 24px;
     height: 24px;
     fill: currentColor;
 }
 
 /* Gallery styles */
-.gallery,
-.image-grid {
+.gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
     gap: 20px;
@@ -87,8 +79,7 @@
 }
 
 /* Gallery item styles */
-.gallery-item,
-.image-tile {
+.gallery-item {
     aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: 8px;
@@ -98,14 +89,11 @@
 }
 
 .gallery-item:hover,
-.gallery-item:focus,
-.image-tile:hover,
-.image-tile:focus {
+.gallery-item:focus {
     transform: scale(1.05);
 }
 
-.gallery-item img,
-.image-tile img {
+.gallery-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -113,8 +101,7 @@
 }
 
 /* Modal styles */
-.image-modal,
-.modal-content {
+.image-modal {
     position: relative;
     width: auto;
     max-width: 90vw;
@@ -136,8 +123,7 @@
     border-radius: 8px;
 }
 
-.close-button,
-.modal-close-btn {
+.close-button {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -156,15 +142,12 @@
 }
 
 .close-button:hover,
-.close-button:focus,
-.modal-close-btn:hover,
-.modal-close-btn:focus {
+.close-button:focus {
     background-color: var(--gallery-accent-color);
     color: var(--gallery-secondary-color);
 }
 
-.image-overlay,
-.modal-overlay {
+.image-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -213,7 +196,9 @@
 
 .page-header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    color: var(--main-red);
 }
 
 .page-header h1 {
@@ -226,90 +211,28 @@
     font-size: 1.2em;
 }
 
-/* Services section styles */
-.services-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-}
-
-.services-section h2,
-.gallery-section h2 {
-    font-size: xx-large;
-    margin-bottom: 40px;
-    text-align: center;
-    color: var(--services-gallery-text-color);
-}
-
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.service-item {
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.service-item.expanded {
-    background-color: #e0e0e0;
-    transition: background-color 0.3s ease;
-}
-
-.service-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.service-item h3 {
-    margin: 0;
-    color: var(--services-gallery-text-color);
-}
-
-.service-arrow {
-    transition: transform 0.3s ease;
-}
-
-.service-item.expanded .service-arrow {
-    transform: rotate(90deg);
-}
-
-.service-description {
-    margin-top: 10px;
-}
-
 /* Responsive styles */
 @media screen and (max-width: 1180px) {
-    .nav-button,
-    .navigation-btn {
+    .nav-button {
         width: 40px;
         height: 40px;
     }
 
-    .nav-button svg,
-    .navigation-btn svg {
+    .nav-button svg {
         width: 20px;
         height: 20px;
     }
 }
 
 @media screen and (max-width: 844px) {
-    .nav-button,
-    .navigation-btn,
-    .nav-button svg,
-    .navigation-btn svg {
+    .nav-button
+    .nav-button svg {
         display: none;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .gallery,
-    .image-grid {
+    .gallery {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
 
