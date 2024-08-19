@@ -42,12 +42,17 @@ const Header = () => {
         </Link>
         {isMobile ? (
           <button
-            className="menu-toggle"
+            className={`menu-toggle ${isMenuOpen ? 'open' : ''}`}
             onClick={toggleMenu}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
           >
-            {isMenuOpen ? "Close" : "Menu"}
+            <span className="burger-icon">
+              <span className="burger-line"></span>
+              <span className="burger-line"></span>
+              <span className="burger-line"></span>
+            </span>
+            <span className="visually-hidden">{isMenuOpen ? "Close menu" : "Open menu"}</span>
           </button>
         ) : (
           <nav className="header-nav" aria-label="Main Navigation">
