@@ -9,6 +9,7 @@ const Form = () => {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
     reset,
   } = useForm({
     defaultValues: {
@@ -20,7 +21,21 @@ const Form = () => {
     },
   });
 
-  const [submissionStatus, setSubmissionStatus] = useState("");
+  const watchEmail = watch("footer-email");
+  const watchPhone = watch("footer-phone");
+
+  const validateContactInfo = (value, type) => {
+    if (!watchEmail && !watchPhone) {
+      return "Phone number or email is required.";
+    }
+    if (type === "email" && value) {
+      return validateEmail(value);
+    }
+    if (type === "phone" && value) {
+      return value.match(/^[0-9]{6,15}$/) ? true : "Please enter a valid phone number.";
+    }
+    return true;
+  };
 
   const validateEmail = useCallback((value) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -60,12 +75,17 @@ const Form = () => {
     [reset, sendEmail]
   );
 
+  const [submissionStatus, setSubmissionStatus] = useState("");
+
   if (submissionStatus === "success") {
     return (
       <div className="success-message" role="alert">
         <h2>Thank you!</h2>
         <p>Your message has been sent successfully.</p>
         <p>We will get back to you shortly.</p>
+        <button onClick={() => setSubmissionStatus("")} className="reset-button">
+          Send Another Message
+        </button>
       </div>
     );
   }
@@ -75,7 +95,7 @@ const Form = () => {
       <h2>Contact Us</h2>
       <div className="form-group">
         <div className="form-label">
-          <label htmlFor="footer-name">Full Name:</label>
+          <label htmlFor="footer-name">Name:</label>
           {errors["footer-name"] && (
             <p id="footer-name-error" role="alert" className="error-message">
               {errors["footer-name"].message}
@@ -114,8 +134,7 @@ const Form = () => {
           id="footer-email"
           type="email"
           {...register("footer-email", {
-            required: "Email is required.",
-            validate: validateEmail,
+            validate: (value) => validateContactInfo(value, "email"),
           })}
           aria-invalid={errors["footer-email"] ? "true" : "false"}
           aria-describedby="footer-email-error"
@@ -136,10 +155,7 @@ const Form = () => {
           id="footer-phone"
           type="tel"
           {...register("footer-phone", {
-            pattern: {
-              value: /^[0-9]{6,15}$/,
-              message: "Please enter a valid phone number.",
-            },
+            validate: (value) => validateContactInfo(value, "phone"),
           })}
           aria-invalid={errors["footer-phone"] ? "true" : "false"}
           aria-describedby="footer-phone-error"
