@@ -5,7 +5,7 @@ import Nav from "../components/Footer/footer-nav-socials";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import ErrorBoundary from "./error-boundary";
 
-const LazyForm = lazy(() => import("../components/Footer/contact-form-page"));
+const LazyForm = lazy(() => import("../components/Footer/contact-form"));
 
 const Footer = () => {
   const isMobile = useMediaQuery("(max-width: 1080px)");
@@ -43,8 +43,8 @@ const Footer = () => {
       </div>
       <div className="footer-copy">
         <p>
-          &copy; {new Date().getFullYear()} Quality Hi Tech Carpet Cleaning. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} Quality Hi Tech Carpet Cleaning. All
+          rights reserved.
         </p>
       </div>
     </footer>

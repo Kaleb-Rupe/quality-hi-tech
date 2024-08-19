@@ -3,7 +3,7 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "../../css/hero-section.css";
 import heroImg from "../../assets/logos/quality-hi-tech-large.svg";
 import { FaPhone } from "react-icons/fa";
-import ContactForm from "../Footer/contact-form-page";
+import ContactForm from "../Footer/contact-form";
 
 const Hero = () => {
   const isMobile = useMediaQuery("(max-width: 880px)");

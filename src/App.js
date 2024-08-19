@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout.js";
 import ErrorPage from "./pages/error-page.js";
 import Home from "./pages/Home.js";
-import Services from "./pages/gallery.js";
+import Services from "./pages/services.js";
 import About from "./pages/about.js";
 import ContactForm from "./pages/contact.js";
 import "./css/app.css";

@@ -30,25 +30,10 @@ const FeaturedGallery = () => {
     <div className="gallery-container">
       <Galleria
         value={galleryImages}
-        numVisible={5}
         circular
         showItemNavigators
         showIndicators
         showIndicatorsOnItem={true}
-        responsiveOptions={[
-          {
-            breakpoint: '1024px',
-            numVisible: 3
-          },
-          {
-            breakpoint: '768px',
-            numVisible: 2
-          },
-          {
-            breakpoint: '560px',
-            numVisible: 1
-          }
-        ]}
         showThumbnails={false}
         item={itemTemplate}
         thumbnail={thumbnailTemplate}
