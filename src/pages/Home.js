@@ -4,7 +4,7 @@ import LoadingFallback from "../shared/loading-fallback";
 import Hero from "../components/Home/hero-section";
 
 const FeaturedServices = lazy(() => import("../components/Home/featured-services"));
-const FeaturedGallery = lazy(() => import("../components/Home/Featured-Gallery/featured-gallery"));
+const FeaturedGallery = lazy(() => import("../components/Featured-Gallery/featured-gallery"));
 const Testimonials = lazy(() => import("../components/Home/testimonials"));
 
 const ErrorFallback = ({ error }) => <div>Error: {error.message}</div>;

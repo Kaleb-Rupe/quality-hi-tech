@@ -6,6 +6,9 @@ import LoadingFallback from "../shared/loading-fallback";
 import PropTypes from "prop-types";
 import "../css/layout.css";
 
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+
 const Layout = ({ children }) => (
   <ErrorBoundary>
     <div className="layout">

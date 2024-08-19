@@ -1,5 +1,5 @@
 import React from "react";
-import { services } from "../../components/Services-Gallery/services-list";
+import { services } from "./services-list";
 import "../../css/featured-services.css";
 
 const FeaturedServices = () => {

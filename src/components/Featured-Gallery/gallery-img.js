@@ -8,7 +8,12 @@ const imageContext = require.context(
 const importedImages = importAll(imageContext);
 
 export const images = importedImages.map((src, index) => ({
-  id: index + 1,
-  src,
-  alt: `Gallery image ${index + 1} - ${src.split('/').pop().split('.')[0].replace(/_/g, ' ')}`,
+  itemImageSrc: src,
+  thumbnailImageSrc: src, // Using the same image for thumbnail
+  alt: `Gallery image ${index + 1} - ${src
+    .split("/")
+    .pop()
+    .split(".")[0]
+    .replace(/_/g, " ")}`,
+  title: `Image ${index + 1}`
 }));

@@ -1,6 +1,4 @@
 :root {
-    --primary-color: var(--main-red);
-    --secondary-color: var(--link-red);
     --background-color: #f9f9f9;
     --card-background: #ffffff;
     --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -55,7 +53,7 @@
     left: 0;
     width: 50px;
     height: 3px;
-    background-color: var(--secondary-color);
+    background-color: var(--link-red);
 }
 
 .services-grid {
@@ -80,7 +78,7 @@
 .service-item h3 {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
-    color: var(--primary-color);
+    color: var(--main-red);
 }
 
 .service-item p {

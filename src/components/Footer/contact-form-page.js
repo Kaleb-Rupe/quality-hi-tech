@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import emailjs from "@emailjs/browser";
-import { services } from "../Services-Gallery/services-list";
+import { services } from "../Home/services-list";
 import "../../css/contact.css";
 
 const Form = () => {

@@ -1,7 +1,4 @@
 :root {
-  --primary-color: var(--main-red);
-  --secondary-color: var(--link-red);
-  --text-color: var(--main-black);
   --background-color: #f9f9f9;
   --card-background: #ffffff;
   --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -64,11 +61,11 @@
   left: 0;
   width: 50px;
   height: 3px;
-  background-color: var(--secondary-color);
+  background-color: var(--link-red);
 }
 
 .about-page h2 {
-  color: var(--primary-color);
+  color: var(--main-red);
   font-size: 2rem;
   margin-bottom: 1.5rem;
   position: relative;
@@ -82,7 +79,7 @@
   left: 0;
   width: 50px;
   height: 3px;
-  background-color: var(--secondary-color);
+  background-color: var(--link-red);
 }
 
 p {
@@ -111,13 +108,13 @@ p {
 }
 
 .team-member h3 {
-  color: var(--primary-color);
+  color: var(--main-red);
   margin-bottom: 0.5rem;
 }
 
 .team-member .role {
   font-style: italic;
-  color: var(--secondary-color);
+  color: var(--link-red);
   margin-bottom: 1rem;
 }
 
