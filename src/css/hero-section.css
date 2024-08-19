@@ -148,6 +148,7 @@
 
     .hero-left,
     .hero-right {
+        padding-top: 0;
         width: 100%;
     }
 
