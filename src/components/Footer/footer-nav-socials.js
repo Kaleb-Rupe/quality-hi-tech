@@ -32,7 +32,7 @@ const Nav = () => {
       <p className="social-title">Check Us Out On Facebook!</p>
       <div className="nav-social">
         <a
-          href="https://www.facebook.com/profile.php?id=100092280827323"
+          href="https://www.facebook.com/"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Facebook"
