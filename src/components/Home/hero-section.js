@@ -22,7 +22,6 @@ const Hero = () => {
               loading="eager"
               width="300"
               height="100"
-              priority
             />
           </div>
           <div className="contrast-element hero-contact-info">

@@ -67,6 +67,7 @@ a:hover {
 }
 
 .error-message {
+    text-align: end;
     color: var(--error-color);
     font-size: 0.875rem;
     margin: 0;

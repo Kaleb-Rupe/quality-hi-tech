@@ -1,50 +1,69 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import emailjs from "@emailjs/browser";
 import { services } from "../Home/services-list";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import "../../css/contact.css";
 
 const Form = () => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  const schema = useMemo(() => yup.object().shape({
+    "name": yup
+      .string()
+      .required(isMobile ? "Name required." : "Name is required.")
+      .min(5, "At least 5 characters.")
+      .max(50, "Cannot exceed 50 characters."),
+    "email": yup
+      .string()
+      .email("Invalid email address.")
+      .max(50, "Cannot exceed 50 characters.")
+      .test("email-or-phone", isMobile ? "Phone or email required." : "Phone number or email is required.", function (value) {
+        return this.parent.phone || value;
+      }),
+    "phone": yup
+      .string()
+      .test("phone-or-email", isMobile ? "Phone or email required." : "Phone number or email is required.", function (value) {
+        return this.parent.email || value;
+      })
+      .test("phone-format", "Valid number required.", function (value) {
+        // Only check format if a value is provided
+        if (value && value.length > 0) {
+          return /^[0-9]{6,15}$/.test(value);
+        }
+        return true;
+      }),
+    "service": yup
+      .string()
+      .required(isMobile ? "Select a service." : "Please select a service."),
+    "message": yup
+      .string()
+      .required(isMobile ? "Message required." : "Message is required.")
+      .max(200, "Exceeds 200 characters."),
+  }), [isMobile]);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     reset,
+    watch,
   } = useForm({
+    resolver: yupResolver(schema),
     defaultValues: {
-      "footer-name": "",
-      "footer-email": "",
-      "footer-phone": "",
-      "footer-service": "",
-      "footer-message": "",
+      name: "",
+      email: "",
+      phone: "",
+      service: "",
+      message: "",
     },
   });
 
-  const watchEmail = watch("footer-email");
-  const watchPhone = watch("footer-phone");
-
-  const validateContactInfo = (value, type) => {
-    if (!watchEmail && !watchPhone) {
-      return "Phone number or email is required.";
-    }
-    if (type === "email" && value) {
-      return validateEmail(value);
-    }
-    if (type === "phone" && value) {
-      return value.match(/^[0-9]{6,15}$/) ? true : "Please enter a valid phone number.";
-    }
-    return true;
-  };
-
-  const validateEmail = useCallback((value) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(value) || "Invalid email address";
-  }, []);
-
   const sendEmail = useCallback((data) => {
-    const serviceID = "service_rv66zp1";
-    const templateID = "template_o0s4yot";
+    const serviceID = "service_rv66zp1"
+    const templateID = "template_o0s4yot"
 
     emailjs.init({
       publicKey: "hohx4dG5zc1Gehn9H",
@@ -95,70 +114,56 @@ const Form = () => {
       <h2>Contact Us</h2>
       <div className="form-group">
         <div className="form-label">
-          <label htmlFor="footer-name">Name:</label>
-          {errors["footer-name"] && (
-            <p id="footer-name-error" role="alert" className="error-message">
-              {errors["footer-name"].message}
+          <label htmlFor="name">Name:</label>
+          {errors["name"] && (
+            <p id="name-error" role="alert" className="error-message">
+              {errors["name"].message}
             </p>
           )}
         </div>
         <input
-          id="footer-name"
-          {...register("footer-name", {
-            required: "Name is required.",
-            minLength: {
-              value: 2,
-              message: "Name must be at least 2 characters long.",
-            },
-            maxLength: {
-              value: 50,
-              message: "Name cannot exceed 50 characters.",
-            },
-          })}
-          aria-invalid={errors["footer-name"] ? "true" : "false"}
-          aria-describedby="footer-name-error"
+          id="name"
+          {...register("name")}
+          aria-invalid={errors["name"] ? "true" : "false"}
+          aria-describedby="name-error"
           placeholder="Full Name"
         />
       </div>
 
       <div className="form-group">
         <div className="form-label">
-          <label htmlFor="footer-email">Email:</label>
-          {errors["footer-email"] && (
-            <p id="footer-email-error" role="alert" className="error-message">
-              {errors["footer-email"].message}
+          <label htmlFor="email">Email:</label>
+          {errors["email"] && !watch("phone") && (
+            <p id="email-error" role="alert" className="error-message">
+              {errors["email"].message}
             </p>
           )}
         </div>
         <input
-          id="footer-email"
+          id="email"
           type="email"
-          {...register("footer-email", {
-            validate: (value) => validateContactInfo(value, "email"),
-          })}
-          aria-invalid={errors["footer-email"] ? "true" : "false"}
-          aria-describedby="footer-email-error"
+          {...register("email")}
+          aria-invalid={errors["email"] && !watch("phone") ? "true" : "false"}
+          aria-describedby="email-error"
           placeholder="Email"
         />
       </div>
 
       <div className="form-group">
         <div className="form-label">
-          <label htmlFor="footer-phone">Phone Number:</label>
-          {errors["footer-phone"] && (
-            <p id="footer-phone-error" role="alert" className="error-message">
-              {errors["footer-phone"].message}
+          <label htmlFor="phone">Phone:</label>
+          {errors["phone"] && !watch("email") && (
+            <p id="phone-error" role="alert" className="error-message">
+              {errors["phone"].message}
             </p>
           )}
         </div>
         <input
-          id="footer-phone"
+          id="phone"
           type="tel"
-          {...register("footer-phone", {
-            validate: (value) => validateContactInfo(value, "phone"),
-          })}
-          aria-invalid={errors["footer-phone"] ? "true" : "false"}
-          aria-describedby="footer-phone-error"
+          {...register("phone")}
+          aria-invalid={errors["phone"] && !watch("email") ? "true" : "false"}
+          aria-describedby="phone-error"
           placeholder="Phone Number"
         />
       </div>
@@ -166,19 +171,17 @@ const Form = () => {
       <div className="form-group">
         <div className="form-label">
           <label htmlFor="service">Service:</label>
-          {errors.service && (
+          {errors["service"] && (
             <p id="service-error" role="alert" className="error-message">
-              {errors.service.message}
+              {errors["service"].message}
             </p>
           )}
         </div>
         <select
           id="service"
-          {...register("service", {
-            required: "Please select a service.",
-          })}
+          {...register("service")}
         >
-          <option value="" className="select-service">
+          <option value="" className="service">
             Select a service
           </option>
           {services.map((service) => (
@@ -191,25 +194,19 @@ const Form = () => {
 
       <div className="form-group">
         <div className="form-label">
-          <label htmlFor="footer-message">Message:</label>
-          {errors["footer-message"] && (
-            <p id="footer-message-error" role="alert" className="error-message">
-              {errors["footer-message"].message}
+          <label htmlFor="message">Message:</label>
+          {errors["message"] && (
+            <p id="message-error" role="alert" className="error-message">
+              {errors["message"].message}
             </p>
           )}
         </div>
         <textarea
           className="message-input"
-          id="footer-message"
-          {...register("footer-message", {
-            required: "Message is required.",
-            maxLength: {
-              value: 500,
-              message: "Message cannot exceed 500 characters.",
-            },
-          })}
-          aria-invalid={errors["footer-message"] ? "true" : "false"}
-          aria-describedby="footer-message-error"
+          id="message"
+          {...register("message")}
+          aria-invalid={errors["message"] ? "true" : "false"}
+          aria-describedby="message-error"
           placeholder="Your message..."
         />
       </div>

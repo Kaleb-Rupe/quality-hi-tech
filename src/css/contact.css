@@ -61,12 +61,6 @@
     margin: 0;
 }
 
-/* .form-wrapper form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-} */
-
 .form-group {
     flex: 1 1 calc(50% - 0.5rem);
     min-width: 150px;
