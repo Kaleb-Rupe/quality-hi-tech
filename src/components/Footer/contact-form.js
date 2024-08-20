@@ -20,7 +20,7 @@ const Form = () => {
       .string()
       .email("Invalid email address.")
       .max(50, "Cannot exceed 50 characters.")
-      .test("email-or-phone", isMobile ? "Phone or email required." : "Phone number or email is required.", function (value) {
+      .test("email-or-phone", isMobile ? "Email or phone required." : "Email or phone number is required.", function (value) {
         return this.parent.phone || value;
       }),
     "phone": yup

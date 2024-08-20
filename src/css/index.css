@@ -69,7 +69,7 @@ a:hover {
 .error-message {
     text-align: end;
     color: var(--error-color);
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     margin: 0;
     margin-bottom: 0.5rem;
 }
