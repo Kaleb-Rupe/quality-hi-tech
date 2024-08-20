@@ -1,13 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Galleria } from 'primereact/galleria';
-import { images } from "./gallery-img";
+import { storage } from '../../firebaseConfig';
+import { ref, listAll, getDownloadURL } from 'firebase/storage';
 import "../../css/gallery.css";
 
 const FeaturedGallery = () => {
   const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
-    setGalleryImages(images);
+    const fetchImages = async () => {
+      try {
+        const imagesRef = ref(storage, 'images');
+        const imageList = await listAll(imagesRef);
+        const imageUrls = await Promise.all(
+          imageList.items.map(async (item) => {
+            const url = await getDownloadURL(item);
+            return {
+              itemImageSrc: url,
+              thumbnailImageSrc: url,
+              alt: item.name,
+              title: item.name
+            };
+          })
+        );
+        setGalleryImages(imageUrls);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+        // You might want to add some UI feedback here
+      }
+    };
+
+    fetchImages();
   }, []);
 
   const itemTemplate = (item) => {

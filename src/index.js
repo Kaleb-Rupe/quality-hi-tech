@@ -1,3 +1,4 @@
+
 import React, { Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -7,6 +8,9 @@ import ErrorBoundary from "./shared/error-boundary.jsx";
 import LoadingFallback from "./shared/loading-fallback.jsx";
 import { useViewportHeight } from "./hooks/useViewportHeight.jsx";
 import App from "./App";
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 const rootElement = document.getElementById("root");
 

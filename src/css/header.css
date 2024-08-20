@@ -57,7 +57,8 @@
     margin: 0;
 }
 
-.header-nav a {
+.header-nav a,
+.header-nav button {
     color: var(--header-text-color);
     text-decoration: none;
     font-weight: bold;
@@ -66,6 +67,11 @@
 
 .header-nav a:hover {
     color: var(--header-hover-color);
+}
+
+.header-nav li {
+    display: flex;
+    align-items: center;
 }
 
 .menu-toggle {
@@ -155,4 +161,31 @@
 
 .menu-toggle.open .burger-line:nth-child(3) {
   transform: translateY(-8px) rotate(-45deg);
+}
+
+.login-logout-btn {
+  background: none;
+  border: none;
+  color: var(--main-red);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  padding: 0;
+}
+
+.login-logout-btn:hover {
+  color: var(--link-red);
+}
+
+.login-logout-btn .icon {
+  margin-right: 0.5rem;
+}
+
+@media screen and (max-width: 880px) {
+  .mobile-nav .login-logout-btn {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 1rem 0;
+  }
 }
