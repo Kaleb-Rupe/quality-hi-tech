@@ -66,12 +66,12 @@ const Details = () => {
   return (
     <section className="details-container">
       <div className="center">
-        <a href="/" onClick={onClick} id="bottle">
+        <Link to="/" id="bottle" onClick={onClick}>
           <img src={Logo} alt="Quality Hi Tech Logo" className="photo" />
-        </a>
+        </Link>
 
         {isMobile && (
-          <Link id="link" to="/contact" onClick={() => window.scrollTo(0, 0)}>
+          <Link id="link" to="/contact" onClick={onClick}>
             <button aria-label="Get a free estimate">Free Estimate</button>
           </Link>
         )}
