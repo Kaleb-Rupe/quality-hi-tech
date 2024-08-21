@@ -132,7 +132,7 @@
 }
 
 @media (max-width: 1025px) {
-    .hero p {
+    .hero-contact-column p {
         font-size: 0.92rem;
     }
 }
@@ -142,7 +142,7 @@
         flex-direction: column;
     }
 
-    .hero p {
+    .hero-contact-column p {
         font-size: 1rem;
     }
 
@@ -176,7 +176,7 @@
 }
 
 @media (max-width: 410px) {
-    .hero p {
+    .hero-contact-column p {
         font-size: 0.7rem;
     }
 }

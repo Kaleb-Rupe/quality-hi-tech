@@ -13,15 +13,18 @@ const AdminPage = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user);
+      setIsLoggedIn(!!user && user.emailVerified);
     });
 
     return () => unsubscribe();
   }, [auth]);
 
   const handleLogin = () => {
-    setIsLoggedIn(true);
-    logEvent(analytics, 'login');
+    const user = auth.currentUser;
+    if (user && user.emailVerified) {
+      setIsLoggedIn(true);
+      logEvent(analytics, 'login');
+    }
   };
 
   const handleLogout = async () => {

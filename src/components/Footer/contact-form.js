@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -61,18 +61,13 @@ const Form = () => {
     },
   });
 
+  useEffect(() => {
+    reset(); // Reset the form when isMobile changes
+  }, [isMobile, reset]);
+
   const sendEmail = useCallback((data) => {
     const serviceID = "service_rv66zp1"
     const templateID = "template_o0s4yot"
-
-    emailjs.init({
-      publicKey: "hohx4dG5zc1Gehn9H",
-      blockHeadless: false,
-      limitRate: {
-        id: "app",
-        throttle: 10000,
-      },
-    });
 
     emailjs
       .send(serviceID, templateID, data)
@@ -140,7 +135,7 @@ const Form = () => {
           )}
         </div>
         <input
-          id="email"
+          id="contact-email"
           type="email"
           {...register("email")}
           aria-invalid={errors["email"] && !watch("phone") ? "true" : "false"}

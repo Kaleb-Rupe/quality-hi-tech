@@ -16,7 +16,7 @@
 .admin-login,
 .admin-dashboard {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 5rem auto;
     background-color: var(--admin-background);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -26,7 +26,11 @@
 .admin-login h2,
 .admin-dashboard h2 {
     color: var(--admin-primary);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
+}
+
+.admin-login-title {
+    margin-bottom: 1.5rem !important;
 }
 
 .admin-login .p-field {
@@ -41,11 +45,6 @@
 .admin-login .p-button:hover {
     background-color: var(--admin-secondary);
     border-color: var(--admin-secondary);
-}
-
-.error-message {
-    color: var(--error-color);
-    margin-bottom: 1rem;
 }
 
 .image-list {
@@ -299,8 +298,34 @@
 }
 
 @media screen and (max-width: 480px) {
+
     .forgot-password,
     .verify-email {
         padding: 1rem;
     }
+}
+
+
+.back-button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.back-button {
+    background-color: transparent;
+    border: 2px solid var(--admin-primary);
+    border-radius: 5px;
+    color: var(--admin-primary);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    transition: color 0.3s ease;
+}
+
+.back-button:hover {
+    color: var(--link-red);
+    border: 2px solid var(--link-red);
+    border-radius: 5px;
 }

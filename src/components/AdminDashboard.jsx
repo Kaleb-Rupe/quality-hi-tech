@@ -101,7 +101,7 @@ const AdminDashboard = () => {
 
   const headerTemplate = (options) => {
     const { className, chooseButton, uploadButton, cancelButton } = options;
-    const value = totalSize / 10000;
+    const value = totalSize / 10000000;
     const formatedValue = fileUploadRef && fileUploadRef.current ? fileUploadRef.current.formatSize(totalSize) : '0 B';
 
     return (
@@ -112,7 +112,7 @@ const AdminDashboard = () => {
           {cancelButton}
         </div>
         <div className="admin-dashboard-header-info">
-          <span>{formatedValue} / 1 MB</span>
+          <span>{formatedValue} / 10 MB</span>
           <ProgressBar value={value} showValue={false} className="admin-dashboard-progress-bar"></ProgressBar>
         </div>
       </div>
@@ -193,7 +193,7 @@ const AdminDashboard = () => {
         name="demo[]"
         multiple
         accept="image/*"
-        maxFileSize={1000000}
+        maxFileSize={10000000}
         customUpload
         uploadHandler={onTemplateUpload}
         onSelect={onTemplateSelect}
