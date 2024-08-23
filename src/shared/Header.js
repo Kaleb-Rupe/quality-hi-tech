@@ -4,13 +4,15 @@ import Logo from "../assets/logos/quality-hi-tech-main.svg";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { FaPhone, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 import "../css/header.css";
+import { useAuth } from "../AuthProvider";
 
-const Header = ({ isLoggedIn, onLogin, onLogout }) => {
+const Header = ({ isLoggedIn, onLogout }) => {
   const onClick = () => window.scrollTo(0, 0);
   const isMobile = useMediaQuery("(max-width: 880px)");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef(null);
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
@@ -18,7 +20,7 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
   }, []);
 
   const handleLoginLogout = () => {
-    if (isLoggedIn) {
+    if (isLoggedIn && isAdmin) {
       onLogout();
     } else {
       navigate('/admin');
@@ -75,7 +77,11 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
               </li>
               <div className="header-line"></div>
               <li>
-                <Link to="/services" onClick={onClick} data-testid="services-link">
+                <Link
+                  to="/services"
+                  onClick={onClick}
+                  data-testid="services-link"
+                >
                   Services
                 </Link>
               </li>
@@ -87,15 +93,22 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
               </li>
               <div className="header-line"></div>
               <li>
-                <a href="tel:8132256515" rel="noopener noreferrer" aria-label="Call us">
+                <a
+                  href="tel:8132256515"
+                  rel="noopener noreferrer"
+                  aria-label="Call us"
+                >
                   <FaPhone className="icon" />
                   <span>(813) 225-6515</span>
                 </a>
               </li>
               <div className="header-line"></div>
               <li>
-                <button onClick={handleLoginLogout} className="login-logout-btn">
-                  {isLoggedIn ? (
+                <button
+                  onClick={handleLoginLogout}
+                  className="login-logout-btn"
+                >
+                  {isLoggedIn && isAdmin ? (
                     <>
                       <FaSignOutAlt className="icon" />
                       <span>Logout</span>
@@ -103,7 +116,7 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
                   ) : (
                     <>
                       <FaSignInAlt className="icon" />
-                      {/* <span>Admin</span> */}
+                      <span>Admin Login</span>
                     </>
                   )}
                 </button>
@@ -113,7 +126,11 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
         )}
       </div>
       {isMobile && isMenuOpen && (
-        <nav id="mobile-menu" className="mobile-nav" aria-label="Mobile Navigation">
+        <nav
+          id="mobile-menu"
+          className="mobile-nav"
+          aria-label="Mobile Navigation"
+        >
           <ul>
             <li>
               <Link to="/" onClick={toggleMenu}>
@@ -131,14 +148,24 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
               </Link>
             </li>
             <li>
-              <a href="tel:8132256515" rel="noopener noreferrer" aria-label="Call us">
+              <a
+                href="tel:8132256515"
+                rel="noopener noreferrer"
+                aria-label="Call us"
+              >
                 <FaPhone className="icon" />
                 <span>(813) 225-6515</span>
               </a>
             </li>
             <li>
-              <button onClick={() => { handleLoginLogout(); toggleMenu(); }} className="login-logout-btn">
-                {isLoggedIn ? (
+              <button
+                onClick={() => {
+                  handleLoginLogout();
+                  toggleMenu();
+                }}
+                className="login-logout-btn"
+              >
+                {isLoggedIn && isAdmin ? (
                   <>
                     <FaSignOutAlt className="icon" />
                     <span>Logout</span>
@@ -146,7 +173,7 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
                 ) : (
                   <>
                     <FaSignInAlt className="icon" />
-                    <span>Admin</span>
+                    <span>Admin Login</span>
                   </>
                 )}
               </button>

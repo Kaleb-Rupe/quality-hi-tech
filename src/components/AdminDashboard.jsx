@@ -10,6 +10,10 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { storage } from '../firebaseConfig';
 import { ref, uploadBytesResumable, getDownloadURL, listAll, deleteObject } from 'firebase/storage';
 import '../css/admin.css';
+import CreateInvoice from './CreateInvoice';
+import InvoiceList from './InvoiceList';
+import { useAuth } from '../AuthProvider';
+import AdminUserManagement from './AdminUserManagement';
 
 const AdminDashboard = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
@@ -19,6 +23,7 @@ const AdminDashboard = () => {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(12);
   const [uploadProgress, setUploadProgress] = useState({});
+  const { isAdmin, isSuperAdmin } = useAuth();
 
   useEffect(() => {
     loadImages();
@@ -183,48 +188,58 @@ const AdminDashboard = () => {
       <h2>Admin Dashboard</h2>
       <Toast ref={toast}></Toast>
       <ConfirmDialog />
-
       <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
       <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
       <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
-
-      <FileUpload
-        ref={fileUploadRef}
-        name="demo[]"
-        multiple
-        accept="image/*"
-        maxFileSize={1000000}
-        customUpload
-        uploadHandler={onTemplateUpload}
-        onSelect={onTemplateSelect}
-        onError={onTemplateClear}
-        onClear={onTemplateClear}
-        headerTemplate={headerTemplate}
-        itemTemplate={itemTemplate}
-        emptyTemplate={emptyTemplate}
-        chooseOptions={chooseOptions}
-        uploadOptions={uploadOptions}
-        cancelOptions={cancelOptions}
-        className="admin-dashboard-file-upload"
-      />
-
-      <div className="image-list">
-        {uploadedImages.slice(first, first + rows).map((image, index) => (
-          <div key={index} className="image-item">
-            <img src={image.url} alt={image.name} />
-            <Button
-              icon="pi pi-trash"
-              onClick={() => handleDelete(image.name)}
-            />
+      {isSuperAdmin && (
+        <div>
+          <h2>Super Admin Features</h2>
+          <AdminUserManagement />
+        </div>
+      )}
+      {(isAdmin || isSuperAdmin) && (
+        <>
+          <h2>Admin Features</h2>
+          <FileUpload
+            ref={fileUploadRef}
+            name="demo[]"
+            multiple
+            accept="image/*"
+            maxFileSize={1000000}
+            customUpload
+            uploadHandler={onTemplateUpload}
+            onSelect={onTemplateSelect}
+            onError={onTemplateClear}
+            onClear={onTemplateClear}
+            headerTemplate={headerTemplate}
+            itemTemplate={itemTemplate}
+            emptyTemplate={emptyTemplate}
+            chooseOptions={chooseOptions}
+            uploadOptions={uploadOptions}
+            cancelOptions={cancelOptions}
+            className="admin-dashboard-file-upload"
+          />
+          <div className="image-list">
+            {uploadedImages.slice(first, first + rows).map((image, index) => (
+              <div key={index} className="image-item">
+                <img src={image.url} alt={image.name} />
+                <Button
+                  icon="pi pi-trash"
+                  onClick={() => handleDelete(image.name)}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <Paginator
-        first={first}
-        rows={rows}
-        totalRecords={uploadedImages.length}
-        onPageChange={onPageChange}
-      />
+          <Paginator
+            first={first}
+            rows={rows}
+            totalRecords={uploadedImages.length}
+            onPageChange={onPageChange}
+          />
+          <CreateInvoice />
+          <InvoiceList />
+        </>
+      )}
     </div>
   );
 };

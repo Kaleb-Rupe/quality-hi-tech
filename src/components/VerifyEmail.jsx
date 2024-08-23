@@ -1,43 +1,52 @@
 import React, { useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { getAuth, sendEmailVerification } from 'firebase/auth';
 import { Toast } from 'primereact/toast';
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const VerifyEmail = () => {
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [resendingVerification, setResendingVerification] = useState(false);
   const toast = React.useRef(null);
 
-  const handleVerifyEmail = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleResendVerification = async () => {
+    setResendingVerification(true);
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (user && user.email === email) {
-        await sendEmailVerification(user);
-        toast.current.show({ severity: 'success', summary: 'Success', detail: 'Verification email sent. Please check your inbox.' });
-      } else {
-        throw new Error('User not found or email mismatch');
-      }
+      const functions = getFunctions();
+      const resendVerificationEmail = httpsCallable(
+        functions,
+        "resendVerificationEmail"
+      );
+      await resendVerificationEmail({ email });
+      alert("Verification email sent. Please check your inbox.");
     } catch (error) {
-      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to send verification email. Please try again.' });
+      console.error("Error resending verification email:", error);
+      alert("Failed to resend verification email. Please try again.");
     } finally {
-      setLoading(false);
+      setResendingVerification(false);
     }
   };
 
   return (
-    <form onSubmit={handleVerifyEmail} className="admin-login">
+    <form onSubmit={handleResendVerification} className="admin-login">
       <Toast ref={toast} />
       <h2>Verify Email</h2>
       <div className="p-fluid">
         <div className="p-field">
           <label htmlFor="email">Email</label>
-          <InputText id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <InputText
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
-        <Button type="submit" label="Send Verification Email" loading={loading} />
+        <Button
+          type="button"
+          label="Resend Verification Email"
+          onClick={handleResendVerification}
+          loading={resendingVerification}
+          className="p-button-secondary"
+        />
       </div>
     </form>
   );
