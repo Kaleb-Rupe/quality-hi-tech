@@ -1,52 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { analytics } from '../firebaseConfig';
-import { logEvent } from 'firebase/analytics';
+import React from "react";
+import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
 import AdminLogin from "./AdminLogin";
-import AdminDashboard from "./AdminDashboard";
-import Header from "../shared/Header";
 import "../css/admin.css";
 
 const AdminPage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const auth = getAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user && user.emailVerified);
-    });
-
-    return () => unsubscribe();
-  }, [auth]);
-
-  const handleLogin = () => {
-    const user = auth.currentUser;
-    if (user && user.emailVerified) {
-      setIsLoggedIn(true);
-      logEvent(analytics, 'login');
+  React.useEffect(() => {
+    if (user && user.isAdmin) {
+      navigate("/admin/dashboard");
     }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setIsLoggedIn(false);
-      logEvent(analytics, 'logout');
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
+  }, [user, navigate]);
 
   return (
     <div className="admin-page">
-      <Header isLoggedIn={isLoggedIn} onLogin={handleLogin} onLogout={handleLogout} />
-      {isLoggedIn ? (
-        <>
-          <AdminDashboard />
-        </>
-      ) : (
-        <AdminLogin onLogin={handleLogin} />
-      )}
+      <AdminLogin />
     </div>
   );
 };

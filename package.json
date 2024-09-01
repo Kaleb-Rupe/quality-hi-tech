@@ -6,11 +6,13 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emailjs/browser": "^4.3.3",
     "@hookform/resolvers": "^3.9.0",
+    "@stripe/react-stripe-js": "^2.8.0",
+    "@stripe/stripe-js": "^4.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.4",
+    "axios": "^1.7.5",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
-    "firebase": "^10.13.0",
+    "firebase": "^10.13.1",
     "jsonwebtoken": "^9.0.2",
     "mobile-detect": "^1.4.5",
     "nodemon": "^3.1.0",
@@ -28,6 +30,7 @@
     "react-router": "^6.23.1",
     "react-router-dom": "^6.23.1",
     "react-scripts": "^5.0.1",
+    "stripe": "^16.9.0",
     "yup": "^1.4.0"
   },
   "scripts": {

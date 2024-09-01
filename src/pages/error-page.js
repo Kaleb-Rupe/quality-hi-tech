@@ -1,6 +1,6 @@
-import React from 'react';
-import { useRouteError, Link } from 'react-router-dom';
-import '../css/error-page.css';
+import React from "react";
+import { useRouteError, Link } from "react-router-dom";
+import "../css/error-page.css";
 
 const ErrorPage = () => {
   const error = useRouteError();
@@ -12,7 +12,9 @@ const ErrorPage = () => {
       <p className="error-details">
         <i>{error.statusText || error.message}</i>
       </p>
-      <Link to="/" className="back-link">Go back to homepage</Link>
+      <Link to="/" className="back-link">
+        Go back to homepage
+      </Link>
     </div>
   );
 };

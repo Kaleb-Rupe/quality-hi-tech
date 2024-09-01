@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "quality-hi-tech-74e77"
+  },
+  "targets": {},
+  "etags": {
+    "quality-hi-tech-74e77": {
+      "extensionInstances": {}
+    }
+  },
+  "dataconnectEmulatorConfig": {}
+}

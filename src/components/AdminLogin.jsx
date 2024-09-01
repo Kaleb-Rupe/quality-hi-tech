@@ -3,8 +3,9 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Toast } from "primereact/toast";
+import { useAuth } from "./AuthContext";
 import "../css/admin.css";
 
 const AdminLogin = ({ onLogin }) => {
@@ -13,6 +14,8 @@ const AdminLogin = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [showVerificationLink, setShowVerificationLink] = useState(false);
   const toast = useRef(null);
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const auth = getAuth();
 
   useEffect(() => {
@@ -21,6 +24,12 @@ const AdminLogin = ({ onLogin }) => {
       setPassword("");
     };
   }, []);
+
+  React.useEffect(() => {
+    if (user && user.isAdmin) {
+      navigate("/admin/dashboard");
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -33,62 +42,45 @@ const AdminLogin = ({ onLogin }) => {
         email,
         password
       );
-      if (!userCredential.user.emailVerified) {
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
         setShowVerificationLink(true);
         toast.current.show({
           severity: "warn",
           summary: "Email not verified",
-          detail: "Please verify your email before you are authorized to login.",
+          detail: "Please verify your email before logging in.",
         });
+        await auth.signOut();
       } else {
-        onLogin();
-        toast.current.show({
-          severity: "success",
-          summary: "Login Successful",
-          detail: "Welcome back!",
-        });
+        // Check for admin claim
+        const token = await user.getIdTokenResult();
+        if (token.claims.admin) {
+          toast.current.show({
+            severity: "success",
+            summary: "Login Successful",
+            detail: "Welcome back, admin!",
+          });
+          navigate("/admin/dashboard");
+        } else {
+          toast.current.show({
+            severity: "error",
+            summary: "Access Denied",
+            detail: "You do not have admin privileges.",
+          });
+          await auth.signOut();
+        }
       }
     } catch (error) {
-      handleLoginError(error);
+      console.error("Login error:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Login Error",
+        detail: "Invalid email or password. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLoginError = (error) => {
-    let errorMessage = "An unexpected error occurred. Please try again.";
-    let severity = "error";
-
-    if (error.code) {
-      switch (error.code) {
-        case "auth/invalid-email":
-          errorMessage = "Invalid email format. Please enter a valid email address.";
-          severity = "warn";
-          break;
-        case "auth/invalid-password":
-          errorMessage = "Incorrect password. Please try again.";
-          severity = "warn";
-          break;
-        case "auth/invalid-credential":
-          errorMessage = "Invalid email or password. Please try again.";
-          severity = "warn";
-          break;
-        case "auth/user-not-found":
-          errorMessage = "No account found with this email. Please check your email or sign up.";
-          severity = "warn";
-          break;
-        default:
-          console.error("Login error:", error);
-      }
-    } else {
-      console.error("Unexpected error structure:", error);
-    }
-
-    toast.current.show({
-      severity,
-      summary: "Login Error",
-      detail: errorMessage,
-    });
   };
 
   return (

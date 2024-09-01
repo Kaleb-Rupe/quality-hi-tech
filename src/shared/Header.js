@@ -1,27 +1,27 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../components/AuthContext";
 import Logo from "../assets/logos/quality-hi-tech-main.svg";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { FaPhone, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 import "../css/header.css";
 
-const Header = ({ isLoggedIn, onLogin, onLogout }) => {
+const Header = () => {
   const onClick = () => window.scrollTo(0, 0);
   const isMobile = useMediaQuery("(max-width: 880px)");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef(null);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const toggleMenu = useCallback(() => {
-    setIsMenuOpen((prev) => !prev);
-    window.scrollTo(0, 0);
-  }, []);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const handleLoginLogout = () => {
-    if (isLoggedIn) {
-      onLogout();
+  const handleLoginLogout = async () => {
+    if (user) {
+      await logout();
+      navigate("/admin");
     } else {
-      navigate('/admin');
+      navigate("/admin");
     }
   };
 
@@ -75,7 +75,11 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
               </li>
               <div className="header-line"></div>
               <li>
-                <Link to="/services" onClick={onClick} data-testid="services-link">
+                <Link
+                  to="/services"
+                  onClick={onClick}
+                  data-testid="services-link"
+                >
                   Services
                 </Link>
               </li>
@@ -86,16 +90,34 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
                 </Link>
               </li>
               <div className="header-line"></div>
+              {!user && (
+                <>
+                  <li>
+                    <a
+                      href="tel:8132256515"
+                      rel="noopener noreferrer"
+                      aria-label="Call us"
+                    >
+                      <FaPhone className="icon" />
+                      <span>(813) 225-6515</span>
+                    </a>
+                  </li>
+                  <div className="header-line"></div>
+                </>
+              )}
+              {user && (
+                <li>
+                  <Link to="/admin" onClick={toggleMenu}>
+                    Dashboard
+                  </Link>
+                </li>
+              )}
               <li>
-                <a href="tel:8132256515" rel="noopener noreferrer" aria-label="Call us">
-                  <FaPhone className="icon" />
-                  <span>(813) 225-6515</span>
-                </a>
-              </li>
-              <div className="header-line"></div>
-              <li>
-                <button onClick={handleLoginLogout} className="login-logout-btn">
-                  {isLoggedIn ? (
+                <button
+                  onClick={handleLoginLogout}
+                  className="login-logout-btn"
+                >
+                  {user ? (
                     <>
                       <FaSignOutAlt className="icon" />
                       <span>Logout</span>
@@ -103,7 +125,6 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
                   ) : (
                     <>
                       <FaSignInAlt className="icon" />
-                      {/* <span>Admin</span> */}
                     </>
                   )}
                 </button>
@@ -113,7 +134,11 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
         )}
       </div>
       {isMobile && isMenuOpen && (
-        <nav id="mobile-menu" className="mobile-nav" aria-label="Mobile Navigation">
+        <nav
+          id="mobile-menu"
+          className="mobile-nav"
+          aria-label="Mobile Navigation"
+        >
           <ul>
             <li>
               <Link to="/" onClick={toggleMenu}>
@@ -130,15 +155,36 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
                 About
               </Link>
             </li>
-            <li>
-              <a href="tel:8132256515" rel="noopener noreferrer" aria-label="Call us">
+            {!user && (
+              <>
+                <li>
+                  <a
+                    href="tel:8132256515"
+                rel="noopener noreferrer"
+                aria-label="Call us"
+              >
                 <FaPhone className="icon" />
                 <span>(813) 225-6515</span>
-              </a>
-            </li>
+                  </a>
+                </li>
+              </>
+            )}
+            {user && (
+              <li>
+                <Link to="/admin" onClick={toggleMenu}>
+                  Back to Dashboard
+                </Link>
+              </li>
+            )}
             <li>
-              <button onClick={() => { handleLoginLogout(); toggleMenu(); }} className="login-logout-btn">
-                {isLoggedIn ? (
+              <button
+                onClick={() => {
+                  handleLoginLogout();
+                  toggleMenu();
+                }}
+                className="login-logout-btn"
+              >
+                {user ? (
                   <>
                     <FaSignOutAlt className="icon" />
                     <span>Logout</span>
@@ -146,7 +192,6 @@ const Header = ({ isLoggedIn, onLogin, onLogout }) => {
                 ) : (
                   <>
                     <FaSignInAlt className="icon" />
-                    <span>Admin</span>
                   </>
                 )}
               </button>

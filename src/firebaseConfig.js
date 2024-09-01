@@ -2,21 +2,25 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDF3IZ7fge2iCpXYIEFaKGtdopXuoe3TUw",
-  authDomain: "quality-hi-tech.firebaseapp.com",
-  projectId: "quality-hi-tech",
-  storageBucket: "quality-hi-tech.appspot.com",
-  messagingSenderId: "461156867744",
-  appId: "1:461156867744:web:82acd30f465c912654b3c5",
-  measurementId: "G-B2EXS4FS59"
+  apiKey: "AIzaSyB4RhYpGlsEzHXPo7klJTXUSCSBHgtgb_I",
+  authDomain: "quality-hi-tech-74e77.firebaseapp.com",
+  databaseURL: "https://quality-hi-tech-74e77-default-rtdb.firebaseio.com",
+  projectId: "quality-hi-tech-74e77",
+  storageBucket: "quality-hi-tech-74e77.appspot.com",
+  messagingSenderId: "690281832227",
+  appId: "1:690281832227:web:0898a5bb93ed8124deb696",
+  measurementId: "G-S8WJHLGC2V",
 };
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
+const functions = getFunctions(app);
 
-export { storage, auth, analytics };
+export { storage, auth, analytics, db, functions };
