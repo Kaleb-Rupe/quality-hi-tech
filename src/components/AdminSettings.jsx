@@ -3,14 +3,13 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { confirmDialog } from "primereact/confirmdialog";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Dialog } from "primereact/dialog";
 import { Divider } from "primereact/divider";
 import {
   getAuth,
-  createUserWithEmailAndPassword,
   sendEmailVerification,
   onAuthStateChanged,
 } from "firebase/auth";
@@ -28,41 +27,61 @@ const AdminSettings = () => {
   const functions = getFunctions();
   const auth = getAuth();
 
- 
-
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      console.log("Calling listUsers function");
-      const listUsers = httpsCallable(functions, "listUsers");
-      const result = await listUsers();
-      console.log("listUsers result:", result.data);
+      const cachedUsers = localStorage.getItem('adminUsers');
+      const cachedTimestamp = localStorage.getItem('adminUsersTimestamp');
+      
+      if (cachedUsers && cachedTimestamp) {
+        const now = new Date().getTime();
+        const cacheAge = now - parseInt(cachedTimestamp);
+        
+        // Use cached data if it's less than 1 hour old
+        if (cacheAge < 3600000) {
+          setUsers(JSON.parse(cachedUsers));
+          setLoading(false);
+          return;
+        }
+      }
+
+      console.log("Calling listAdminUsers function");
+      const listAdminUsers = httpsCallable(functions, "listAdminUsers");
+      const result = await listAdminUsers();
+      console.log("listAdminUsers result:", result.data);
       setUsers(result.data);
+      
+      // Cache the fetched users
+      localStorage.setItem('adminUsers', JSON.stringify(result.data));
+      localStorage.setItem('adminUsersTimestamp', new Date().getTime().toString());
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching admin users:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: `Failed to fetch users: ${error.message}`,
+        detail: `Failed to fetch admin users: ${error.message}`,
       });
     } finally {
       setLoading(false);
     }
   }, [functions]);
 
-   useEffect(() => {
-     const unsubscribe = onAuthStateChanged(auth, (user) => {
-       setCurrentUser(user);
-       setAuthChecked(true);
-       if (user) {
-         fetchUsers();
-       } else {
-         setLoading(false);
-       }
-     });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setAuthChecked(true);
+      if (user) {
+        fetchUsers();
+      } else {
+        setLoading(false);
+        // Clear cache when user logs out
+        localStorage.removeItem('adminUsers');
+        localStorage.removeItem('adminUsersTimestamp');
+      }
+    });
 
-     return () => unsubscribe();
-   }, [auth, fetchUsers]);
+    return () => unsubscribe();
+  }, [auth, fetchUsers]);
 
   const validatePassword = (password) => {
     const errors = [];
@@ -133,29 +152,22 @@ const AdminSettings = () => {
     }
 
     try {
-      // Create the user
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        editingUser.email,
-        editingUser.password
-      );
-      const user = userCredential.user;
-
-      // Send verification email
-      await sendEmailVerification(user);
-
-      // Set admin claim using Cloud Function
-      const setAdminClaim = httpsCallable(functions, "setAdminClaim");
-      await setAdminClaim({ uid: user.uid });
+      const createNewAdmin = httpsCallable(functions, "createNewAdmin");
+      const result = await createNewAdmin({
+        email: editingUser.email,
+        password: editingUser.password,
+        displayName: `${editingUser.firstName} ${editingUser.lastName}`.trim(),
+      });
 
       toast.current.show({
         severity: "success",
         summary: "Success",
-        detail:
-          "Admin user created successfully. A verification email has been sent.",
+        detail: `Admin user created successfully with UID: ${result.data.uid}. A verification email has been sent automatically.`,
         life: 5000,
       });
       setShowDialog(false);
+      localStorage.removeItem('adminUsers');
+      localStorage.removeItem('adminUsersTimestamp');
       fetchUsers(); // Refresh the user list
     } catch (error) {
       console.error("Error creating admin user:", error);
@@ -169,66 +181,84 @@ const AdminSettings = () => {
   };
 
   const resendVerificationEmail = async (user) => {
-    if (!currentUser) {
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "You must be logged in to perform this action.",
-        life: 5000,
-      });
+    if (user.emailVerified) {
       return;
     }
 
+    setLoading(true);
     try {
-      if (currentUser.email === user.email) {
-        await sendEmailVerification(currentUser);
-        toast.current.show({
-          severity: "success",
-          summary: "Success",
-          detail: "Verification email sent. Please check your email.",
-          life: 5000,
-        });
-      } else {
-        throw new Error("Cannot send verification email for a different user.");
-      }
+      await sendEmailVerification(user);
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Verification email sent. Please check your inbox.",
+      });
     } catch (error) {
       console.error("Error sending verification email:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: `Failed to send verification email: ${error.message}`,
+        detail: "Failed to send verification email: " + error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveEditedUser = async () => {
+    try {
+      const editAdminUser = httpsCallable(functions, "editAdminUser");
+      await editAdminUser({
+        uid: editingUser.uid,
+        displayName: `${editingUser.firstName} ${editingUser.lastName}`.trim(),
+        email: editingUser.email,
+      });
+
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Admin user updated successfully.",
+        life: 5000,
+      });
+      setShowDialog(false);
+      localStorage.removeItem('adminUsers');
+      localStorage.removeItem('adminUsersTimestamp');
+      fetchUsers(); // Refresh the user list
+    } catch (error) {
+      console.error("Error editing admin user:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: `Failed to edit admin user: ${error.message}`,
         life: 5000,
       });
     }
   };
 
-  const saveEditedUser = async () => {
-    // Implementation for editing existing user
-    // This would typically involve updating the user's display name and email
-    // You might need to create a new Cloud Function to handle this
-  };
-
-  const removeUser = (user) => {
+  const deleteAdmin = (user) => {
     confirmDialog({
-      message: `Are you sure you want to remove ${user.email}?`,
-      header: "Confirm Removal",
+      message: `Are you sure you want to delete the admin user ${user.email}?`,
+      header: "Confirm Deletion",
       icon: "pi pi-exclamation-triangle",
       accept: async () => {
         try {
-          const removeUserFunction = httpsCallable(functions, "removeUser");
-          const result = await removeUserFunction({ uid: user.uid });
+          const deleteAdminFunction = httpsCallable(functions, "deleteAdmin");
+          await deleteAdminFunction({ uid: user.uid });
           setUsers(users.filter((u) => u.uid !== user.uid));
           toast.current.show({
             severity: "success",
             summary: "Success",
-            detail: result.data.message,
+            detail: "Admin user deleted successfully.",
           });
+          localStorage.removeItem('adminUsers');
+          localStorage.removeItem('adminUsersTimestamp');
+          fetchUsers(); // Refresh the user list
         } catch (error) {
-          console.error("Error removing user:", error);
+          console.error("Error deleting admin user:", error);
           toast.current.show({
             severity: "error",
             summary: "Error",
-            detail: `Failed to remove user: ${error.message}`,
+            detail: `Failed to delete admin user: ${error.message}`,
           });
         }
       },
@@ -254,8 +284,8 @@ const AdminSettings = () => {
         <Button
           icon="pi pi-trash"
           className="p-button-rounded p-button-danger"
-          onClick={() => removeUser(rowData)}
-          tooltip="Remove User"
+          onClick={() => deleteAdmin(rowData)}
+          tooltip="Delete Admin User"
         />
       </>
     );
@@ -294,6 +324,12 @@ const AdminSettings = () => {
     </>
   );
 
+  const handleRefreshUsers = () => {
+    localStorage.removeItem('adminUsers');
+    localStorage.removeItem('adminUsersTimestamp');
+    fetchUsers();
+  };
+
   if (!authChecked) {
     return <div>Checking authentication...</div>;
   }
@@ -305,13 +341,12 @@ const AdminSettings = () => {
   return (
     <div className="admin-settings">
       <Toast ref={toast} />
-      <ConfirmDialog />
       <h2>User Management</h2>
       <div className="p-d-flex p-jc-between p-mb-3">
         <Button
           label="Refresh Users"
           icon="pi pi-refresh"
-          onClick={fetchUsers}
+          onClick={handleRefreshUsers}
           className="p-button-secondary"
         />
         <Button

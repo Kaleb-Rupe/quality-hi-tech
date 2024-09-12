@@ -34,6 +34,7 @@ firebase-debug.*.log*
 
 # Firebase cache
 .firebase/
+.functions/scripts
 
 # Firebase config
 

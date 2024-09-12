@@ -9,13 +9,13 @@ admin.initializeApp({
 const uid = "MiorIpNyBNP11zPlgP64t1HN8yg1";
 
 admin
-    .auth()
-    .setCustomUserClaims(uid, {admin: true})
-    .then(() => {
-      console.log("Admin claim set successfully");
-      process.exit();
-    })
-    .catch((error) => {
-      console.error("Error setting admin claim:", error);
-      process.exit(1);
-    });
+  .auth()
+  .setCustomUserClaims(uid, { admin: true })
+  .then(() => {
+    console.log("Admin claim set successfully");
+    process.exit();
+  })
+  .catch(error => {
+    console.error("Error setting admin claim:", error);
+    process.exit(1);
+  });

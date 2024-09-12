@@ -4,6 +4,8 @@ import { useAuth } from "../components/AuthContext";
 import Logo from "../assets/logos/quality-hi-tech-main.svg";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { FaPhone, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { Toast } from "primereact/toast";
 import "../css/header.css";
 
 const Header = () => {
@@ -13,13 +15,40 @@ const Header = () => {
   const headerRef = useRef(null);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const toast = React.useRef(null);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const handleLoginLogout = async () => {
-    if (user) {
+  const handleLogout = async () => {
+    try {
       await logout();
+      toast.current.show({
+        severity: "success",
+        summary: "Logged Out",
+        detail: "You have been successfully logged out.",
+      });
       navigate("/admin");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Logout Error",
+        detail: "An error occurred during logout. Please try again.",
+      });
+    }
+  };
+
+  const handleLogoutConfirmation = () => {
+    if (user) {
+      confirmDialog({
+        message: "Are you sure you want to log out?",
+        header: "Logout Confirmation",
+        icon: "pi pi-exclamation-triangle",
+        accept: handleLogout,
+        reject: () => {
+          // Do nothing if the user cancels
+        },
+      });
     } else {
       navigate("/admin");
     }
@@ -40,6 +69,8 @@ const Header = () => {
 
   return (
     <header className="site-header" ref={headerRef}>
+      <Toast ref={toast} />
+      <ConfirmDialog />
       <div className="header-content">
         <Link
           to="/"
@@ -113,21 +144,26 @@ const Header = () => {
                 </li>
               )}
               <li>
-                <button
-                  onClick={handleLoginLogout}
-                  className="login-logout-btn"
-                >
-                  {user ? (
-                    <>
+                {user ? (
+                  <>
+                    <button
+                      onClick={handleLogoutConfirmation}
+                      className="login-logout-btn"
+                    >
                       <FaSignOutAlt className="icon" />
                       <span>Logout</span>
-                    </>
-                  ) : (
-                    <>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleLogoutConfirmation}
+                      className="login-logout-btn"
+                    >
                       <FaSignInAlt className="icon" />
-                    </>
-                  )}
-                </button>
+                    </button>
+                  </>
+                )}
               </li>
             </ul>
           </nav>
@@ -160,11 +196,11 @@ const Header = () => {
                 <li>
                   <a
                     href="tel:8132256515"
-                rel="noopener noreferrer"
-                aria-label="Call us"
-              >
-                <FaPhone className="icon" />
-                <span>(813) 225-6515</span>
+                    rel="noopener noreferrer"
+                    aria-label="Call us"
+                  >
+                    <FaPhone className="icon" />
+                    <span>(813) 225-6515</span>
                   </a>
                 </li>
               </>
@@ -177,24 +213,32 @@ const Header = () => {
               </li>
             )}
             <li>
-              <button
-                onClick={() => {
-                  handleLoginLogout();
-                  toggleMenu();
-                }}
-                className="login-logout-btn"
-              >
-                {user ? (
-                  <>
+              {user ? (
+                <>
+                  <button
+                    onClick={() => {
+                      handleLogoutConfirmation();
+                      toggleMenu();
+                    }}
+                    className="login-logout-btn"
+                  >
                     <FaSignOutAlt className="icon" />
                     <span>Logout</span>
-                  </>
-                ) : (
-                  <>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      handleLogoutConfirmation();
+                      toggleMenu();
+                    }}
+                    className="login-logout-btn"
+                  >
                     <FaSignInAlt className="icon" />
-                  </>
-                )}
-              </button>
+                  </button>
+                </>
+              )}
             </li>
           </ul>
         </nav>

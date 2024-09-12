@@ -1,0 +1,71 @@
+.invoice-button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the Dropdown component */
+.invoice-button-container .p-dropdown {
+    min-width: 200px;
+}
+
+/* Style the Button component */
+.invoice-button-container .p-button {
+    margin-left: 1rem;
+}
+
+/* Add some responsive styling */
+@media (max-width: 768px) {
+    .invoice-button-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .invoice-button-container .p-dropdown,
+    .invoice-button-container .p-button {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+}
+
+.invoice-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.invoice-status {
+    color: #f8f9fa;
+    font-size: 1rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 50px;
+}
+
+.invoice-actions .p-button {
+    padding: 0.5rem;
+}
+
+.invoice-status-draft {
+    background-color: #9d9d9d;
+}
+
+.invoice-status-open {
+    background-color: #2196F3;
+}
+
+.invoice-status-paid {
+    background-color: #4CAF50;
+}
+
+.invoice-status-uncollectible {
+    background-color: #F44336;
+}
+
+.invoice-status-void {
+    background-color: #7a32bd;
+}

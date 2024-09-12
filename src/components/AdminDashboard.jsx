@@ -5,6 +5,7 @@ import AdminSettings from "./AdminSettings";
 import { useAuth } from "./AuthContext";
 import { Navigate } from "react-router-dom";
 import InvoiceForm from "./InvoiceForm";
+import InvoiceList from "./InvoiceList";
 import { Toast } from "primereact/toast";
 import "../css/admin.css";
 
@@ -37,6 +38,7 @@ const AdminPage = () => {
           </TabPanel>
         </TabView>
       </div>
+      {activeIndex === 2 ? <InvoiceList /> : null}
     </div>
   );
 };

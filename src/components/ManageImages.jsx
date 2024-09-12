@@ -6,7 +6,7 @@ import { Button } from "primereact/button";
 import { Tooltip } from "primereact/tooltip";
 import { Tag } from "primereact/tag";
 import { Paginator } from "primereact/paginator";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { confirmDialog } from "primereact/confirmdialog";
 import { storage, db } from "../firebaseConfig";
 import {
   ref,
@@ -275,7 +275,6 @@ const AdminDashboard = () => {
     <div>
       <h2>Image Management</h2>
       <Toast ref={toast}></Toast>
-      <ConfirmDialog />
 
       <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
       <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
