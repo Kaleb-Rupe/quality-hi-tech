@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TabView, TabPanel } from "primereact/tabview";
 import ManageImages from "./ManageImages";
 import AdminSettings from "./AdminSettings";
@@ -10,9 +10,21 @@ import { Toast } from "primereact/toast";
 import "../css/admin.css";
 
 const AdminPage = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(() => {
+    const savedIndex = localStorage.getItem("adminActiveTabIndex");
+    return savedIndex !== null ? parseInt(savedIndex, 10) : 0;
+  });;
   const toast = React.useRef(null);
   const { user } = useAuth();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  useEffect(() => {
+    localStorage.setItem("adminActiveTabIndex", activeIndex.toString());
+  }, [activeIndex]);
+
+  const triggerRefresh = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
 
   if (!user || !user.isAdmin) {
     return <Navigate to="/admin" replace />;
@@ -34,11 +46,13 @@ const AdminPage = () => {
             <AdminSettings />
           </TabPanel>
           <TabPanel header="Invoices">
-            <InvoiceForm />
+            <InvoiceForm onInvoiceCreated={triggerRefresh} />
           </TabPanel>
         </TabView>
       </div>
-      {activeIndex === 2 ? <InvoiceList /> : null}
+      {activeIndex === 2 ? (
+        <InvoiceList refreshTrigger={refreshTrigger} />
+      ) : null}
     </div>
   );
 };

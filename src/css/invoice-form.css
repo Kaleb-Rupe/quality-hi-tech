@@ -1,0 +1,61 @@
+.invoice-form {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.invoice-form .p-field {
+  margin-bottom: 1.5rem;
+}
+
+.invoice-form .p-grid > div {
+  margin-bottom: 1rem;
+}
+
+.invoice-form .p-card {
+  margin-bottom: 1.5rem;
+}
+
+.invoice-form .p-fieldset {
+  margin-bottom: 1.5rem;
+}
+
+.invoice-form .p-float-label {
+  margin-bottom: 1rem;
+}
+
+.invoice-form .p-button-lg {
+  margin-top: 1.5rem;
+}
+
+.invoice-form .p-grid.p-formgrid {
+  margin-bottom: 1rem;
+}
+
+.invoice-form .p-d-flex.p-jc-between {
+  margin-top: 0.5rem;
+}
+
+@media screen and (max-width: 768px) {
+  .invoice-form .p-card {
+    padding: 1rem;
+  }
+
+  .invoice-form .p-fieldset {
+    padding: 0.5rem;
+  }
+
+  .invoice-form .p-float-label {
+    margin-bottom: 1rem;
+  }
+
+  .invoice-form .p-button-lg {
+    width: 100%;
+  }
+}
+
+.delete-button {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}

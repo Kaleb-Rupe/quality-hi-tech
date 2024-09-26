@@ -48,14 +48,21 @@ exports.createDraftInvoice = functions.https.onCall(async (data, context) => {
     });
 
     // Add invoice items to the invoice
+    const invoiceItems = [];
     for (const item of items) {
-      await stripe.invoiceItems.create({
+      const invoiceItem = await stripe.invoiceItems.create({
         customer: customer.id,
         invoice: invoice.id,
         description: item.description,
         quantity: item.quantity,
         unit_amount: item.unit_amount,
         currency: "usd",
+      });
+      invoiceItems.push({
+        id: invoiceItem.id,
+        description: invoiceItem.description,
+        quantity: invoiceItem.quantity,
+        amount: invoiceItem.amount,
       });
     }
 
@@ -65,6 +72,22 @@ exports.createDraftInvoice = functions.https.onCall(async (data, context) => {
         payment_method_types: ["card", "cashapp", "us_bank_account"],
       },
     });
+
+    // Store the invoice data in Firestore
+    const db = admin.firestore();
+    await db
+      .collection("invoices")
+      .doc(invoice.id)
+      .set({
+        id: invoice.id,
+        customerName: customerName,
+        customerEmail: customerEmail,
+        amount: invoice.amount_due,
+        status: invoice.status,
+        dueDate: invoice.due_date,
+        created: admin.firestore.Timestamp.fromMillis(invoice.created * 1000),
+        invoiceItems: invoiceItems,
+      });
 
     return { success: true, invoiceId: invoice.id };
   } catch (error) {
@@ -148,18 +171,23 @@ exports.syncInvoices = functions.pubsub
 
       // Store new invoices in Firestore
       const batch = db.batch();
-      newInvoices.data.forEach(invoice => {
+      for (const invoice of newInvoices.data) {
+        const invoiceItems = await fetchInvoiceItems(invoice.id);
         const invoiceData = {
           id: invoice.id,
           customerName: invoice.customer.name,
           customerEmail: invoice.customer.email,
           amount: invoice.amount_due,
           status: invoice.status,
-          dueDate: invoice.due_date,
-          created: invoice.created,
+          dueDate: invoice.due_date ? new Date(invoice.due_date * 1000) : null,
+          created: invoice.created
+            ? new Date(invoice.created * 1000)
+            : new Date(),
+          updatedAt: new Date(),
+          invoiceItems: invoiceItems,
         };
         batch.set(invoicesRef.doc(invoice.id), invoiceData);
-      });
+      }
       await batch.commit();
 
       console.log(`Synced ${newInvoices.data.length} new invoices`);
@@ -169,6 +197,19 @@ exports.syncInvoices = functions.pubsub
       return null;
     }
   });
+
+// Add a new function to fetch invoice items
+async function fetchInvoiceItems(invoiceId) {
+  const invoiceItems = await stripe.invoiceItems.list({
+    invoice: invoiceId,
+  });
+  return invoiceItems.data.map(item => ({
+    id: item.id,
+    description: item.description,
+    unit_amount: item.unit_amount,
+    quantity: item.quantity,
+  }));
+}
 
 exports.handleStripeWebhook = functions.https.onRequest(async (req, res) => {
   const stripe = require("stripe")(functions.config().stripe.secret_key);
@@ -184,17 +225,29 @@ exports.handleStripeWebhook = functions.https.onRequest(async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  if (event.type === "invoice.created" || event.type === "invoice.updated") {
-    const invoice = event.data.object;
-    await updateInvoiceInFirestore(invoice);
+  switch (event.type) {
+  case "invoice.created":
+  case "invoice.updated":
+  case "invoice.deleted":
+  case "invoice.finalized":
+  case "invoice.marked_uncollectible":
+  case "invoice.paid":
+  case "invoice.voided":
+    await updateInvoiceInFirestore(event.data.object);
+    break;
+  default:
+    console.log(`Unhandled event type ${event.type}`);
   }
 
   res.json({ received: true });
 });
 
+// Update the updateInvoiceInFirestore function
 async function updateInvoiceInFirestore(invoice) {
   const db = admin.firestore();
   const invoiceRef = db.collection("invoices").doc(invoice.id);
+
+  const invoiceItems = await fetchInvoiceItems(invoice.id);
 
   await invoiceRef.set(
     {
@@ -210,6 +263,7 @@ async function updateInvoiceInFirestore(invoice) {
         ? admin.firestore.Timestamp.fromDate(new Date(invoice.created * 1000))
         : admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      invoiceItems: invoiceItems,
     },
     { merge: true },
   );
@@ -235,7 +289,8 @@ exports.manualSyncInvoices = functions.https.onCall(async (data, context) => {
 
     // Store all invoices in Firestore
     const batch = db.batch();
-    allInvoices.data.forEach(invoice => {
+    for (const invoice of allInvoices.data) {
+      const invoiceItems = await fetchInvoiceItems(invoice.id);
       const invoiceData = {
         id: invoice.id,
         customerName: invoice.customer?.name || "Unknown",
@@ -251,9 +306,10 @@ exports.manualSyncInvoices = functions.https.onCall(async (data, context) => {
           ? admin.firestore.Timestamp.fromDate(new Date(invoice.created * 1000))
           : admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        invoiceItems: invoiceItems,
       };
       batch.set(invoicesRef.doc(invoice.id), invoiceData, { merge: true });
-    });
+    }
     await batch.commit();
 
     console.log(`Synced ${allInvoices.data.length} invoices`);
@@ -269,7 +325,74 @@ exports.manualSyncInvoices = functions.https.onCall(async (data, context) => {
 
 exports.finalizeAndSendInvoice = functions.https.onCall(
   async (data, context) => {
-    // Implement logic to finalize and send invoice
+    if (!context.auth || !context.auth.token.admin) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "Must be an admin to finalize and send invoices.",
+      );
+    }
+
+    const { invoiceId } = data;
+
+    try {
+      // Finalize the invoice
+      const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoiceId);
+
+      // Check if the invoice was successfully finalized
+      if (finalizedInvoice.status !== "open") {
+        throw new functions.https.HttpsError(
+          "failed-precondition",
+          `Invoice could not be finalized. Current status: ${finalizedInvoice.status}`,
+        );
+      }
+
+      // Send the invoice
+      const sentInvoice = await stripe.invoices.sendInvoice(invoiceId);
+
+      // Update the invoice status in Firestore
+      const db = admin.firestore();
+      const updateData = {
+        status: sentInvoice.status,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      };
+
+      // Safely add finalizedAt if it exists
+      if (
+        finalizedInvoice.status_transitions &&
+        finalizedInvoice.status_transitions.finalized_at
+      ) {
+        updateData.finalizedAt = admin.firestore.Timestamp.fromMillis(
+          finalizedInvoice.status_transitions.finalized_at * 1000,
+        );
+      }
+
+      // Safely add sentAt if it exists
+      if (
+        sentInvoice.status_transitions &&
+        sentInvoice.status_transitions.sent_at
+      ) {
+        updateData.sentAt = admin.firestore.Timestamp.fromMillis(
+          sentInvoice.status_transitions.sent_at * 1000,
+        );
+      }
+
+      await db.collection("invoices").doc(invoiceId).update(updateData);
+
+      return {
+        success: true,
+        message: "Invoice finalized and sent successfully",
+        invoiceStatus: sentInvoice.status,
+        finalizedAt: finalizedInvoice.status_transitions?.finalized_at || null,
+        sentAt: sentInvoice.status_transitions?.sent_at || null,
+        hostedInvoiceUrl: sentInvoice.hosted_invoice_url || null,
+      };
+    } catch (error) {
+      console.error("Error finalizing and sending invoice:", error);
+      throw new functions.https.HttpsError(
+        "internal",
+        "Error finalizing and sending invoice: " + error.message,
+      );
+    }
   },
 );
 
@@ -334,7 +457,38 @@ exports.voidInvoice = functions.https.onCall(async (data, context) => {
 
 exports.markInvoiceUncollectible = functions.https.onCall(
   async (data, context) => {
-    // Implement logic to mark invoice as uncollectible
+    if (!context.auth || !context.auth.token.admin) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "Must be an admin to mark invoices as uncollectible.",
+      );
+    }
+
+    const { invoiceId } = data;
+
+    try {
+      // Mark the invoice as uncollectible in Stripe
+      const invoice = await stripe.invoices.markUncollectible(invoiceId);
+
+      // Update the invoice status in Firestore
+      const db = admin.firestore();
+      await db.collection("invoices").doc(invoiceId).update({
+        status: invoice.status,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      return {
+        success: true,
+        message: "Invoice marked as uncollectible successfully",
+        invoiceStatus: invoice.status,
+      };
+    } catch (error) {
+      console.error("Error marking invoice as uncollectible:", error);
+      throw new functions.https.HttpsError(
+        "internal",
+        "Error marking invoice as uncollectible: " + error.message,
+      );
+    }
   },
 );
 
@@ -374,7 +528,7 @@ exports.getInvoicePdf = functions.https.onCall(async (data, context) => {
         metadata: {
           contentType: "application/pdf",
           invoiceId: invoiceId,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          createdAt: admin.firestore.Timestamp.now().toDate().toISOString(),
         },
       });
     }
@@ -434,6 +588,22 @@ exports.getInvoicePaymentLink = functions.https.onCall(
     const { invoiceId } = data;
 
     try {
+      // Check if the payment link is already cached in Firestore
+      const db = admin.firestore();
+      const invoiceRef = db.collection("invoices").doc(invoiceId);
+      const invoiceDoc = await invoiceRef.get();
+
+      if (invoiceDoc.exists) {
+        const invoiceData = invoiceDoc.data();
+        const cachedPaymentLink = invoiceData.paymentLink;
+        const cachedExpiry = invoiceData.paymentLinkExpiry;
+
+        if (cachedPaymentLink && cachedExpiry && cachedExpiry > Date.now()) {
+          return { success: true, paymentLink: cachedPaymentLink };
+        }
+      }
+
+      // If the payment link is not cached or expired, fetch it from Stripe
       const invoice = await stripe.invoices.retrieve(invoiceId);
 
       if (invoice.status !== "open") {
@@ -462,10 +632,11 @@ exports.getInvoicePaymentLink = functions.https.onCall(
         }
       }
 
-      // Update Firestore with the payment link
-      const db = admin.firestore();
-      await db.collection("invoices").doc(invoiceId).update({
+      // Update Firestore with the payment link and expiry
+      const expiry = Date.now() + 24 * 60 * 60 * 1000; // 24 hours from now
+      await invoiceRef.update({
         paymentLink: paymentLink,
+        paymentLinkExpiry: expiry,
         status: "open",
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
@@ -480,3 +651,142 @@ exports.getInvoicePaymentLink = functions.https.onCall(
     }
   },
 );
+
+exports.updateInvoiceAndItems = functions.https.onCall(
+  async (data, context) => {
+    if (!context.auth || !context.auth.token.admin) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "Must be an admin to update invoices.",
+      );
+    }
+
+    const { invoiceId, customerData, invoiceItemUpdates } = data;
+
+    try {
+      // Retrieve the invoice from Stripe
+      const invoice = await stripe.invoices.retrieve(invoiceId);
+
+      // Check if the invoice is in a state that allows modifications
+      if (invoice.status !== "draft") {
+        throw new Error(
+          `Invoice is not editable. Current status: ${invoice.status}`,
+        );
+      }
+
+      // Update customer information if provided
+      if (customerData) {
+        await stripe.customers.update(invoice.customer, {
+          name: customerData.name,
+          email: customerData.email,
+        });
+      }
+
+      // Update invoice items
+      for (const itemUpdate of invoiceItemUpdates) {
+        if (itemUpdate.id) {
+          if (itemUpdate.deleted) {
+            await stripe.invoiceItems.del(itemUpdate.id);
+          } else {
+            await stripe.invoiceItems.update(itemUpdate.id, {
+              description: itemUpdate.description,
+              unit_amount: Math.round(itemUpdate.unit_amount * 100), // Convert to cents
+              quantity: itemUpdate.quantity,
+            });
+          }
+        } else {
+          await stripe.invoiceItems.create({
+            customer: invoice.customer,
+            invoice: invoiceId,
+            description: itemUpdate.description,
+            unit_amount: Math.round(itemUpdate.unit_amount * 100), // Convert to cents
+            quantity: itemUpdate.quantity,
+            currency: invoice.currency,
+          });
+        }
+      }
+
+      // Recalculate the invoice totals
+      const updatedInvoice = await stripe.invoices.retrieve(invoiceId);
+
+      // Fetch updated invoice items
+      const updatedInvoiceItems = await fetchInvoiceItems(invoiceId);
+
+      // Update Firestore
+      const db = admin.firestore();
+      await db.collection("invoices").doc(invoiceId).update({
+        customerName: customerData.name,
+        customerEmail: customerData.email,
+        amount: updatedInvoice.total,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        invoiceItems: updatedInvoiceItems,
+      });
+
+      return {
+        success: true,
+        message: "Invoice and items updated successfully",
+        updatedAmount: updatedInvoice.total,
+        updatedInvoiceItems: updatedInvoiceItems,
+      };
+    } catch (error) {
+      console.error("Error updating invoice and items:", error);
+      throw new functions.https.HttpsError(
+        "internal",
+        "Error updating invoice and items: " + error.message,
+      );
+    }
+  },
+);
+
+exports.deleteInvoiceItem = functions.https.onCall(async (data, context) => {
+  if (!context.auth || !context.auth.token.admin) {
+    throw new functions.https.HttpsError(
+      "permission-denied",
+      "Must be an admin to delete invoice items.",
+    );
+  }
+
+  const { invoiceId, itemId } = data;
+
+  try {
+    // Retrieve the invoice from Stripe
+    const invoice = await stripe.invoices.retrieve(invoiceId);
+
+    // Check if the invoice is in a state that allows modifications
+    if (invoice.status !== "draft") {
+      throw new Error(
+        `Invoice is not editable. Current status: ${invoice.status}`,
+      );
+    }
+
+    // Delete the invoice item
+    await stripe.invoiceItems.del(itemId);
+
+    // Recalculate the invoice totals
+    const updatedInvoice = await stripe.invoices.retrieve(invoiceId);
+
+    // Fetch updated invoice items
+    const updatedInvoiceItems = await fetchInvoiceItems(invoiceId);
+
+    // Update Firestore
+    const db = admin.firestore();
+    await db.collection("invoices").doc(invoiceId).update({
+      amount: updatedInvoice.total,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      invoiceItems: updatedInvoiceItems,
+    });
+
+    return {
+      success: true,
+      message: "Invoice item deleted successfully",
+      updatedAmount: updatedInvoice.total,
+      updatedInvoiceItems: updatedInvoiceItems,
+    };
+  } catch (error) {
+    console.error("Error deleting invoice item:", error);
+    throw new functions.https.HttpsError(
+      "internal",
+      "Error deleting invoice item: " + error.message,
+    );
+  }
+});

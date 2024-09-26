@@ -66,15 +66,15 @@ const Form = () => {
   }, [isMobile, reset]);
 
   useEffect(() => {
-    emailjs.init("OZ-0dAUcSOR-fmnmp");
+    emailjs.init(process.env.REACT_APP_EMAILJS_INIT);
   }, []);
 
   const sendEmail = useCallback((data) => {
-    const serviceID = "service_rv66zp1";
-    const templateID = "template_o0s4yot";
+    const serviceID = process.env.REACT_APP_EMAILJS_SERVICEID;
+    const templateID = process.env.REACT_APP_EMAILJS_TEMPLATEID;
 
     emailjs
-      .send(serviceID, templateID, data, "OZ-0dAUcSOR-fmnmp")
+      .send(serviceID, templateID, data, process.env.REACT_APP_EMAILJS_INIT)
       .then((response) => {
         console.log("Email sent successfully!", response.status, response.text);
         setSubmissionStatus("success");

@@ -17,6 +17,8 @@ const Header = () => {
   const { user, logout } = useAuth();
   const toast = React.useRef(null);
 
+  const phone = process.env.REACT_APP_CONTACT_PHONE;
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleLogout = async () => {
@@ -125,12 +127,12 @@ const Header = () => {
                 <>
                   <li>
                     <a
-                      href="tel:8132256515"
+                      href={`tel:${phone}`}
                       rel="noopener noreferrer"
                       aria-label="Call us"
                     >
                       <FaPhone className="icon" />
-                      <span>(813) 225-6515</span>
+                      <span>Call For A Quote</span>
                     </a>
                   </li>
                   <div className="header-line"></div>
@@ -195,12 +197,12 @@ const Header = () => {
               <>
                 <li>
                   <a
-                    href="tel:8132256515"
+                    href={`tel:${phone}`}
                     rel="noopener noreferrer"
                     aria-label="Call us"
                   >
                     <FaPhone className="icon" />
-                    <span>(813) 225-6515</span>
+                    <span>Call For A Quote</span>
                   </a>
                 </li>
               </>

@@ -1,8 +1,10 @@
-import React, { lazy, Suspense } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import "../../css/footer-nav-socials.css";
 
-const LazyFacebookIcon = lazy(() => import("./FacebookIcon"));
+// This must be put back into place if you are using the socials { lazy, Suspense }
+
+// const LazyFacebookIcon = lazy(() => import("./FacebookIcon"));
 
 const Nav = () => {
   const onClick = () => window.scrollTo(0, 0);
@@ -29,7 +31,7 @@ const Nav = () => {
         </ul>
       </nav>
 
-      <p className="social-title">Check Us Out On Facebook!</p>
+      {/* <p className="social-title">Check Us Out On Facebook!</p>
       <div className="nav-social">
         <a
           href="https://www.facebook.com/"
@@ -41,7 +43,7 @@ const Nav = () => {
             <LazyFacebookIcon />
           </Suspense>
         </a>
-      </div>
+      </div> */}
 
       <div className="hours-of-operation">
         <h3>Hours of Operation:</h3>

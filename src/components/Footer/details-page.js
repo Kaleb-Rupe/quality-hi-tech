@@ -25,7 +25,9 @@ const useMediaQuery = (query) => {
 const Details = () => {
   const onClick = () => window.scrollTo(0, 0);
   const isMobile = useMediaQuery("(max-width: 1080px)");
-  const email = "qhtm58@yahoo.com";
+  const email = process.env.REACT_APP_CONTACT_EMAIL;
+  const phone = process.env.REACT_APP_CONTACT_PHONE;
+
   const subject = encodeURIComponent("Inquiry here!");
   const body = encodeURIComponent(
     "Put your inquiries or questions here. We will get back to you asap."
@@ -107,9 +109,9 @@ const Details = () => {
         </a>
 
         <h3>Phone:</h3>
-        <a href="tel:8132256515" rel="noopener noreferrer" aria-label="Call us">
+        <a href={`tel:${phone}`} rel="noopener noreferrer" aria-label="Call us">
           <FaPhone className="icon" />
-          <span>(813) 225-6515</span>
+          <span>Call For A Quote</span>
         </a>
       </div>
     </section>

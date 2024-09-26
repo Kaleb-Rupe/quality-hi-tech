@@ -8,7 +8,7 @@ import { Toast } from "primereact/toast";
 import { useAuth } from "./AuthContext";
 import "../css/admin.css";
 
-const AdminLogin = ({ onLogin }) => {
+const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

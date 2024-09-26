@@ -24,3 +24,7 @@ exports.voidInvoice = invoiceManagementFunctions.voidInvoice;
 exports.getInvoicePdf = invoiceManagementFunctions.getInvoicePdf;
 exports.cleanupOldPdfs = invoiceManagementFunctions.cleanupOldPdfs;
 exports.getInvoicePaymentLink = invoiceManagementFunctions.getInvoicePaymentLink;
+exports.finalizeAndSendInvoice = invoiceManagementFunctions.finalizeAndSendInvoice;
+exports.markInvoiceUncollectible = invoiceManagementFunctions.markInvoiceUncollectible;
+exports.updateInvoiceAndItems = invoiceManagementFunctions.updateInvoiceAndItems;
+exports.deleteInvoiceItem = invoiceManagementFunctions.deleteInvoiceItem;

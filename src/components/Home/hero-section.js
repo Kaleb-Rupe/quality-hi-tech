@@ -8,6 +8,8 @@ import ContactForm from "../Footer/contact-form";
 const Hero = () => {
   const isMobile = useMediaQuery("(max-width: 880px)");
 
+  const phone = process.env.REACT_APP_CONTACT_PHONE;
+
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-content">
@@ -29,14 +31,13 @@ const Hero = () => {
             <div className="hero-contact-links">
               {isMobile ? (
                 <a
-                  href="tel:8132256515"
+                  href={`tel:${phone}`}
                   rel="noopener noreferrer"
-                  aria-label="Contact Us"
+                  aria-label="Call Us"
                 >
                   <span>
-                    Contact Us:&emsp;
                     <FaPhone className="icon" />
-                    (813) 225-6515
+                    Call For A Quote
                   </span>
                 </a>
               ) : (
