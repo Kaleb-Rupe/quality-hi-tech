@@ -1,3 +1,7 @@
 scripts/
 node_modules/
 *.local
+
+testing.js
+
+.env

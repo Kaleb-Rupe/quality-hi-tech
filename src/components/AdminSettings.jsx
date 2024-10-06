@@ -8,12 +8,15 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Dialog } from "primereact/dialog";
 import { Divider } from "primereact/divider";
+import { ProgressSpinner } from "primereact/progressspinner";
 import {
   getAuth,
-  sendEmailVerification,
+  // sendEmailVerification,
   onAuthStateChanged,
 } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import useScreenSize from '../hooks/useScreenSize';
+import { secureSet, secureGet } from '../utils/secureStorage';
 
 const AdminSettings = () => {
   const [users, setUsers] = useState([]);
@@ -26,34 +29,35 @@ const AdminSettings = () => {
   const toast = useRef(null);
   const functions = getFunctions();
   const auth = getAuth();
+  const isMobile = useScreenSize();
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const cachedUsers = localStorage.getItem('adminUsers');
-      const cachedTimestamp = localStorage.getItem('adminUsersTimestamp');
+      const cachedUsers = secureGet('adminUsers');
+      const cachedTimestamp = secureGet('adminUsersTimestamp');
+      const now = new Date().getTime();
       
-      if (cachedUsers && cachedTimestamp) {
-        const now = new Date().getTime();
-        const cacheAge = now - parseInt(cachedTimestamp);
-        
-        // Use cached data if it's less than 1 hour old
-        if (cacheAge < 3600000) {
-          setUsers(JSON.parse(cachedUsers));
-          setLoading(false);
-          return;
-        }
+      if (cachedUsers && Array.isArray(cachedUsers) && cachedTimestamp && (now - parseInt(cachedTimestamp)) < 60 * 60 * 1000) {
+        setUsers(cachedUsers);
+        setLoading(false);
+        return;
       }
 
-      console.log("Calling listAdminUsers function");
       const listAdminUsers = httpsCallable(functions, "listAdminUsers");
-      const result = await listAdminUsers();
-      console.log("listAdminUsers result:", result.data);
+      const result = await Promise.race([
+        listAdminUsers(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Function timed out')), 10000))
+      ]);
+      
+      if (!result.data || !Array.isArray(result.data)) {
+        throw new Error("Invalid response from server");
+      }
+
       setUsers(result.data);
       
-      // Cache the fetched users
-      localStorage.setItem('adminUsers', JSON.stringify(result.data));
-      localStorage.setItem('adminUsersTimestamp', new Date().getTime().toString());
+      secureSet('adminUsers', result.data);
+      secureSet('adminUsersTimestamp', now.toString());
     } catch (error) {
       console.error("Error fetching admin users:", error);
       toast.current.show({
@@ -61,10 +65,20 @@ const AdminSettings = () => {
         summary: "Error",
         detail: `Failed to fetch admin users: ${error.message}`,
       });
+      
+      const cachedUsers = secureGet('adminUsers');
+      if (cachedUsers && Array.isArray(cachedUsers)) {
+        setUsers(cachedUsers);
+        toast.current.show({
+          severity: "info",
+          summary: "Using Cached Data",
+          detail: "Displaying previously cached user data.",
+        });
+      }
     } finally {
       setLoading(false);
     }
-  }, [functions]);
+  }, [functions, toast]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -152,6 +166,7 @@ const AdminSettings = () => {
     }
 
     try {
+      setLoading(true);
       const createNewAdmin = httpsCallable(functions, "createNewAdmin");
       const result = await createNewAdmin({
         email: editingUser.email,
@@ -159,16 +174,20 @@ const AdminSettings = () => {
         displayName: `${editingUser.firstName} ${editingUser.lastName}`.trim(),
       });
 
-      toast.current.show({
-        severity: "success",
-        summary: "Success",
-        detail: `Admin user created successfully with UID: ${result.data.uid}. A verification email has been sent automatically.`,
-        life: 5000,
-      });
-      setShowDialog(false);
-      localStorage.removeItem('adminUsers');
-      localStorage.removeItem('adminUsersTimestamp');
-      fetchUsers(); // Refresh the user list
+      if (result.data && result.data.uid) {
+        toast.current.show({
+          severity: "success",
+          summary: "Success",
+          detail: `Admin user created successfully with UID: ${result.data.uid}. A verification email has been sent automatically.`,
+          life: 5000,
+        });
+        setShowDialog(false);
+        localStorage.removeItem('adminUsers');
+        localStorage.removeItem('adminUsersTimestamp');
+        fetchUsers(); // Refresh the user list
+      } else {
+        throw new Error("User creation failed or UID not returned");
+      }
     } catch (error) {
       console.error("Error creating admin user:", error);
       toast.current.show({
@@ -177,33 +196,38 @@ const AdminSettings = () => {
         detail: `Failed to create admin user: ${error.message}`,
         life: 5000,
       });
-    }
-  };
-
-  const resendVerificationEmail = async (user) => {
-    if (user.emailVerified) {
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await sendEmailVerification(user);
-      toast.current.show({
-        severity: "success",
-        summary: "Success",
-        detail: "Verification email sent. Please check your inbox.",
-      });
-    } catch (error) {
-      console.error("Error sending verification email:", error);
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to send verification email: " + error.message,
-      });
     } finally {
       setLoading(false);
     }
   };
+
+  // const resendVerificationEmail = async (userEmail) => {
+  //   setLoading(true);
+  //   try {
+  //     const auth = getAuth();
+  //     const user = auth.currentUser;
+
+  //     if (!user) {
+  //       throw new Error("No authenticated user found");
+  //     }
+
+  //     await sendEmailVerification(user);
+  //     toast.current.show({
+  //       severity: "success",
+  //       summary: "Success",
+  //       detail: "Verification email sent. Please check your inbox.",
+  //     });
+  //   } catch (error) {
+  //     console.error("Error sending verification email:", error);
+  //     toast.current.show({
+  //       severity: "error",
+  //       summary: "Error",
+  //       detail: "Failed to send verification email: " + error.message,
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const saveEditedUser = async () => {
     try {
@@ -264,7 +288,7 @@ const AdminSettings = () => {
       },
     });
   };
-
+  
   const actionBodyTemplate = (rowData) => {
     return (
       <>
@@ -272,24 +296,24 @@ const AdminSettings = () => {
           icon="pi pi-pencil"
           className="p-button-rounded p-button-success p-mr-2"
           onClick={() => handleEditUser(rowData)}
-          tooltip="Edit User"
+          tooltip={isMobile ? null : "Edit User"}
         />
-        <Button
+        {/* <Button
           icon="pi pi-envelope"
           className="p-button-rounded p-button-info p-mr-2"
-          onClick={() => resendVerificationEmail(rowData)}
-          tooltip="Resend Verification Email"
+          onClick={() => resendVerificationEmail(rowData.email)}
+          tooltip={isMobile ? null : "Resend Verification Email"}
           disabled={rowData.emailVerified}
-        />
+        /> */}
         <Button
           icon="pi pi-trash"
           className="p-button-rounded p-button-danger"
           onClick={() => deleteAdmin(rowData)}
-          tooltip="Delete Admin User"
+          tooltip={isMobile ? null : "Delete Admin User"}
         />
       </>
     );
-  };
+  }
 
   const passwordHeader = <h6>Password Strength</h6>;
   const passwordFooter = (
@@ -340,7 +364,7 @@ const AdminSettings = () => {
 
   return (
     <div className="admin-settings">
-      <Toast ref={toast} />
+      <Toast ref={toast} position="top-right" />
       <h2>User Management</h2>
       <div className="p-d-flex p-jc-between p-mb-3">
         <Button
@@ -357,20 +381,54 @@ const AdminSettings = () => {
         />
       </div>
 
-      <DataTable value={users} loading={loading} responsiveLayout="scroll">
-        <Column field="email" header="Email" />
-        <Column field="displayName" header="Name" />
-        <Column
-          field="emailVerified"
-          header="Verified"
-          body={(rowData) => (rowData.emailVerified ? "Yes" : "No")}
-        />
-        <Column
-          body={actionBodyTemplate}
-          exportable={false}
-          style={{ minWidth: "8rem" }}
-        />
-      </DataTable>
+      {isMobile ? (
+        // Mobile version
+        <div className="mobile-user-list">
+          {loading ? (
+            <div className="loading-indicator">
+              <ProgressSpinner />
+              <p>Loading admin users...</p>
+            </div>
+          ) : users.length > 0 ? (
+            users.map((user) => (
+              <div key={user.uid} className="mobile-user-item">
+                <div>{user.email}</div>
+                <div>{user.displayName}</div>
+                <div>{user.emailVerified ? "Verified" : "Not Verified"}</div>
+                <div className="mobile-user-actions">
+                  {actionBodyTemplate(user)}
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>No admin users found.</p>
+          )}
+        </div>
+      ) : (
+        // Desktop version
+        <DataTable value={users} loading={loading} responsiveLayout="scroll">
+          <Column field="email" header="Email" />
+          <Column field="displayName" header="Name" />
+          <Column
+            field="emailVerified"
+            header="Verified"
+            body={(rowData) => (rowData.emailVerified ? "Yes" : "No")}
+          />
+          {!isMobile ? (
+            <Column
+              body={actionBodyTemplate}
+              exportable={false}
+              style={{ minWidth: "8rem" }}
+            />
+          ) : (
+            <Column
+              body={actionBodyTemplate}
+              exportable={false}
+              style={{ width: "90vw" }}
+            />
+          )}
+        </DataTable>
+      )}
 
       <Dialog
         header={editingUser?.uid ? "Edit Admin User" : "Create New Admin User"}

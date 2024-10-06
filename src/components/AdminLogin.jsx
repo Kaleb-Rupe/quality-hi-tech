@@ -12,7 +12,7 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showVerificationLink, setShowVerificationLink] = useState(false);
+  // const [showVerificationLink, setShowVerificationLink] = useState(false);
   const toast = useRef(null);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -34,7 +34,7 @@ const AdminLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setShowVerificationLink(false);
+    // setShowVerificationLink(false);
 
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -45,7 +45,7 @@ const AdminLogin = () => {
       const user = userCredential.user;
 
       if (!user.emailVerified) {
-        setShowVerificationLink(true);
+        // setShowVerificationLink(true);
         toast.current.show({
           severity: "warn",
           summary: "Email not verified",
@@ -85,7 +85,7 @@ const AdminLogin = () => {
 
   return (
     <form onSubmit={handleLogin} className="admin-login">
-      <Toast ref={toast} />
+      <Toast ref={toast} position="top-right" />
       <h2 className="admin-login-title">Admin Login</h2>
       <div className="p-fluid">
         <div className="p-field">
@@ -114,11 +114,11 @@ const AdminLogin = () => {
           <Link to="/forgot-password" state={{ email }}>
             Forgot Password?
           </Link>
-          {showVerificationLink && (
+          {/* {showVerificationLink && (
             <Link to="/verify-email" state={{ email }}>
               Resend Verification Email
             </Link>
-          )}
+          )} */}
         </div>
       </div>
     </form>

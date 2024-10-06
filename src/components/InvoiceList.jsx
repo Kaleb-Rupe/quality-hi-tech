@@ -11,10 +11,27 @@ import { confirmDialog } from "primereact/confirmdialog";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
+import { Paginator } from "primereact/paginator";
+import { ProgressSpinner } from "primereact/progressspinner";
 import "../css/invoice-list.css";
+import useScreenSize from "../hooks/useScreenSize";
+import Select from "react-select";
+import { services } from "./Home/services-list";
+import {
+  formatCurrency,
+  statusOptions,
+  isInvoiceEditable,
+  finalizeAndSendInvoice,
+  voidInvoice,
+  markUncollectible,
+  viewPdf,
+  fetchInvoices,
+} from "../utils/invoiceUtils";
 
 const InvoiceList = ({ refreshTrigger }) => {
   const [invoices, setInvoices] = useState([]);
+
+  const isMobile = useScreenSize();
   const [loading, setLoading] = useState(true);
   const [totalRecords, setTotalRecords] = useState(0);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -29,7 +46,6 @@ const InvoiceList = ({ refreshTrigger }) => {
 
   const [pdfDialogVisible, setPdfDialogVisible] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
-  const [pdfLoading, setPdfLoading] = useState({});
 
   const [paymentLinkDialogVisible, setPaymentLinkDialogVisible] =
     useState(false);
@@ -39,14 +55,16 @@ const InvoiceList = ({ refreshTrigger }) => {
   const [editableCustomer, setEditableCustomer] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableInvoiceItems, setEditableInvoiceItems] = useState([]);
+  const [focusedPriceIndex, setFocusedPriceIndex] = useState(null);
 
-  const statusOptions = [
-    { label: "Draft", value: "draft" },
-    { label: "Open", value: "open" },
-    { label: "Paid", value: "paid" },
-    { label: "Uncollectible", value: "uncollectible" },
-    { label: "Void", value: "void" },
-  ];
+  const [manualSyncLoading, setManualSyncLoading] = useState(false);
+
+  const serviceOptions = services.map((service) => ({
+    label: service.title,
+    value: service.title,
+  }));
+
+  const invoiceListTopRef = useRef(null);
 
   const loadLazyData = useCallback(() => {
     setLoading(true);
@@ -81,8 +99,49 @@ const InvoiceList = ({ refreshTrigger }) => {
     loadLazyData();
   }, [loadLazyData, refreshTrigger]);
 
+  const scrollToInvoice = useCallback(() => {
+    if (invoiceListTopRef.current) {
+      invoiceListTopRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, []);
+
   const onPage = (event) => {
-    setLazyParams(event);
+    requestAnimationFrame(() => {
+      scrollToInvoice();
+    });
+
+    setLoading(true);
+    setLazyParams((prevParams) => ({
+      ...prevParams,
+      first: event.first,
+      page: event.page + 1,
+      rows: event.rows,
+    }));
+
+    fetchInvoices(
+      {
+        page: event.page + 1,
+        pageSize: event.rows,
+        status: lazyParams.status,
+      },
+      setInvoices,
+      setTotalRecords,
+      toast
+    )
+      .catch((error) => {
+        console.error("Error syncing page data:", error);
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to fetch next page.",
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const onFilter = (value) => {
@@ -94,13 +153,6 @@ const InvoiceList = ({ refreshTrigger }) => {
     });
   };
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(value / 100);
-  };
-
   const statusBodyTemplate = (rowData) => {
     return (
       <span className={`invoice-status invoice-status-${rowData.status}`}>
@@ -110,7 +162,7 @@ const InvoiceList = ({ refreshTrigger }) => {
   };
 
   const handleManualSync = async () => {
-    setLoading(true);
+    setManualSyncLoading(true);
     try {
       const manualSyncInvoices = httpsCallable(functions, "manualSyncInvoices");
       const result = await manualSyncInvoices();
@@ -130,78 +182,13 @@ const InvoiceList = ({ refreshTrigger }) => {
         detail: "Failed to sync invoices",
       });
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const finalizeAndSendInvoice = async (invoiceId) => {
-    confirmDialog({
-      message: "Are you sure you want to finalize and send this invoice?",
-      header: "Confirm Action",
-      icon: "pi pi-exclamation-triangle",
-      accept: async () => {
-        try {
-          setLoading(true);
-          const finalizeAndSendFunction = httpsCallable(
-            functions,
-            "finalizeAndSendInvoice"
-          );
-          const result = await finalizeAndSendFunction({ invoiceId });
-          if (result.data.success) {
-            toast.current.show({
-              severity: "success",
-              summary: "Success",
-              detail: "Invoice finalized and sent successfully",
-            });
-            loadLazyData(); // Refresh the invoice list
-          } else {
-            throw new Error(
-              result.data.message || "Failed to finalize and send invoice"
-            );
-          }
-        } catch (error) {
-          console.error("Error finalizing and sending invoice:", error);
-          toast.current.show({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to finalize and send invoice: " + error.message,
-          });
-        } finally {
-          setLoading(false);
-        }
-      },
-    });
-  };
-
-  const viewPdf = async (invoiceId) => {
-    try {
-      setPdfLoading((prev) => ({ ...prev, [invoiceId]: true }));
-      const getInvoicePdf = httpsCallable(functions, "getInvoicePdf");
-      const result = await getInvoicePdf({ invoiceId });
-      if (result.data.success) {
-        setPdfUrl(result.data.pdfUrl);
-        setPdfDialogVisible(true);
-      }
-    } catch (error) {
-      console.error("Error fetching invoice PDF:", error);
-      let errorMessage = "Failed to fetch invoice PDF";
-      if (error.code === "not-found") {
-        errorMessage =
-          "PDF not available for this invoice. It might be a draft.";
-      }
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: errorMessage,
-      });
-    } finally {
-      setPdfLoading((prev) => ({ ...prev, [invoiceId]: false }));
+      setManualSyncLoading(false);
     }
   };
 
   const viewPaymentPage = async (invoiceId) => {
     try {
-      setLoadingStates((prev) => ({ ...prev, [invoiceId]: true }));
+      setLoadingStates((prev) => ({ ...prev, [`payment_${invoiceId}`]: true }));
       const getInvoicePaymentLink = httpsCallable(
         functions,
         "getInvoicePaymentLink"
@@ -219,7 +206,10 @@ const InvoiceList = ({ refreshTrigger }) => {
         detail: "Failed to fetch payment link: " + error.message,
       });
     } finally {
-      setLoadingStates((prev) => ({ ...prev, [invoiceId]: false }));
+      setLoadingStates((prev) => ({
+        ...prev,
+        [`payment_${invoiceId}`]: false,
+      }));
     }
   };
 
@@ -244,7 +234,10 @@ const InvoiceList = ({ refreshTrigger }) => {
       icon: "pi pi-exclamation-triangle",
       accept: async () => {
         try {
-          setLoading(true);
+          setLoadingStates((prev) => ({
+            ...prev,
+            [`delete_${invoiceId}`]: true,
+          }));
           const deleteInvoiceFunction = httpsCallable(
             functions,
             "deleteInvoice"
@@ -264,7 +257,10 @@ const InvoiceList = ({ refreshTrigger }) => {
             detail: "Failed to delete invoice: " + error.message,
           });
         } finally {
-          setLoading(false);
+          setLoadingStates((prev) => ({
+            ...prev,
+            [`delete_${invoiceId}`]: false,
+          }));
         }
       },
       reject: () => {
@@ -277,83 +273,35 @@ const InvoiceList = ({ refreshTrigger }) => {
     });
   };
 
-  const voidInvoice = async (invoiceId) => {
-    confirmDialog({
-      message: "Are you sure you want to void this invoice?",
-      header: "Void Confirmation",
-      icon: "pi pi-exclamation-triangle",
-      accept: async () => {
-        try {
-          setLoading(true);
-          const voidInvoiceFunction = httpsCallable(functions, "voidInvoice");
-          await voidInvoiceFunction({ invoiceId });
-          toast.current.show({
-            severity: "success",
-            summary: "Success",
-            detail: "Invoice voided successfully",
-          });
-          loadLazyData();
-        } catch (error) {
-          console.error("Error voiding invoice:", error);
-          toast.current.show({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to void invoice: " + error.message,
-          });
-        } finally {
-          setLoading(false);
-        }
-      },
-      reject: () => {
-        toast.current.show({
-          severity: "info",
-          summary: "Cancelled",
-          detail: "Invoice voiding cancelled",
-        });
-      },
-    });
+  const handleFinalizeAndSendInvoice = (invoiceId) => {
+    finalizeAndSendInvoice(
+      invoiceId,
+      toast,
+      loadLazyData,
+      setLoadingStates,
+      resetDialog
+    );
   };
 
-  const markUncollectible = async (invoiceId) => {
-    confirmDialog({
-      message: "Are you sure you want to mark this invoice as uncollectible?",
-      header: "Confirm Action",
-      icon: "pi pi-exclamation-triangle",
-      accept: async () => {
-        try {
-          setLoading(true);
-          const markUncollectibleFunction = httpsCallable(
-            functions,
-            "markInvoiceUncollectible"
-          );
-          const result = await markUncollectibleFunction({ invoiceId });
-          if (result.data.success) {
-            toast.current.show({
-              severity: "success",
-              summary: "Success",
-              detail: result.data.message,
-            });
-            loadLazyData(); // Refresh the invoice list
-          } else {
-            throw new Error(
-              result.data.message || "Failed to mark invoice as uncollectible"
-            );
-          }
-        } catch (error) {
-          console.error("Error marking invoice as uncollectible:", error);
-          toast.current.show({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to mark invoice as uncollectible: " + error.message,
-          });
-        } finally {
-          setLoading(false);
-        }
-      },
-    });
+  const handleVoidInvoice = (invoiceId) => {
+    voidInvoice(invoiceId, toast, loadLazyData, setLoadingStates, resetDialog);
+  };
+
+  const handleMarkUncollectible = (invoiceId) => {
+    markUncollectible(
+      invoiceId,
+      toast,
+      loadLazyData,
+      setLoadingStates,
+      resetDialog
+    );
   };
 
   const actionBodyTemplate = (rowData) => {
+    const isAnyActionLoading = Object.keys(loadingStates).some(
+      (key) => key.includes(rowData.id) && loadingStates[key]
+    );
+
     return (
       <div className="invoice-actions">
         {rowData.status === "draft" && (
@@ -361,14 +309,18 @@ const InvoiceList = ({ refreshTrigger }) => {
             <Button
               icon="pi pi-send"
               className="p-button-rounded p-button-success"
-              onClick={() => finalizeAndSendInvoice(rowData.id)}
-              tooltip="Finalize and Send"
+              onClick={() => handleFinalizeAndSendInvoice(rowData.id)}
+              tooltip={isMobile ? null : "Finalize and Send"}
+              loading={loadingStates[`finalize_${rowData.id}`]}
+              disabled={isAnyActionLoading}
             />
             <Button
               icon="pi pi-trash"
               className="p-button-rounded p-button-danger"
               onClick={() => deleteInvoice(rowData.id)}
-              tooltip="Delete"
+              tooltip={isMobile ? null : "Delete"}
+              loading={loadingStates[`delete_${rowData.id}`]}
+              disabled={isAnyActionLoading}
             />
           </>
         )}
@@ -377,21 +329,34 @@ const InvoiceList = ({ refreshTrigger }) => {
             <Button
               icon="pi pi-times"
               className="p-button-rounded p-button-warning"
-              onClick={() => voidInvoice(rowData.id)}
-              tooltip="Void"
+              onClick={() => handleVoidInvoice(rowData.id)}
+              tooltip={isMobile ? null : "Void"}
+              disabled={
+                isAnyActionLoading ||
+                rowData.status === "void" ||
+                rowData.status === "uncollectible"
+              }
+              loading={loadingStates[`void_${rowData.id}`]}
             />
             <Button
               icon="pi pi-exclamation-triangle"
               className="p-button-rounded p-button-danger"
-              onClick={() => markUncollectible(rowData.id)}
-              tooltip="Mark Uncollectible"
+              onClick={() => handleMarkUncollectible(rowData.id)}
+              tooltip={isMobile ? null : "Mark Uncollectible"}
+              disabled={
+                isAnyActionLoading ||
+                rowData.status === "void" ||
+                rowData.status === "uncollectible"
+              }
+              loading={loadingStates[`uncollectible_${rowData.id}`]}
             />
             <Button
               icon="pi pi-dollar"
               className="p-button-rounded p-button-success"
               onClick={() => viewPaymentPage(rowData.id)}
-              tooltip="View Payment Page"
-              loading={loadingStates[rowData.id]}
+              tooltip={isMobile ? null : "View Payment Page"}
+              loading={loadingStates[`payment_${rowData.id}`]}
+              disabled={isAnyActionLoading}
             />
           </>
         )}
@@ -402,9 +367,18 @@ const InvoiceList = ({ refreshTrigger }) => {
           <Button
             icon="pi pi-file-pdf"
             className="p-button-rounded p-button-info"
-            onClick={() => viewPdf(rowData.id)}
-            tooltip="View PDF"
-            loading={pdfLoading[rowData.id]}
+            onClick={() =>
+              viewPdf(
+                rowData.id,
+                setLoadingStates,
+                setPdfUrl,
+                setPdfDialogVisible,
+                toast
+              )
+            }
+            tooltip={isMobile ? null : "View PDF"}
+            loading={loadingStates[`pdf_${rowData.id}`]}
+            disabled={isAnyActionLoading}
           />
         )}
       </div>
@@ -420,8 +394,8 @@ const InvoiceList = ({ refreshTrigger }) => {
     setEditableInvoiceItems(
       customer.invoiceItems.map((item) => ({
         ...item,
-        unit_amount: item.unit_amount || item.amount, // Handle both cases
-        quantity: item.quantity || 1, // Ensure quantity is set
+        unit_amount: item.unit_amount || item.amount,
+        quantity: item.quantity || 1,
       })) || []
     );
     setIsEditing(false);
@@ -484,13 +458,13 @@ const InvoiceList = ({ refreshTrigger }) => {
       });
     } finally {
       setLoading(false);
+      resetDialog();
     }
   };
 
   const deleteItem = async (index) => {
     const itemToDelete = editableInvoiceItems[index];
     if (itemToDelete.id) {
-      // If the item has an ID, call the deleteInvoiceItem function
       try {
         setLoading(true);
         const deleteInvoiceItemFunction = httpsCallable(
@@ -502,12 +476,16 @@ const InvoiceList = ({ refreshTrigger }) => {
           itemId: itemToDelete.id,
         });
         if (result.data.success) {
-          setEditableInvoiceItems(result.data.updatedInvoiceItems);
+          const updatedItems = editableInvoiceItems.filter(
+            (_, i) => i !== index
+          );
+          setEditableInvoiceItems(updatedItems);
           toast.current.show({
             severity: "success",
             summary: "Success",
             detail: "Invoice item deleted successfully",
           });
+          resetDialog();
         }
       } catch (error) {
         console.error("Error deleting invoice item:", error);
@@ -520,16 +498,29 @@ const InvoiceList = ({ refreshTrigger }) => {
         setLoading(false);
       }
     } else {
-      // If it's a new item, just remove it from the array
-      const newItems = [...editableInvoiceItems];
-      newItems.splice(index, 1);
-      setEditableInvoiceItems(newItems);
+      const updatedItems = editableInvoiceItems.filter((_, i) => i !== index);
+      setEditableInvoiceItems(updatedItems);
+      resetDialog();
     }
   };
 
-  // Add this function to check if the invoice is editable
-  const isInvoiceEditable = (status) => {
-    return status === "draft";
+  const addItem = () => {
+    setEditableInvoiceItems([
+      ...editableInvoiceItems,
+      { description: "", unit_amount: 0, quantity: 1 },
+    ]);
+  };
+
+  const updateItem = (index, field, value) => {
+    const updatedItems = [...editableInvoiceItems];
+    if (field === "unit_amount") {
+      updatedItems[index][field] = value ? Math.round(value * 100) : null;
+    } else if (field === "description") {
+      updatedItems[index][field] = value || "";
+    } else {
+      updatedItems[index][field] = value;
+    }
+    setEditableInvoiceItems(updatedItems);
   };
 
   const customerNameBodyTemplate = (rowData) => {
@@ -542,274 +533,383 @@ const InvoiceList = ({ refreshTrigger }) => {
     );
   };
 
-  return (
-    <div className="invoice-list">
-      <h2>Invoices</h2>
-      <Toast ref={toast} />
-      <div className="invoice-button-container">
-        <Dropdown
-          value={lazyParams.status}
-          options={statusOptions}
-          onChange={(e) => onFilter(e.value)}
-          placeholder="Filter by Status"
-          showClear
-        />
-        <Button
-          label="Manual Sync"
-          icon="pi pi-sync"
-          onClick={handleManualSync}
-          className="p-button-secondary invoice-sync-button"
-        />
-      </div>
-      <DataTable
-        value={invoices}
-        lazy
-        paginator
-        totalRecords={totalRecords}
-        first={lazyParams.first}
-        rows={lazyParams.rows}
-        onPage={onPage}
-        loading={loading}
-        responsiveLayout="scroll"
-        emptyMessage="No invoices found"
-      >
-        <Column
-          field="customerName"
-          header="Customer Name"
-          body={customerNameBodyTemplate}
-        />
-        <Column field="customerEmail" header="Customer Email" />
-        <Column
-          field="amount"
-          header="Amount"
-          body={(rowData) => formatCurrency(rowData.amount)}
-        />
-        <Column field="status" header="Status" body={statusBodyTemplate} />
-        <Column field="actions" header="Actions" body={actionBodyTemplate} />
-      </DataTable>
+  const resetDialog = useCallback(() => {
+    setSelectedCustomer(null);
+    setCustomerDialogVisible(false);
+  }, []);
 
-      <Dialog
-        header="Customer Details"
-        visible={customerDialogVisible}
-        style={{ width: "50vw" }}
-        onHide={() => {
-          setCustomerDialogVisible(false);
-          setIsEditing(false);
-        }}
-      >
-        {selectedCustomer && (
-          <div>
-            {isEditing ? (
-              <div>
-                <div className="p-field">
-                  <label htmlFor="customerName">Name</label>
-                  <InputText
-                    id="customerName"
-                    value={editableCustomer.name}
-                    onChange={(e) =>
-                      setEditableCustomer({
-                        ...editableCustomer,
-                        name: e.target.value,
-                      })
-                    }
-                    disabled={!isInvoiceEditable(selectedCustomer.status)}
-                  />
-                </div>
-                <div className="p-field">
-                  <label htmlFor="customerEmail">Email</label>
-                  <InputText
-                    id="customerEmail"
-                    value={editableCustomer.email}
-                    onChange={(e) =>
-                      setEditableCustomer({
-                        ...editableCustomer,
-                        email: e.target.value,
-                      })
-                    }
-                    disabled={!isInvoiceEditable(selectedCustomer.status)}
-                  />
-                </div>
-                <h3>Invoice Items</h3>
-                {editableInvoiceItems.map((item, index) => (
-                  <div key={item.id || index} className="p-field">
+  return (
+    <div ref={invoiceListTopRef}>
+      <div className="invoice-list-container">
+        <h2>Invoices</h2>
+        <Toast ref={toast} position="top-right" />
+        <div className="invoice-button-container">
+          <Dropdown
+            value={lazyParams.status}
+            options={statusOptions}
+            onChange={(e) => onFilter(e.value)}
+            placeholder="Filter by Status"
+            showClear
+          />
+          <Button
+            label="Manual Sync"
+            icon="pi pi-sync"
+            onClick={handleManualSync}
+            loading={manualSyncLoading}
+            className="p-button-secondary invoice-sync-button"
+          />
+        </div>
+        {isMobile ? (
+          // Mobile version
+          <div className="invoice-list-mobile">
+            {loading ? (
+              <div className="loading-spinner">
+                <ProgressSpinner />
+              </div>
+            ) : (
+              <>
+                {invoices.map((invoice) => (
+                  <div key={invoice.id} className="invoice-item-mobile">
+                    <div className="customer-status-container">
+                      <div
+                        onClick={() => onCustomerSelect(invoice)}
+                        className="customer-name"
+                      >
+                        {invoice.customerName}
+                      </div>
+                      <div
+                        className={`invoice-status invoice-status-${invoice.status}`}
+                      >
+                        {invoice.status}
+                      </div>
+                    </div>
+                    <div>{invoice.customerEmail}</div>
+                    <div>{formatCurrency(invoice.amount)}</div>
+                    <div className="invoice-actions-mobile">
+                      {actionBodyTemplate(invoice)}
+                    </div>
+                  </div>
+                ))}
+                {invoices.length === 0 && (
+                  <div className="no-invoices-message">No invoices found</div>
+                )}
+                <Paginator
+                  first={lazyParams.first}
+                  rows={lazyParams.rows}
+                  totalRecords={totalRecords}
+                  onPageChange={onPage}
+                  template="PrevPageLink PageLinks NextPageLink"
+                />
+              </>
+            )}
+          </div>
+        ) : (
+          // Desktop version
+          <DataTable
+            value={invoices}
+            lazy
+            paginator
+            first={lazyParams.first}
+            rows={lazyParams.rows}
+            totalRecords={totalRecords}
+            onPage={onPage}
+            loading={loading}
+            emptyMessage="No invoices found"
+          >
+            <Column
+              field="customerName"
+              header="Customer Name"
+              body={customerNameBodyTemplate}
+            />
+            <Column field="customerEmail" header="Customer Email" />
+            <Column
+              field="amount"
+              header="Amount"
+              body={(rowData) => formatCurrency(rowData.amount)}
+            />
+            <Column field="status" header="Status" body={statusBodyTemplate} />
+            <Column
+              field="actions"
+              header="Actions"
+              body={actionBodyTemplate}
+            />
+          </DataTable>
+        )}
+
+        <Dialog
+          header="Customer Details"
+          visible={customerDialogVisible}
+          style={{ width: "80vw", maxWidth: "800px" }}
+          onHide={() => {
+            setCustomerDialogVisible(false);
+            setIsEditing(false);
+          }}
+          className="customer-details-dialog"
+        >
+          {selectedCustomer && (
+            <div>
+              {isEditing ? (
+                <div className="p-fluid p-dialog-content">
+                  <div className="p-field">
+                    <label htmlFor="customerName">Name</label>
                     <InputText
-                      value={item.description}
-                      onChange={(e) => {
-                        const newItems = [...editableInvoiceItems];
-                        newItems[index].description = e.target.value;
-                        setEditableInvoiceItems(newItems);
-                      }}
-                      placeholder="Description"
-                      disabled={!isInvoiceEditable(selectedCustomer.status)}
-                    />
-                    <InputNumber
-                      value={item.unit_amount / 100}
-                      onValueChange={(e) => {
-                        const newItems = [...editableInvoiceItems];
-                        newItems[index].unit_amount = e.value * 100;
-                        setEditableInvoiceItems(newItems);
-                      }}
-                      mode="currency"
-                      currency="USD"
-                      locale="en-US"
-                      disabled={!isInvoiceEditable(selectedCustomer.status)}
-                    />
-                    <InputNumber
-                      value={item.quantity}
-                      onValueChange={(e) => {
-                        const newItems = [...editableInvoiceItems];
-                        newItems[index].quantity = e.value;
-                        setEditableInvoiceItems(newItems);
-                      }}
-                      min={1}
-                      placeholder="Quantity"
-                      disabled={!isInvoiceEditable(selectedCustomer.status)}
-                    />
-                    <Button
-                      icon="pi pi-trash"
-                      className="p-button-danger p-button-rounded"
-                      onClick={() => deleteItem(index)}
+                      id="customerName"
+                      value={editableCustomer.name}
+                      onChange={(e) =>
+                        setEditableCustomer({
+                          ...editableCustomer,
+                          name: e.target.value,
+                        })
+                      }
                       disabled={!isInvoiceEditable(selectedCustomer.status)}
                     />
                   </div>
-                ))}
-                <Button
-                  label="Add Item"
-                  icon="pi pi-plus"
-                  onClick={() => {
-                    setEditableInvoiceItems([
-                      ...editableInvoiceItems,
-                      { description: "", unit_amount: 0, quantity: 1 },
-                    ]);
-                  }}
-                  className="p-button-secondary"
-                  disabled={!isInvoiceEditable(selectedCustomer.status)}
-                />
-                <Button
-                  label="Save Changes"
-                  onClick={handleCustomerUpdate}
-                  loading={loading}
-                  disabled={!isInvoiceEditable(selectedCustomer.status)}
-                />
-                <Button
-                  label="Cancel"
-                  onClick={() => setIsEditing(false)}
-                  className="p-button-secondary"
-                  style={{ marginLeft: "10px" }}
-                />
-              </div>
-            ) : (
-              <div>
-                {isInvoiceEditable(selectedCustomer.status) && (
-                  <Button
-                    label="Edit Customer"
-                    icon="pi pi-pencil"
-                    onClick={() => setIsEditing(true)}
-                    className="p-button-text"
-                  />
-                )}
-                <p>
-                  <strong>Name:</strong> {selectedCustomer.customerName}
-                </p>
-                <p>
-                  <strong>Email:</strong>{" "}
-                  <a href={`mailto:${selectedCustomer.customerEmail}`}>
-                    {selectedCustomer.customerEmail}
-                  </a>
-                </p>
-                <p>
-                  <strong>Invoice ID:</strong> {selectedCustomer.id}
-                </p>
-                <p>
-                  <strong>Amount:</strong>{" "}
-                  {formatCurrency(selectedCustomer.amount)}
-                </p>
-                <p>
-                  <strong>Status:</strong> {selectedCustomer.status}
-                </p>
-                <p>
-                  <strong>Due Date:</strong>{" "}
-                  {selectedCustomer.dueDate
-                    ? new Date(
-                        selectedCustomer.dueDate.seconds * 1000
-                      ).toLocaleDateString()
-                    : "N/A"}
-                </p>
-                <p>
-                  <strong>Created At:</strong>{" "}
-                  {selectedCustomer.created
-                    ? new Date(
-                        selectedCustomer.created.seconds * 1000
-                      ).toLocaleDateString()
-                    : "N/A"}
-                </p>
-                <h3>Invoice Items</h3>
-                {selectedCustomer.invoiceItems &&
-                  selectedCustomer.invoiceItems.map((item) => (
-                    <div key={item.id}>
-                      <p>
-                        <strong>Description:</strong> {item.description}
-                      </p>
-                      <p>
-                        <strong>Unit Amount:</strong>
-                        {formatCurrency(item.unit_amount)}
-                      </p>
-                      <p>
-                        <strong>Total Amount:</strong>
-                        {formatCurrency(item.unit_amount * item.quantity)}
-                      </p>
-                      <p>
-                        <strong>Quantity:</strong> {item.quantity}
-                      </p>
+                  <div className="p-field">
+                    <label htmlFor="customerEmail">Email</label>
+                    <InputText
+                      id="customerEmail"
+                      value={editableCustomer.email}
+                      onChange={(e) =>
+                        setEditableCustomer({
+                          ...editableCustomer,
+                          email: e.target.value,
+                        })
+                      }
+                      disabled={!isInvoiceEditable(selectedCustomer.status)}
+                    />
+                  </div>
+                  <h3>Invoice Items</h3>
+                  {editableInvoiceItems.map((item, index) => (
+                    <div key={item.id || index} className="invoice-item">
+                      <div className="p-grid p-formgrid p-fluid">
+                        <div className="p-col-12 p-mb-2">
+                          <label htmlFor={`service-${index}`}>
+                            Select a Service
+                          </label>
+                          <Select
+                            id={`service-${index}`}
+                            value={
+                              serviceOptions.find(
+                                (option) => option.value === item.description
+                              ) || null
+                            }
+                            options={serviceOptions}
+                            onChange={(selectedOption) =>
+                              updateItem(
+                                index,
+                                "description",
+                                selectedOption ? selectedOption.value : ""
+                              )
+                            }
+                            placeholder="Select a Service"
+                            isClearable
+                            isSearchable
+                            isDisabled={
+                              !isInvoiceEditable(selectedCustomer.status)
+                            }
+                          />
+                        </div>
+                        <div className="p-col-6 p-mb-2">
+                          <label htmlFor={`quantity-${index}`}>Quantity</label>
+                          <InputNumber
+                            id={`quantity-${index}`}
+                            value={item.quantity}
+                            onValueChange={(e) =>
+                              updateItem(index, "quantity", e.value)
+                            }
+                            min={1}
+                            showButtons
+                            buttonLayout="horizontal"
+                            decrementButtonClassName="p-button-secondary"
+                            incrementButtonClassName="p-button-secondary"
+                            incrementButtonIcon="pi pi-plus"
+                            decrementButtonIcon="pi pi-minus"
+                            disabled={
+                              !isInvoiceEditable(selectedCustomer.status)
+                            }
+                          />
+                        </div>
+                        <div className="p-col-6 p-mb-2">
+                          <label htmlFor={`price-${index}`}>Price</label>
+                          <InputNumber
+                            id={`price-${index}`}
+                            value={
+                              focusedPriceIndex === index
+                                ? null
+                                : item.unit_amount !== null
+                                ? item.unit_amount / 100
+                                : null
+                            }
+                            onValueChange={(e) =>
+                              updateItem(index, "unit_amount", e.value)
+                            }
+                            onFocus={() => setFocusedPriceIndex(index)}
+                            onBlur={() => setFocusedPriceIndex(null)}
+                            mode="currency"
+                            currency="USD"
+                            locale="en-US"
+                            minFractionDigits={2}
+                            maxFractionDigits={2}
+                            placeholder="$0.00"
+                            disabled={
+                              !isInvoiceEditable(selectedCustomer.status)
+                            }
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        icon="pi pi-trash"
+                        className="p-button-danger p-button-rounded"
+                        onClick={() => deleteItem(index)}
+                        disabled={!isInvoiceEditable(selectedCustomer.status)}
+                      />
                     </div>
                   ))}
-                <p>
-                  <strong>Actions:</strong>
-                </p>
-                <div className="invoice-actions">
-                  {actionBodyTemplate(selectedCustomer)}
+                  <Button
+                    label="Add Item"
+                    icon="pi pi-plus"
+                    onClick={addItem}
+                    className="p-button-secondary p-mb-3"
+                    disabled={!isInvoiceEditable(selectedCustomer.status)}
+                  />
+                  <div className="p-d-flex p-jc-between">
+                    <Button
+                      label="Save Changes"
+                      icon="pi pi-check"
+                      onClick={handleCustomerUpdate}
+                      loading={loading}
+                      disabled={!isInvoiceEditable(selectedCustomer.status)}
+                    />
+                    <Button
+                      label="Cancel"
+                      icon="pi pi-times"
+                      onClick={() => setIsEditing(false)}
+                      className="p-button-secondary"
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-      </Dialog>
+              ) : (
+                <div>
+                  {isInvoiceEditable(selectedCustomer.status) && (
+                    <Button
+                      label="Edit Customer"
+                      icon="pi pi-pencil"
+                      onClick={() => setIsEditing(true)}
+                      className="p-button-text p-mb-3"
+                    />
+                  )}
+                  <div className="p-grid">
+                    <div className="p-col-12 p-md-6">
+                      <p>
+                        <strong>Name:</strong> {selectedCustomer.customerName}
+                      </p>
+                      <p>
+                        <strong>Email:</strong>{" "}
+                        <a href={`mailto:${selectedCustomer.customerEmail}`}>
+                          {selectedCustomer.customerEmail}
+                        </a>
+                      </p>
+                      <p>
+                        <strong>Invoice ID:</strong> {selectedCustomer.id}
+                      </p>
+                      <p>
+                        <strong>Amount:</strong>{" "}
+                        {formatCurrency(selectedCustomer.amount)}
+                      </p>
+                    </div>
+                    <div className="p-col-12 p-md-6">
+                      <p>
+                        <strong>Status:</strong> {selectedCustomer.status}
+                      </p>
+                      <p>
+                        <strong>Due Date:</strong>{" "}
+                        {selectedCustomer.dueDate
+                          ? new Date(
+                              selectedCustomer.dueDate.seconds * 1000
+                            ).toLocaleDateString()
+                          : "N/A"}
+                      </p>
+                      <p>
+                        <strong>Created At:</strong>{" "}
+                        {selectedCustomer.created
+                          ? new Date(
+                              selectedCustomer.created.seconds * 1000
+                            ).toLocaleDateString()
+                          : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <h3>Invoice Items</h3>
+                  {selectedCustomer.invoiceItems &&
+                    selectedCustomer.invoiceItems.map((item) => (
+                      <div key={item.id} className="p-grid p-mb-2">
+                        <div className="p-col-12 p-md-6">
+                          <strong>Description:</strong> {item.description}
+                        </div>
+                        <div className="p-col-4 p-md-2">
+                          <strong>Unit Amount:</strong>{" "}
+                          {formatCurrency(item.unit_amount)}
+                        </div>
+                        <div className="p-col-4 p-md-2">
+                          <strong>Quantity:</strong> {item.quantity}
+                        </div>
+                        <div className="p-col-4 p-md-2">
+                          <strong>Total:</strong>{" "}
+                          {formatCurrency(item.unit_amount * item.quantity)}
+                        </div>
+                      </div>
+                    ))}
+                  <h3>Actions</h3>
+                  <div className="invoice-actions">
+                    {actionBodyTemplate(selectedCustomer)}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </Dialog>
 
-      <Dialog
-        header="Invoice PDF"
-        visible={pdfDialogVisible}
-        style={{ width: "80vw" }}
-        onHide={() => setPdfDialogVisible(false)}
-      >
-        {pdfUrl ? (
-          <iframe
-            src={pdfUrl}
-            width="100%"
-            height="600px"
-            style={{ border: "none" }}
-            title="Invoice PDF"
-          />
-        ) : (
-          <p>No PDF available</p>
-        )}
-      </Dialog>
+        <Dialog
+          header="Invoice PDF"
+          visible={pdfDialogVisible}
+          style={{ width: "80vw" }}
+          onHide={() => setPdfDialogVisible(false)}
+        >
+          {pdfUrl ? (
+            <iframe
+              src={pdfUrl}
+              width="100%"
+              height="600px"
+              style={{ border: "none" }}
+              title="Invoice PDF"
+            />
+          ) : (
+            <p>No PDF available</p>
+          )}
+        </Dialog>
 
-      <ConfirmDialog
-        visible={paymentLinkDialogVisible}
-        onHide={() => setPaymentLinkDialogVisible(false)}
-        message={
-          <div>
-            <p>Payment link:</p>
-            <InputText value={paymentLink} readOnly style={{ width: "150%" }} />
-          </div>
-        }
-        header="Invoice Payment Link"
-        icon="pi pi-exclamation-triangle"
-        accept={openInNewWindow}
-        reject={copyToClipboard}
-        acceptLabel="Open in New Window"
-        rejectLabel="Copy to Clipboard"
-      />
+        <ConfirmDialog
+          visible={paymentLinkDialogVisible}
+          onHide={() => setPaymentLinkDialogVisible(false)}
+          message={
+            <div className="payment-link-container">
+              <p>Payment link:</p>
+              <InputText
+                value={paymentLink}
+                readOnly
+                className="payment-link-box"
+              />
+            </div>
+          }
+          header="Invoice Payment Link"
+          icon="pi pi-exclamation-triangle"
+          accept={openInNewWindow}
+          reject={copyToClipboard}
+          acceptLabel="Open in New Window"
+          rejectLabel="Copy to Clipboard"
+          className="payment-link-dialog"
+        />
+      </div>
     </div>
   );
 };

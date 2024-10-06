@@ -8,12 +8,11 @@ import { functions } from "../firebaseConfig";
 import { httpsCallable } from "firebase/functions";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Navigate } from "react-router-dom";
-import { Dropdown } from "primereact/dropdown";
-import { FloatLabel } from "primereact/floatlabel";
 import { Card } from "primereact/card";
 import { Fieldset } from "primereact/fieldset";
 import { services } from "./Home/services-list";
 import "../css/invoice-form.css";
+import Select from "react-select";
 
 const InvoiceForm = ({ onInvoiceCreated }) => {
   const [customerEmail, setCustomerEmail] = useState("");
@@ -24,6 +23,7 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
   const [items, setItems] = useState([
     { description: "", quantity: 1, price: 0 },
   ]);
+  const [focusedPriceIndex, setFocusedPriceIndex] = useState(null);
 
   const serviceOptions = services.map((service) => ({
     label: service.title,
@@ -46,7 +46,15 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
 
   const updateItem = (index, field, value) => {
     const updatedItems = [...items];
-    updatedItems[index][field] = value;
+    if (field === "price") {
+      // Convert the value to cents
+      updatedItems[index][field] = value ? Math.round(value * 100) : null;
+    } else if (field === "description") {
+      // Handle empty string for description
+      updatedItems[index][field] = value || "";
+    } else {
+      updatedItems[index][field] = value;
+    }
     setItems(updatedItems);
   };
 
@@ -56,7 +64,16 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
   };
 
   const calculateTotal = () => {
-    return items.reduce((total, item) => total + item.quantity * item.price, 0);
+    return items.reduce((total, item) => {
+      const itemPrice = item.price !== null ? item.price : 0;
+      return total + item.quantity * (itemPrice / 100);
+    }, 0);
+  };
+
+  const resetForm = () => {
+    setCustomerName("");
+    setCustomerEmail("");
+    setItems([{ description: "", quantity: 1, price: 0 }]);
   };
 
   const createInvoice = async () => {
@@ -72,7 +89,7 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
         items: items.map((item) => ({
           description: item.description,
           quantity: parseInt(item.quantity),
-          unit_amount: Math.round(parseFloat(item.price) * 100), // Convert to cents
+          unit_amount: item.price, // Price is already in cents
         })),
       });
 
@@ -83,13 +100,10 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
           detail: `Draft invoice created with ID: ${result.data.invoiceId}`,
           life: 5000,
         });
-        // Reset form
-        setCustomerEmail("");
-        setCustomerName("");
-        setItems([{ description: "", quantity: 1, price: 0 }]);
-
-        // Call the onInvoiceCreated prop to trigger a refresh in InvoiceList
-        onInvoiceCreated();
+        resetForm();
+        if (onInvoiceCreated) {
+          onInvoiceCreated();
+        }
       } else {
         throw new Error(result.data.error || "Failed to create draft invoice");
       }
@@ -111,22 +125,11 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
 
   return (
     <div className="invoice-form">
-      <Toast ref={toast} />
+      <Toast ref={toast} position="top-right" />
       <Card title="Create Invoice" className="p-shadow-5">
         <form onSubmit={handleSubmit}>
           <div className="p-fluid">
             <Fieldset legend="Customer Information">
-              <div className="p-field">
-                <span className="p-float-label">
-                  <InputText
-                    id="customerEmail"
-                    value={customerEmail}
-                    onChange={(e) => setCustomerEmail(e.target.value)}
-                    required
-                  />
-                  <label htmlFor="customerEmail">Customer Email</label>
-                </span>
-              </div>
               <div className="p-field">
                 <span className="p-float-label">
                   <InputText
@@ -138,28 +141,48 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
                   <label htmlFor="customerName">Customer Name</label>
                 </span>
               </div>
+              <div className="p-field">
+                <span className="p-float-label">
+                  <InputText
+                    id="customerEmail"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    required
+                  />
+                  <label htmlFor="customerEmail">Customer Email</label>
+                </span>
+              </div>
             </Fieldset>
 
             <Fieldset legend="Invoice Items">
               {items.map((item, index) => (
                 <div key={index} className="p-grid p-formgrid p-fluid p-mb-3">
-                  <div className="p-col-12 p-md-6 p-mb-2 p-md-mb-0">
-                    <FloatLabel>
-                      <Dropdown
-                        value={item.description}
-                        options={serviceOptions}
-                        onChange={(e) =>
-                          updateItem(index, "description", e.value)
-                        }
-                        filter
-                        showClear={item.description ? true : false}
-                        filterBy="label,value"
-                      />
-                      <label htmlFor="service">Select a Service</label>
-                    </FloatLabel>
+                  <div className="p-col-12 p-mb-2">
+                    <label htmlFor={`service-${index}`}>Select a Service</label>
+                    <Select
+                      id={`service-${index}`}
+                      value={
+                        serviceOptions.find(
+                          (option) => option.value === item.description
+                        ) || null
+                      }
+                      options={serviceOptions}
+                      onChange={(selectedOption) =>
+                        updateItem(
+                          index,
+                          "description",
+                          selectedOption ? selectedOption.value : ""
+                        )
+                      }
+                      placeholder="Select a Service"
+                      isClearable
+                      isSearchable
+                    />
                   </div>
-                  <div className="p-col-6 p-md-2 p-mb-2 p-md-mb-0">
+                  <div className="p-col-6 p-mb-2">
+                    <label htmlFor={`quantity-${index}`}>Quantity</label>
                     <InputNumber
+                      id={`quantity-${index}`}
                       value={item.quantity}
                       onValueChange={(e) =>
                         updateItem(index, "quantity", e.value)
@@ -173,24 +196,37 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
                       decrementButtonIcon="pi pi-minus"
                     />
                   </div>
-                  <div className="p-col-6 p-md-3 p-mb-2 p-md-mb-0">
+                  <div className="p-col-6 p-mb-2">
+                    <label htmlFor={`price-${index}`}>Price</label>
                     <InputNumber
-                      value={item.price}
+                      id={`price-${index}`}
+                      value={
+                        focusedPriceIndex === index
+                          ? null
+                          : item.price !== null
+                          ? item.price / 100
+                          : null
+                      }
                       onValueChange={(e) => updateItem(index, "price", e.value)}
+                      onFocus={() => setFocusedPriceIndex(index)}
+                      onBlur={() => setFocusedPriceIndex(null)}
                       mode="currency"
                       currency="USD"
                       locale="en-US"
+                      minFractionDigits={2}
+                      maxFractionDigits={2}
+                      placeholder="$0.00"
                     />
                   </div>
                 </div>
               ))}
-              <div className="p-d-flex p-jc-between p-ai-center">
+              <div className="p-d-flex p-flex-column p-ai-center">
                 <Button
                   type="button"
                   label="Add Item"
                   icon="pi pi-plus"
                   onClick={addItem}
-                  className="p-button-secondary"
+                  className="p-button-secondary p-mb-2"
                 />
                 {items.length > 1 && (
                   <div className="delete-button">
@@ -211,10 +247,10 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
                 <span>Subtotal:</span>
                 <span>${calculateTotal().toFixed(2)}</span>
               </div>
-              <div className="p-d-flex p-jc-between p-mt-2">
+              {/* <div className="p-d-flex p-jc-between p-mt-2">
                 <span>Tax (0%):</span>
                 <span>$0.00</span>
-              </div>
+              </div> */}
               <div className="p-d-flex p-jc-between p-mt-2">
                 <strong>Total:</strong>
                 <strong>${calculateTotal().toFixed(2)}</strong>

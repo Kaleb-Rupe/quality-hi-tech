@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import useScreenSize from '../hooks/useScreenSize';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
 
 const UserDialog = ({ visible, onHide, onSave, user }) => {
+  const isMobile = useScreenSize();
+
   const [formData, setFormData] = useState({
     email: '',
     emailVerified: false,
@@ -32,7 +35,12 @@ const UserDialog = ({ visible, onHide, onSave, user }) => {
   };
 
   return (
-    <Dialog visible={visible} onHide={onHide} header="Edit User">
+    <Dialog 
+      visible={visible} 
+      onHide={onHide} 
+      header="Edit User"
+      className={isMobile ? "user-dialog-mobile" : ""}
+    >
       <div className="p-fluid">
         <div className="p-field">
           <label htmlFor="email">Email</label>

@@ -100,38 +100,24 @@ exports.editAdminUser = functions.https.onCall(async (data, context) => {
 });
 
 exports.createNewAdmin = functions.https.onCall(async (data, context) => {
-  // Check if the request is made by an authenticated user
-  if (!context.auth) {
+  // Check if the request is made by an authenticated admin user
+  if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
-      "unauthenticated",
-      "The function must be called while authenticated.",
+      "permission-denied",
+      "Only admin users can create new admin accounts.",
+    );
+  }
+
+  const { email, password, displayName } = data;
+
+  if (!email || !password) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Email and password are required.",
     );
   }
 
   try {
-    const callerUserRecord = await admin.auth().getUser(context.auth.uid);
-
-    // Check if the authenticated user is an admin
-    const isAdmin =
-      callerUserRecord.customClaims &&
-      callerUserRecord.customClaims.admin === true;
-
-    if (!isAdmin) {
-      throw new functions.https.HttpsError(
-        "permission-denied",
-        "The function must be called by an admin user.",
-      );
-    }
-
-    const { email, password, displayName } = data;
-
-    if (!email || !password) {
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Email and password are required.",
-      );
-    }
-
     // Create the new user
     const userRecord = await admin.auth().createUser({
       email: email,
@@ -142,10 +128,14 @@ exports.createNewAdmin = functions.https.onCall(async (data, context) => {
 
     // Set admin custom claim
     await admin.auth().setCustomUserClaims(userRecord.uid, { admin: true });
+    
+    // Verify the claim was set
+    const updatedUser = await admin.auth().getUser(userRecord.uid);
+    console.log(`User ${updatedUser.uid} claims:`, updatedUser.customClaims);
 
     return {
       uid: userRecord.uid,
-      message: "New admin user created successfully",
+      message: "New admin user created successfully and verification email sent.",
     };
   } catch (error) {
     console.error("Error creating new admin user:", error);

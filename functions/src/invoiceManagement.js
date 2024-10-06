@@ -2,13 +2,58 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const stripe = require("stripe")(functions.config().stripe.secret_key);
 const axios = require("axios");
+const cors = require("cors")({ origin: true });
 
 // Make sure admin is initialized
 if (!admin.apps.length) {
   admin.initializeApp();
 }
 
+async function rateLimiter(context, maxRequests = 25, windowMs = 15 * 60 * 1000) {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Authentication required");
+  }
+
+  const db = admin.firestore();
+  const now = Date.now();
+  const userId = context.auth.uid;
+  const userRef = db.collection("rateLimits").doc(userId);
+
+  try {
+    const doc = await db.runTransaction(async transaction => {
+      const userDoc = await transaction.get(userRef);
+      if (!userDoc.exists) {
+        transaction.set(userRef, { requests: 1, windowStart: now });
+        return { requests: 1, windowStart: now };
+      }
+
+      const data = userDoc.data();
+      if (now - data.windowStart > windowMs) {
+        transaction.update(userRef, { requests: 1, windowStart: now });
+        return { requests: 1, windowStart: now };
+      }
+
+      if (data.requests >= maxRequests) {
+        throw new functions.https.HttpsError("resource-exhausted", "Rate limit exceeded");
+      }
+
+      transaction.update(userRef, { requests: data.requests + 1 });
+      return { requests: data.requests + 1, windowStart: data.windowStart };
+    });
+
+    return doc;
+  } catch (error) {
+    if (error instanceof functions.https.HttpsError) {
+      throw error;
+    }
+    console.error("Rate limiting error:", error);
+    throw new functions.https.HttpsError("internal", "Rate limiting failed");
+  }
+}
+
 exports.createDraftInvoice = functions.https.onCall(async (data, context) => {
+  await rateLimiter(context);
+
   // Check if user is authenticated and has admin rights
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
@@ -91,6 +136,13 @@ exports.createDraftInvoice = functions.https.onCall(async (data, context) => {
 
     return { success: true, invoiceId: invoice.id };
   } catch (error) {
+    if (error.type === "StripeRateLimitError") {
+      console.error("Rate limit error:", error);
+      throw new functions.https.HttpsError(
+        "resource-exhausted",
+        "Stripe rate limit exceeded",
+      );
+    }
     console.error("Error creating draft invoice:", error);
     throw new functions.https.HttpsError(
       "internal",
@@ -100,6 +152,8 @@ exports.createDraftInvoice = functions.https.onCall(async (data, context) => {
 });
 
 exports.listInvoices = functions.https.onCall(async (data, context) => {
+  await rateLimiter(context);
+
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
       "permission-denied",
@@ -117,11 +171,15 @@ exports.listInvoices = functions.https.onCall(async (data, context) => {
       query = query.where("status", "==", status);
     }
 
-    const totalCount = (await query.count().get()).data().count;
-    const snapshot = await query
-      .offset((page - 1) * pageSize)
-      .limit(pageSize)
-      .get();
+    // Get total count
+    const totalCountSnapshot = await query.count().get();
+    const totalCount = totalCountSnapshot.data().count;
+
+    // Calculate offset
+    const offset = (page - 1) * pageSize;
+
+    // Fetch invoices with pagination
+    const snapshot = await query.offset(offset).limit(pageSize).get();
 
     const invoices = snapshot.docs.map(doc => ({
       id: doc.id,
@@ -270,6 +328,8 @@ async function updateInvoiceInFirestore(invoice) {
 }
 
 exports.manualSyncInvoices = functions.https.onCall(async (data, context) => {
+  await rateLimiter(context);
+
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
       "permission-denied",
@@ -315,16 +375,19 @@ exports.manualSyncInvoices = functions.https.onCall(async (data, context) => {
     console.log(`Synced ${allInvoices.data.length} invoices`);
     return { success: true, count: allInvoices.data.length };
   } catch (error) {
-    console.error("Error syncing invoices:", error);
+    console.error("Error in manualSyncInvoices:", error);
     throw new functions.https.HttpsError(
       "internal",
       "Error syncing invoices: " + error.message,
+      { originalError: error.toString() },
     );
   }
 });
 
 exports.finalizeAndSendInvoice = functions.https.onCall(
   async (data, context) => {
+    await rateLimiter(context);
+
     if (!context.auth || !context.auth.token.admin) {
       throw new functions.https.HttpsError(
         "permission-denied",
@@ -397,6 +460,8 @@ exports.finalizeAndSendInvoice = functions.https.onCall(
 );
 
 exports.deleteInvoice = functions.https.onCall(async (data, context) => {
+  await rateLimiter(context);
+
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
       "permission-denied",
@@ -425,6 +490,8 @@ exports.deleteInvoice = functions.https.onCall(async (data, context) => {
 });
 
 exports.voidInvoice = functions.https.onCall(async (data, context) => {
+  await rateLimiter(context);
+
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
       "permission-denied",
@@ -457,6 +524,8 @@ exports.voidInvoice = functions.https.onCall(async (data, context) => {
 
 exports.markInvoiceUncollectible = functions.https.onCall(
   async (data, context) => {
+    await rateLimiter(context);
+
     if (!context.auth || !context.auth.token.admin) {
       throw new functions.https.HttpsError(
         "permission-denied",
@@ -493,6 +562,8 @@ exports.markInvoiceUncollectible = functions.https.onCall(
 );
 
 exports.getInvoicePdf = functions.https.onCall(async (data, context) => {
+  await rateLimiter(context);
+
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
       "permission-denied",
@@ -578,6 +649,8 @@ exports.cleanupOldPdfs = functions.pubsub
 
 exports.getInvoicePaymentLink = functions.https.onCall(
   async (data, context) => {
+    await rateLimiter(context);
+
     if (!context.auth || !context.auth.token.admin) {
       throw new functions.https.HttpsError(
         "permission-denied",
@@ -654,6 +727,8 @@ exports.getInvoicePaymentLink = functions.https.onCall(
 
 exports.updateInvoiceAndItems = functions.https.onCall(
   async (data, context) => {
+    await rateLimiter(context);
+
     if (!context.auth || !context.auth.token.admin) {
       throw new functions.https.HttpsError(
         "permission-denied",
@@ -688,18 +763,38 @@ exports.updateInvoiceAndItems = functions.https.onCall(
           if (itemUpdate.deleted) {
             await stripe.invoiceItems.del(itemUpdate.id);
           } else {
-            await stripe.invoiceItems.update(itemUpdate.id, {
-              description: itemUpdate.description,
-              unit_amount: Math.round(itemUpdate.unit_amount * 100), // Convert to cents
-              quantity: itemUpdate.quantity,
-            });
+            const updateData = {};
+            if (itemUpdate.description)
+              updateData.description = itemUpdate.description;
+            if (itemUpdate.unit_amount !== undefined) {
+              // Check if the value is already in cents
+              const isInCents =
+                Number.isInteger(itemUpdate.unit_amount) &&
+                itemUpdate.unit_amount >= 100;
+              updateData.unit_amount = isInCents
+                ? itemUpdate.unit_amount
+                : Math.round(itemUpdate.unit_amount * 100);
+            }
+            if (itemUpdate.quantity) updateData.quantity = itemUpdate.quantity;
+
+            if (Object.keys(updateData).length > 0) {
+              await stripe.invoiceItems.update(itemUpdate.id, updateData);
+            }
           }
-        } else {
+        } else if (!itemUpdate.deleted) {
+          // Check if the value is already in cents
+          const isInCents =
+            Number.isInteger(itemUpdate.unit_amount) &&
+            itemUpdate.unit_amount >= 100;
+          const unit_amount = isInCents
+            ? itemUpdate.unit_amount
+            : Math.round(itemUpdate.unit_amount * 100);
+
           await stripe.invoiceItems.create({
             customer: invoice.customer,
             invoice: invoiceId,
             description: itemUpdate.description,
-            unit_amount: Math.round(itemUpdate.unit_amount * 100), // Convert to cents
+            unit_amount: unit_amount,
             quantity: itemUpdate.quantity,
             currency: invoice.currency,
           });
@@ -739,6 +834,8 @@ exports.updateInvoiceAndItems = functions.https.onCall(
 );
 
 exports.deleteInvoiceItem = functions.https.onCall(async (data, context) => {
+  await rateLimiter(context);
+
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
       "permission-denied",
@@ -789,4 +886,26 @@ exports.deleteInvoiceItem = functions.https.onCall(async (data, context) => {
       "Error deleting invoice item: " + error.message,
     );
   }
+});
+
+exports.invalidateToken = functions.https.onRequest((req, res) => {
+  return cors(req, res, async () => {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method Not Allowed" });
+    }
+
+    const { uid } = req.body;
+
+    if (!uid) {
+      return res.status(400).json({ error: "UID is required" });
+    }
+
+    try {
+      await admin.auth().revokeRefreshTokens(uid);
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Error invalidating token:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
 });

@@ -44,10 +44,14 @@ const ForgotPassword = () => {
 
   return (
     <form onSubmit={handleResetPassword} className="admin-login">
-      <Toast ref={toast} />
+      <Toast ref={toast} position="top-right" />
       <div className="back-button-container">
         <h2>Reset Password</h2>
-        <button type="button" className="back-button" onClick={() => navigate(-1)}>
+        <button
+          type="button"
+          className="back-button"
+          onClick={() => navigate(-1)}
+        >
           Back
         </button>
       </div>

@@ -329,3 +329,35 @@
     border: 2px solid var(--link-red);
     border-radius: 5px;
 }
+
+@media screen and (max-width: 480px) {
+  .admin-settings {
+    padding: 10px;
+  }
+
+  .mobile-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .mobile-user-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .mobile-user-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+  }
+
+  .p-dialog {
+    width: 90vw !important;
+  }
+
+  .p-dialog-content {
+    padding: 10px !important;
+  }
+}

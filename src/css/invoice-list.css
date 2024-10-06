@@ -1,3 +1,9 @@
+.invoice-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
 .invoice-button-container {
     display: flex;
     justify-content: space-between;
@@ -41,9 +47,10 @@
 
 .invoice-status {
     color: #f8f9fa;
-    font-size: 1rem;
-    padding: 0.35rem 0.6rem;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
     border-radius: 50px;
+    width: fit-content;
 }
 
 .invoice-actions .p-button {
@@ -68,4 +75,165 @@
 
 .invoice-status-void {
     background-color: #7a32bd;
+}
+
+.invoice-list-desktop {
+    display: block;
+}
+
+.invoice-list-mobile {
+    display: none;
+}
+
+.payment-link-dialog .p-dialog-footer {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.payment-link-dialog .p-button {
+    max-width: 200px;
+}
+
+.p-dialog-header {
+    cursor: default;
+    padding: 1.5rem 1.5rem 0rem 1.5rem;
+}
+
+#pr_id_24_content {
+    display: flex;
+    justify-content: center;
+}
+
+.payment-link-box {
+    width: 50vw;
+}
+
+@media screen and (max-width: 480px) {
+    .invoice-list-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .invoice-item-mobile {
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .invoice-item-mobile>div {
+        margin-bottom: 5px;
+    }
+
+    .customer-status-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .customer-name {
+        font-weight: bold;
+        color: #2196F3;
+        cursor: pointer;
+        width: fit-content;
+    }
+
+    .invoice-status-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .invoice-status {
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+
+    .invoice-actions-mobile {
+        display: flex;
+        gap: 5px;
+    }
+
+    .invoice-actions-mobile .p-button {
+        padding: 0.4rem;
+    }
+
+    .invoice-button-container {
+        flex-direction: column;
+    }
+
+    .invoice-button-container>* {
+        margin-bottom: 10px;
+    }
+
+    .invoice-status {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .invoice-actions-mobile .p-button {
+        font-size: 0.75rem;
+    }
+
+    .payment-link-dialog .p-button {
+        font-size: 0.75rem;
+    }
+
+    .payment-link-dialog .p-dialog-footer {
+        padding: 0 0.5rem 0.5rem 0.5rem;
+    }
+}
+
+
+.customer-details-dialog .p-dialog-content {
+    padding: 2rem;
+}
+
+.customer-details-dialog .p-field {
+    margin-bottom: 1.5rem;
+}
+
+.customer-details-dialog .p-grid {
+    margin-bottom: 1rem;
+}
+
+.customer-details-dialog .invoice-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.customer-details-dialog .invoice-item:last-child {
+    border-bottom: none;
+}
+
+.customer-details-dialog .p-button {
+    margin-right: 0.5rem;
+}
+
+.customer-details-dialog .invoice-actions {
+    margin-top: 1.5rem;
+}
+
+@media screen and (max-width: 768px) {
+    .customer-details-dialog .p-dialog-content {
+        padding: 1rem;
+    }
+}
+
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.no-invoices-message {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #666;
 }

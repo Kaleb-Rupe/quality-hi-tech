@@ -47,7 +47,7 @@ const VerifyEmail = () => {
 
   return (
     <form onSubmit={handleVerifyEmail} className="admin-login">
-      <Toast ref={toast} />
+      <Toast ref={toast} position="top-right" />
       <div className="back-button-container">
         <h2>Verify Email</h2>
         <button

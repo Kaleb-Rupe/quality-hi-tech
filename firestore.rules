@@ -5,14 +5,43 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.admin == true;
     }
 
+    // Default rule: only admins can read/write to any document
     match /{document=**} {
       allow read, write: if isAdmin();
     }
 
+    // Invoices collection
     match /invoices/{invoiceId} {
-      allow read, write: if isAdmin();
+      allow read: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.customerId);
+      allow create, update: if isAdmin() && isValidInvoice();
+      allow delete: if isAdmin();
+
+      function isValidInvoice() {
+        return request.resource.data.keys().hasAll(['customerName', 'customerEmail', 'items', 'dueDate', 'status', 'amount', 'customerId']) &&
+               request.resource.data.customerName is string &&
+               request.resource.data.customerName.size() > 0 &&
+               request.resource.data.customerEmail.matches('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$') &&
+               request.resource.data.items is list &&
+               request.resource.data.items.size() > 0 &&
+               request.resource.data.dueDate is timestamp &&
+               request.resource.data.dueDate > request.time &&
+               request.resource.data.status in ['draft', 'open', 'paid', 'void', 'uncollectible'] &&
+               request.resource.data.amount is number &&
+               request.resource.data.amount >= 0 &&
+               request.resource.data.customerId is string;
+      }
     }
 
-    // Add other collection-specific rules as needed
+    // Images collection (if you decide to store image metadata in Firestore)
+    match /images/{imageId} {
+      allow read: if true; // Public read access
+      allow write: if isAdmin();
+    }
+
+    // Secret keys collection
+    match /secretKeys/{document=**} {
+      allow read: if request.auth != null && request.auth.token.admin == true;
+      allow write: if false;
+    }
   }
 }

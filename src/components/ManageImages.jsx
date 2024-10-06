@@ -274,7 +274,7 @@ const AdminDashboard = () => {
   return (
     <div>
       <h2>Image Management</h2>
-      <Toast ref={toast}></Toast>
+      <Toast ref={toast} position="top-right" />
 
       <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
       <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />

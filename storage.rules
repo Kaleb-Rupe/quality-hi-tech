@@ -1,12 +1,25 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read: if true;
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
     }
 
+    // Default rule: public read access, only admins can write
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Invoices: only admins can read and write
     match /invoices/{invoiceId}/{allPaths=**} {
-      allow write: if request.auth != null && request.auth.token.admin == true;
+      allow read, write: if isAdmin();
+    }
+
+    // Images: public read, only admins can write
+    match /images/{imageId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }

@@ -29,7 +29,6 @@ const Header = () => {
         summary: "Logged Out",
         detail: "You have been successfully logged out.",
       });
-      navigate("/admin");
     } catch (error) {
       console.error("Logout error:", error);
       toast.current.show({
@@ -71,7 +70,7 @@ const Header = () => {
 
   return (
     <header className="site-header" ref={headerRef}>
-      <Toast ref={toast} />
+      <Toast ref={toast} position="top-right" />
       <ConfirmDialog />
       <div className="header-content">
         <Link

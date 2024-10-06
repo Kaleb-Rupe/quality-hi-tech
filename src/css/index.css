@@ -1,5 +1,9 @@
 @import 'normalize.css';
 
+.p-dialog {
+    max-height: 90%;
+}
+
 :root {
     --main-gray: #d9d9d9;
     --main-red: #a23418;

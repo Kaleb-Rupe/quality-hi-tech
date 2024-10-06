@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -8,24 +8,65 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const token = await user.getIdTokenResult();
-        user.isAdmin = token.claims.admin || false;
+        try {
+          const token = await user.getIdTokenResult(true);
+          const tokenValidAfter = token.claims.auth_time;
+          const tokenIssuedAt = token.issuedAtTime / 1000;
+
+          if (tokenIssuedAt < tokenValidAfter) {
+            // Token is invalid, sign out the user
+            await signOut(auth);
+            setUser(null);
+            navigate('/admin');
+          } else {
+            user.isAdmin = token.claims.admin || false;
+            setUser(user);
+          }
+        } catch (error) {
+          console.error('Error validating token:', error);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
       }
-      setUser(user);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [auth]);
+  }, [auth, navigate]);
 
   const logout = async () => {
     try {
+      // Call the server-side function to invalidate the token
+      const response = await fetch('https://us-central1-quality-hi-tech-74e77.cloudfunctions.net/invalidateToken', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ uid: user.uid }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to invalidate token');
+      }
+
+      // Sign out from Firebase Auth
       await signOut(auth);
+
+      // Clear any user-related data from local storage
+      localStorage.removeItem('adminUsers');
+      localStorage.removeItem('adminUsersTimestamp');
+
+      // Clear user data from the context
       setUser(null);
+
+      // Redirect to the login page
+      navigate('/admin');
     } catch (error) {
       console.error("Logout error:", error);
     }

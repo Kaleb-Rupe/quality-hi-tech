@@ -33,7 +33,7 @@ const AdminPage = () => {
   return (
     <div className="admin-page">
       <div className="admin-dashboard">
-        <Toast ref={toast} />
+        <Toast ref={toast} position="top-right" />
         <h2>Admin Dashboard</h2>
         <TabView
           activeIndex={activeIndex}
