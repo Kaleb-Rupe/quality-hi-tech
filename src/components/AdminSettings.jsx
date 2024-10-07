@@ -5,25 +5,28 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { confirmDialog } from "primereact/confirmdialog";
 import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
+// import { Password } from "primereact/password";
 import { Dialog } from "primereact/dialog";
-import { Divider } from "primereact/divider";
+// import { Divider } from "primereact/divider";
 import { ProgressSpinner } from "primereact/progressspinner";
 import {
   getAuth,
+  // createUserWithEmailAndPassword,
   // sendEmailVerification,
+  // updateProfile,
   onAuthStateChanged,
 } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import useScreenSize from '../hooks/useScreenSize';
 import { secureSet, secureGet, clearInvoiceCache } from '../utils/secureStorage';
+import emailjs from '@emailjs/browser';
 
 const AdminSettings = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [editingUser, setEditingUser] = useState("");
-  const [passwordErrors, setPasswordErrors] = useState([]);
+  // const [passwordErrors, setPasswordErrors] = useState([]);
   const [currentUser, setCurrentUser] = useState("");
   const [authChecked, setAuthChecked] = useState(false);
   const toast = useRef(null);
@@ -31,14 +34,23 @@ const AdminSettings = () => {
   const auth = getAuth();
   const isMobile = useScreenSize();
 
+  useEffect(() => {
+    emailjs.init("YOUR_USER_ID");
+  }, []);
+
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const cachedUsers = secureGet('adminUsers');
-      const cachedTimestamp = secureGet('adminUsersTimestamp');
+      const cachedUsers = secureGet("adminUsers");
+      const cachedTimestamp = secureGet("adminUsersTimestamp");
       const now = new Date().getTime();
-      
-      if (cachedUsers && Array.isArray(cachedUsers) && cachedTimestamp && (now - parseInt(cachedTimestamp)) < 60 * 60 * 1000) {
+
+      if (
+        cachedUsers &&
+        Array.isArray(cachedUsers) &&
+        cachedTimestamp &&
+        now - parseInt(cachedTimestamp) < 60 * 60 * 1000
+      ) {
         setUsers(cachedUsers);
         setLoading(false);
         return;
@@ -47,17 +59,19 @@ const AdminSettings = () => {
       const listAdminUsers = httpsCallable(functions, "listAdminUsers");
       const result = await Promise.race([
         listAdminUsers(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Function timed out')), 10000))
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Function timed out")), 10000)
+        ),
       ]);
-      
+
       if (!result.data || !Array.isArray(result.data)) {
         throw new Error("Invalid response from server");
       }
 
       setUsers(result.data);
-      
-      secureSet('adminUsers', result.data);
-      secureSet('adminUsersTimestamp', now.toString());
+
+      secureSet("adminUsers", result.data);
+      secureSet("adminUsersTimestamp", now.toString());
     } catch (error) {
       console.error("Error fetching admin users:", error);
       toast.current.show({
@@ -65,8 +79,8 @@ const AdminSettings = () => {
         summary: "Error",
         detail: `Failed to fetch admin users: ${error.message}`,
       });
-      
-      const cachedUsers = secureGet('adminUsers');
+
+      const cachedUsers = secureGet("adminUsers");
       if (cachedUsers && Array.isArray(cachedUsers)) {
         setUsers(cachedUsers);
         toast.current.show({
@@ -89,8 +103,8 @@ const AdminSettings = () => {
       } else {
         setLoading(false);
         // Clear cache when user logs out
-        localStorage.removeItem('adminUsers');
-        localStorage.removeItem('adminUsersTimestamp');
+        localStorage.removeItem("adminUsers");
+        localStorage.removeItem("adminUsersTimestamp");
         clearInvoiceCache(); // Add this line to clear the invoice cache
       }
     });
@@ -98,34 +112,34 @@ const AdminSettings = () => {
     return () => unsubscribe();
   }, [auth, fetchUsers]);
 
-  const validatePassword = (password) => {
-    const errors = [];
-    if (password.length < 8 || password.length > 15) {
-      errors.push("Password length should be between 8 to 15 characters.");
-    }
-    if (!/\d/.test(password)) {
-      errors.push("Password should contain at least one digit (0-9).");
-    }
-    if (!/[a-z]/.test(password)) {
-      errors.push(
-        "Password should contain at least one lowercase letter (a-z)."
-      );
-    }
-    if (!/[A-Z]/.test(password)) {
-      errors.push(
-        "Password should contain at least one uppercase letter (A-Z)."
-      );
-    }
-    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
-      errors.push(
-        "Password should contain at least one special character (@, #, %, &, !, $, etc)."
-      );
-    }
-    if (/\s/.test(password)) {
-      errors.push("Password should not contain any space.");
-    }
-    return errors;
-  };
+  // const validatePassword = (password) => {
+  //   const errors = [];
+  //   if (password.length < 8 || password.length > 15) {
+  //     errors.push("Password length should be between 8 to 15 characters.");
+  //   }
+  //   if (!/\d/.test(password)) {
+  //     errors.push("Password should contain at least one digit (0-9).");
+  //   }
+  //   if (!/[a-z]/.test(password)) {
+  //     errors.push(
+  //       "Password should contain at least one lowercase letter (a-z)."
+  //     );
+  //   }
+  //   if (!/[A-Z]/.test(password)) {
+  //     errors.push(
+  //       "Password should contain at least one uppercase letter (A-Z)."
+  //     );
+  //   }
+  //   if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+  //     errors.push(
+  //       "Password should contain at least one special character (@, #, %, &, !, $, etc)."
+  //     );
+  //   }
+  //   if (/\s/.test(password)) {
+  //     errors.push("Password should not contain any space.");
+  //   }
+  //   return errors;
+  // };
 
   const handleEditUser = (user) => {
     setEditingUser({
@@ -142,65 +156,72 @@ const AdminSettings = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditingUser((prev) => ({ ...prev, [name]: value }));
-    if (name === "password") {
-      setPasswordErrors(validatePassword(value));
-    }
+    // if (name === "password") {
+    //   setPasswordErrors(validatePassword(value));
+    // }
   };
 
-  const createAdminUser = async () => {
-    if (editingUser.password !== editingUser.confirmPassword) {
+  const handleCreateUser = async () => {
+    if (editingUser.firstName.trim() === '' || editingUser.lastName.trim() === '') {
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "Passwords do not match",
+        detail: "First name and last name are required",
       });
       return;
     }
 
-    if (passwordErrors.length > 0) {
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "Please fix all password errors before submitting",
-      });
-      return;
-    }
-
+    setLoading(true);
     try {
-      setLoading(true);
       const createNewAdmin = httpsCallable(functions, "createNewAdmin");
       const result = await createNewAdmin({
         email: editingUser.email,
-        password: editingUser.password,
-        displayName: `${editingUser.firstName} ${editingUser.lastName}`.trim(),
+        displayName: `${editingUser.firstName} ${editingUser.lastName}`,
       });
 
-      if (result.data && result.data.uid) {
-        toast.current.show({
-          severity: "success",
-          summary: "Success",
-          detail: `Admin user created successfully with UID: ${result.data.uid}. A verification email has been sent automatically.`,
-          life: 5000,
-        });
-        setShowDialog(false);
-        localStorage.removeItem('adminUsers');
-        localStorage.removeItem('adminUsersTimestamp');
-        fetchUsers(); // Refresh the user list
-      } else {
-        throw new Error("User creation failed or UID not returned");
-      }
+      // Send password reset email using EmailJS
+      await sendPasswordResetEmail(editingUser.email, result.data.passwordResetLink);
+
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "New admin user created successfully. A password reset email has been sent.",
+      });
+
+      setShowDialog(false);
+      localStorage.removeItem("adminUsers");
+      localStorage.removeItem("adminUsersTimestamp");
+      fetchUsers();
     } catch (error) {
-      console.error("Error creating admin user:", error);
+      console.error("Error creating new admin user:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: `Failed to create admin user: ${error.message}`,
-        life: 5000,
+        detail: `Failed to create new admin user: ${error.message}`,
       });
     } finally {
       setLoading(false);
     }
   };
+
+ const sendPasswordResetEmail = async (email, resetLink) => {
+   try {
+     await emailjs.send(
+       process.env.REACT_APP_EMAILJS_SERVICEID,
+       "template_doto7zf",
+       {
+         to_email: email,
+         reset_link: resetLink,
+         first_name: editingUser.firstName,
+       },
+       process.env.REACT_APP_EMAILJS_INIT
+     );
+     console.log("Password reset email sent successfully");
+   } catch (error) {
+     console.error("Error sending password reset email:", error);
+     throw new Error("Failed to send password reset email");
+   }
+ };
 
   // const resendVerificationEmail = async (userEmail) => {
   //   setLoading(true);
@@ -229,7 +250,6 @@ const AdminSettings = () => {
   //     setLoading(false);
   //   }
   // };
-
   const saveEditedUser = async () => {
     try {
       const editAdminUser = httpsCallable(functions, "editAdminUser");
@@ -246,8 +266,8 @@ const AdminSettings = () => {
         life: 5000,
       });
       setShowDialog(false);
-      localStorage.removeItem('adminUsers');
-      localStorage.removeItem('adminUsersTimestamp');
+      localStorage.removeItem("adminUsers");
+      localStorage.removeItem("adminUsersTimestamp");
       fetchUsers(); // Refresh the user list
     } catch (error) {
       console.error("Error editing admin user:", error);
@@ -275,8 +295,8 @@ const AdminSettings = () => {
             summary: "Success",
             detail: "Admin user deleted successfully.",
           });
-          localStorage.removeItem('adminUsers');
-          localStorage.removeItem('adminUsersTimestamp');
+          localStorage.removeItem("adminUsers");
+          localStorage.removeItem("adminUsersTimestamp");
           fetchUsers(); // Refresh the user list
         } catch (error) {
           console.error("Error deleting admin user:", error);
@@ -289,7 +309,7 @@ const AdminSettings = () => {
       },
     });
   };
-  
+
   const actionBodyTemplate = (rowData) => {
     return (
       <>
@@ -314,23 +334,23 @@ const AdminSettings = () => {
         />
       </>
     );
-  }
+  };
 
-  const passwordHeader = <h6>Password Strength</h6>;
-  const passwordFooter = (
-    <React.Fragment>
-      <Divider />
-      <p className="mt-2">Password Requirements:</p>
-      <ul className="pl-2 ml-2 mt-0" style={{ lineHeight: "1.5" }}>
-        <li>At least one lowercase letter</li>
-        <li>At least one uppercase letter</li>
-        <li>At least one numeric digit</li>
-        <li>At least one special character</li>
-        <li>8-15 characters long</li>
-        <li>No spaces</li>
-      </ul>
-    </React.Fragment>
-  );
+  // const passwordHeader = <h6>Password Strength</h6>;
+  // const passwordFooter = (
+  //   <React.Fragment>
+  //     <Divider />
+  //     <p className="mt-2">Password Requirements:</p>
+  //     <ul className="pl-2 ml-2 mt-0" style={{ lineHeight: "1.5" }}>
+  //       <li>At least one lowercase letter</li>
+  //       <li>At least one uppercase letter</li>
+  //       <li>At least one numeric digit</li>
+  //       <li>At least one special character</li>
+  //       <li>8-15 characters long</li>
+  //       <li>No spaces</li>
+  //     </ul>
+  //   </React.Fragment>
+  // );
 
   const dialogFooter = (
     <>
@@ -343,15 +363,15 @@ const AdminSettings = () => {
       <Button
         label="Save"
         icon="pi pi-check"
-        onClick={editingUser.uid ? saveEditedUser : createAdminUser}
+        onClick={editingUser.uid ? saveEditedUser : handleCreateUser}
         autoFocus
       />
     </>
   );
 
   const handleRefreshUsers = () => {
-    localStorage.removeItem('adminUsers');
-    localStorage.removeItem('adminUsersTimestamp');
+    localStorage.removeItem("adminUsers");
+    localStorage.removeItem("adminUsersTimestamp");
     fetchUsers();
   };
 
@@ -446,6 +466,7 @@ const AdminSettings = () => {
               name="firstName"
               value={editingUser?.firstName || ""}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="p-field">
@@ -455,6 +476,7 @@ const AdminSettings = () => {
               name="lastName"
               value={editingUser?.lastName || ""}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="p-field">
@@ -464,39 +486,14 @@ const AdminSettings = () => {
               name="email"
               value={editingUser?.email || ""}
               onChange={handleInputChange}
+              required
             />
           </div>
-          <div className="p-field">
-            <label htmlFor="password">
-              Password{" "}
-              {editingUser?.uid && "(Leave blank to keep current password)"}
-            </label>
-            <Password
-              id="password"
-              name="password"
-              value={editingUser?.password || ""}
-              onChange={handleInputChange}
-              toggleMask
-              header={passwordHeader}
-              footer={passwordFooter}
-            />
-            {passwordErrors.map((error, index) => (
-              <small key={index} className="p-error">
-                {error}
-              </small>
-            ))}
-          </div>
-          <div className="p-field">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <Password
-              id="confirmPassword"
-              name="confirmPassword"
-              value={editingUser?.confirmPassword || ""}
-              onChange={handleInputChange}
-              toggleMask
-              feedback={false}
-            />
-          </div>
+          {!editingUser?.uid && (
+            <small className="p-mt-2">
+              A password reset link will be generated and sent to the user's email.
+            </small>
+          )}
         </div>
       </Dialog>
     </div>

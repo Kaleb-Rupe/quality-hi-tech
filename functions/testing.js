@@ -7,6 +7,50 @@ const stripe = require("stripe")(functions.config().stripe.secret_key, {
 
 admin.initializeApp();
 
+exports.listAdminUsers = functions.https.onCall(async (data, context) => {
+  // Check if the request is made by an authenticated user
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "The function must be called while authenticated.",
+    );
+  }
+
+  try {
+    const userRecord = await admin.auth().getUser(context.auth.uid);
+
+    // Check if the authenticated user is an admin
+    const isAdmin =
+      userRecord.customClaims && userRecord.customClaims.admin === true;
+
+    if (!isAdmin) {
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "The function must be called by an admin user.",
+      );
+    }
+
+    const listUsersResult = await admin.auth().listUsers();
+    const adminUsers = listUsersResult.users.filter(
+      user => user.customClaims && user.customClaims.admin === true,
+    );
+
+    return adminUsers.map(user => ({
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      emailVerified: user.emailVerified,
+      customClaims: user.customClaims,
+    }));
+  } catch (error) {
+    console.error("Error listing admin users:", error);
+    throw new functions.https.HttpsError(
+      "internal",
+      "Error listing admin users",
+    );
+  }
+});
+
 exports.createDraftInvoice = functions.https.onCall(async (data, context) => {
   // Check if user is authenticated and has admin rights
   if (!context.auth || !context.auth.token.admin) {

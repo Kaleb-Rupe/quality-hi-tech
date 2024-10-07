@@ -100,7 +100,6 @@ exports.editAdminUser = functions.https.onCall(async (data, context) => {
 });
 
 exports.createNewAdmin = functions.https.onCall(async (data, context) => {
-  // Check if the request is made by an authenticated admin user
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError(
       "permission-denied",
@@ -108,20 +107,19 @@ exports.createNewAdmin = functions.https.onCall(async (data, context) => {
     );
   }
 
-  const { email, password, displayName } = data;
+  const { email, displayName } = data;
 
-  if (!email || !password) {
+  if (!email) {
     throw new functions.https.HttpsError(
       "invalid-argument",
-      "Email and password are required.",
+      "Email is required.",
     );
   }
 
   try {
-    // Create the new user
+    // Create the new user without a password
     const userRecord = await admin.auth().createUser({
       email: email,
-      password: password,
       displayName: displayName,
       emailVerified: false,
     });
@@ -129,13 +127,13 @@ exports.createNewAdmin = functions.https.onCall(async (data, context) => {
     // Set admin custom claim
     await admin.auth().setCustomUserClaims(userRecord.uid, { admin: true });
     
-    // Verify the claim was set
-    const updatedUser = await admin.auth().getUser(userRecord.uid);
-    console.log(`User ${updatedUser.uid} claims:`, updatedUser.customClaims);
+    // Generate a password reset link
+    const passwordResetLink = await admin.auth().generatePasswordResetLink(email);
 
     return {
       uid: userRecord.uid,
-      message: "New admin user created successfully and verification email sent.",
+      passwordResetLink: passwordResetLink,
+      message: "New admin user created successfully. A password reset link has been generated.",
     };
   } catch (error) {
     console.error("Error creating new admin user:", error);
