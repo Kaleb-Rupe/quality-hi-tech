@@ -1,6 +1,5 @@
 import { functions } from "../firebaseConfig";
 import { httpsCallable } from "firebase/functions";
-import { confirmDialog } from "primereact/confirmdialog";
 
 export const formatCurrency = (value) => {
   return new Intl.NumberFormat("en-US", {
@@ -50,56 +49,44 @@ export const finalizeAndSendInvoice = async (
   setLoadingStates,
   resetDialog
 ) => {
-  return new Promise((resolve, reject) => {
-    confirmDialog({
-      message: "Are you sure you want to finalize and send this invoice?",
-      header: "Confirmation",
-      icon: "pi pi-exclamation-triangle",
-      accept: async () => {
-        try {
-          setLoadingStates((prev) => ({
-            ...prev,
-            [`finalize_${invoiceId}`]: true,
-          }));
-          const finalizeAndSendFunction = httpsCallable(
-            functions,
-            "finalizeAndSendInvoice"
-          );
-          const result = await finalizeAndSendFunction({ invoiceId });
-          if (result.data.success) {
-            toast.current.show({
-              severity: "success",
-              summary: "Success",
-              detail: "Invoice finalized and sent successfully",
-            });
-            refreshInvoices();
-            resetDialog(); 
-            resolve(result.data);
-          } else {
-            throw new Error(
-              result.data.message || "Failed to finalize and send invoice"
-            );
-          }
-        } catch (error) {
-          console.error("Error finalizing and sending invoice:", error);
-          toast.current.show({
-            severity: "error",
-            summary: "Error",
-            detail: "Failed to finalize and send invoice: " + error.message,
-          });
-          reject(error);
-        } finally {
-            setLoadingStates((prev) => ({
-              ...prev,
-              [`finalize_${invoiceId}`]: false,
-            }));
-        }
-      },
-      reject: () => {
-        resolve(null);
-      },
+  try {
+    setLoadingStates((prev) => ({
+      ...prev,
+      [`finalize_${invoiceId}`]: true,
+    }));
+    const finalizeAndSendFunction = httpsCallable(
+      functions,
+      "finalizeAndSendInvoice"
+    );
+    const result = await finalizeAndSendFunction({ invoiceId });
+    if (result.data.success) {
+      toast.current.show({
+        severity: "success",
+        summary: "Success",
+        detail: "Invoice finalized and sent successfully",
+      });
+      refreshInvoices();
+      resetDialog();
+      return result.data;
+    } else {
+      throw new Error(
+        result.data.message || "Failed to finalize and send invoice"
+      );
+    }
+  } catch (error) {
+    console.error("Error finalizing and sending invoice:", error);
+    toast.current.show({
+      severity: "error",
+      summary: "Error",
+      detail: "Failed to finalize and send invoice: " + error.message,
     });
-  });
+    throw error;
+  } finally {
+    setLoadingStates((prev) => ({
+      ...prev,
+      [`finalize_${invoiceId}`]: false,
+    }));
+  }
 };
 
 export const voidInvoice = async (
