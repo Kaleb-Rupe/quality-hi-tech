@@ -280,13 +280,27 @@ const InvoiceList = ({
   };
 
   const handleFinalizeAndSendInvoice = (invoiceId) => {
-    finalizeAndSendInvoice(
-      invoiceId,
-      toast,
-      invalidateCache,
-      setLoadingStates,
-      resetDialog
-    );
+    confirmDialog({
+      message: "Are you sure you want to finalize and send this invoice?",
+      header: "Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        finalizeAndSendInvoice(
+          invoiceId,
+          toast,
+          invalidateCache,
+          setLoadingStates,
+          resetDialog
+        );
+      },
+      reject: () => {
+        toast.current.show({
+          severity: "info",
+          summary: "Cancelled",
+          detail: "Invoice finalization cancelled",
+        });
+      },
+    });
   };
 
   const handleVoidInvoice = (invoiceId) => {
