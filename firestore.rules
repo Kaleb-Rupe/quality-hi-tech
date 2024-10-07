@@ -5,6 +5,10 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.admin == true;
     }
 
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
     // Default rule: only admins can read/write to any document
     match /{document=**} {
       allow read, write: if isAdmin();

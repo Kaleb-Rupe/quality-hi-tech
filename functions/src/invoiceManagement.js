@@ -9,7 +9,7 @@ if (!admin.apps.length) {
   admin.initializeApp();
 }
 
-async function rateLimiter(context, maxRequests = 25, windowMs = 15 * 60 * 1000) {
+async function rateLimiter(context, maxRequests = 50, windowMs = 15 * 60 * 1000) {
   if (!context.auth) {
     throw new functions.https.HttpsError("unauthenticated", "Authentication required");
   }
@@ -800,7 +800,6 @@ exports.updateInvoiceAndItems = functions.https.onCall(
           });
         }
       }
-
       // Recalculate the invoice totals
       const updatedInvoice = await stripe.invoices.retrieve(invoiceId);
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Toast } from "primereact/toast";
 import { FileUpload } from "primereact/fileupload";
 import { ProgressBar } from "primereact/progressbar";
@@ -33,6 +33,21 @@ const AdminDashboard = () => {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(12);
   const [uploadProgress, setUploadProgress] = useState({});
+
+  const imageListTopRef = useRef(null);
+
+  const scrollToImage = useCallback(() => {
+    if (imageListTopRef.current) {
+      const yOffset = -80; // Adjust this value as needed
+      const element = imageListTopRef.current;
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+
+      window.scrollTo({
+        top: y,
+        behavior: "smooth",
+      });
+    }
+  }, []);
 
   useEffect(() => {
     loadImages();
@@ -269,10 +284,13 @@ const AdminDashboard = () => {
   const onPageChange = (event) => {
     setFirst(event.first);
     setRows(event.rows);
+    requestAnimationFrame(() => {
+      scrollToImage();
+    });
   };
 
   return (
-    <div>
+    <div ref={imageListTopRef}>
       <h2>Image Management</h2>
       <Toast ref={toast} position="top-right" />
 

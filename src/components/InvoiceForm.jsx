@@ -79,17 +79,14 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
   const createInvoice = async () => {
     setLoading(true);
     try {
-      const createDraftInvoiceFunction = httpsCallable(
-        functions,
-        "createDraftInvoice"
-      );
+      const createDraftInvoiceFunction = httpsCallable(functions, "createDraftInvoice");
       const result = await createDraftInvoiceFunction({
         customerEmail,
         customerName,
         items: items.map((item) => ({
           description: item.description,
           quantity: parseInt(item.quantity),
-          unit_amount: item.price, // Price is already in cents
+          unit_amount: item.price,
         })),
       });
 
@@ -101,6 +98,7 @@ const InvoiceForm = ({ onInvoiceCreated }) => {
           life: 5000,
         });
         resetForm();
+        
         if (onInvoiceCreated) {
           onInvoiceCreated();
         }

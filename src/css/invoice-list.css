@@ -109,7 +109,7 @@
     width: 50vw;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 1080px) {
     .invoice-list-mobile {
         display: flex;
         flex-direction: column;
@@ -159,10 +159,6 @@
 
     .invoice-actions-mobile .p-button {
         padding: 0.4rem;
-    }
-
-    .invoice-button-container {
-        flex-direction: column;
     }
 
     .invoice-button-container>* {

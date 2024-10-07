@@ -16,7 +16,7 @@ import {
 } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import useScreenSize from '../hooks/useScreenSize';
-import { secureSet, secureGet } from '../utils/secureStorage';
+import { secureSet, secureGet, clearInvoiceCache } from '../utils/secureStorage';
 
 const AdminSettings = () => {
   const [users, setUsers] = useState([]);
@@ -91,6 +91,7 @@ const AdminSettings = () => {
         // Clear cache when user logs out
         localStorage.removeItem('adminUsers');
         localStorage.removeItem('adminUsersTimestamp');
+        clearInvoiceCache(); // Add this line to clear the invoice cache
       }
     });
 

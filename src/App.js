@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider, ProtectedRoute } from "./components/AuthContext";
 import Layout from "./pages/Layout.js";
@@ -13,8 +13,24 @@ import ForgotPassword from "./components/ForgotPassword";
 import VerifyEmail from "./components/VerifyEmail";
 import "./css/app.css";
 import "./css/toast.css";
+import {
+  initializeSecureStorage,
+} from "./utils/secureStorage";
 
-const App = () => (
+const App = () => {
+  useEffect(() => {
+    const initStorage = async () => {
+      try {
+        await initializeSecureStorage();
+        console.log("Secure storage initialized successfully");
+      } catch (error) {
+        console.error("Failed to initialize secure storage:", error);
+      }
+    };
+    initStorage();
+  }, []);
+
+  return (
     <AuthProvider>
       <Layout>
         <Routes>
@@ -47,5 +63,6 @@ const App = () => (
       </Layout>
     </AuthProvider>
   );
+};
 
 export default React.memo(App);

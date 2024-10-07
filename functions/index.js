@@ -35,5 +35,8 @@ exports.updateInvoiceAndItems =
   invoiceManagementFunctions.updateInvoiceAndItems;
 exports.deleteInvoiceItem = invoiceManagementFunctions.deleteInvoiceItem;
 exports.invalidateToken = invoiceManagementFunctions.invalidateToken;
+exports.updateCacheAfterInvoiceModification =
+  invoiceManagementFunctions.updateCacheAfterInvoiceModification;
 
 exports.rotateSecretKey = keyRotation.rotateSecretKey;
+exports.initializeSecretKey = keyRotation.initializeSecretKey;

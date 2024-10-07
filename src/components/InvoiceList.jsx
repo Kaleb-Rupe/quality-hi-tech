@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
@@ -27,22 +27,24 @@ import {
   viewPdf,
   fetchInvoices,
 } from "../utils/invoiceUtils";
+import { clearInvoiceCache } from "../utils/secureStorage";
 
-const InvoiceList = ({ refreshTrigger }) => {
-  const [invoices, setInvoices] = useState([]);
-
+const InvoiceList = ({
+  invoices,
+  totalRecords,
+  loading,
+  setLoading,
+  lazyParams,
+  setLazyParams,
+  loadLazyData,
+  invalidateCache,
+  setInvoices,
+  setTotalRecords,
+}) => {
   const isMobile = useScreenSize();
-  const [loading, setLoading] = useState(true);
-  const [totalRecords, setTotalRecords] = useState(0);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [customerDialogVisible, setCustomerDialogVisible] = useState(false);
   const toast = useRef(null);
-  const [lazyParams, setLazyParams] = useState({
-    first: 0,
-    rows: 20,
-    page: 1,
-    status: null,
-  });
 
   const [pdfDialogVisible, setPdfDialogVisible] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -66,44 +68,15 @@ const InvoiceList = ({ refreshTrigger }) => {
 
   const invoiceListTopRef = useRef(null);
 
-  const loadLazyData = useCallback(() => {
-    setLoading(true);
-    const listInvoices = httpsCallable(functions, "listInvoices");
-    listInvoices({
-      page: lazyParams.page,
-      pageSize: lazyParams.rows,
-      status: lazyParams.status,
-    })
-      .then((result) => {
-        // Ensure invoiceItems are included in the invoice data
-        const invoicesWithItems = result.data.invoices.map((invoice) => ({
-          ...invoice,
-          invoiceItems: invoice.invoiceItems || [],
-        }));
-        setInvoices(invoicesWithItems);
-        setTotalRecords(result.data.totalCount);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching invoices:", error);
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to fetch invoices: " + error.message,
-        });
-        setLoading(false);
-      });
-  }, [lazyParams]);
-
-  useEffect(() => {
-    loadLazyData();
-  }, [loadLazyData, refreshTrigger]);
-
   const scrollToInvoice = useCallback(() => {
     if (invoiceListTopRef.current) {
-      invoiceListTopRef.current.scrollIntoView({
+      const yOffset = -80; // Adjust this value as needed
+      const element = invoiceListTopRef.current;
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+
+      window.scrollTo({
+        top: y,
         behavior: "smooth",
-        block: "start",
       });
     }
   }, []);
@@ -161,29 +134,60 @@ const InvoiceList = ({ refreshTrigger }) => {
     );
   };
 
-  const handleManualSync = async () => {
-    setManualSyncLoading(true);
-    try {
-      const manualSyncInvoices = httpsCallable(functions, "manualSyncInvoices");
-      const result = await manualSyncInvoices();
-      if (result.data.success) {
+  const handleManualSync = () => {
+    confirmDialog({
+      message: (
+        <>
+          <p>Are you sure you want to perform a manual sync?</p>
+          <p
+            style={{
+              color: "red",
+              fontSize: "0.9em",
+              marginTop: "10px",
+            }}
+          >
+            Warning: You can only preform this action a limited number of times
+            before being temporarily locked out.
+          </p>
+        </>
+      ),
+      header: "Manual Sync Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: async () => {
+        setManualSyncLoading(true);
+        try {
+          const manualSyncInvoices = httpsCallable(
+            functions,
+            "manualSyncInvoices"
+          );
+          const result = await manualSyncInvoices();
+          if (result.data.success) {
+            toast.current.show({
+              severity: "success",
+              summary: "Success",
+              detail: `Synced ${result.data.count} invoices`,
+            });
+            invalidateCache();
+          }
+        } catch (error) {
+          console.error("Error syncing invoices:", error);
+          toast.current.show({
+            severity: "error",
+            summary: "Error",
+            detail: "Failed to sync invoices: " + error.message,
+          });
+        } finally {
+          setManualSyncLoading(false);
+        }
+      },
+      reject: () => {
         toast.current.show({
-          severity: "success",
-          summary: "Success",
-          detail: `Synced ${result.data.count} invoices`,
+          severity: "info",
+          summary: "Cancelled",
+          detail: "Manual sync cancelled",
         });
-        loadLazyData();
-      }
-    } catch (error) {
-      console.error("Error syncing invoices:", error);
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to sync invoices",
-      });
-    } finally {
-      setManualSyncLoading(false);
-    }
+      },
+    });
   };
 
   const viewPaymentPage = async (invoiceId) => {
@@ -243,12 +247,13 @@ const InvoiceList = ({ refreshTrigger }) => {
             "deleteInvoice"
           );
           await deleteInvoiceFunction({ invoiceId });
+          clearInvoiceCache(); // Add this line
           toast.current.show({
             severity: "success",
             summary: "Success",
             detail: "Invoice deleted successfully",
           });
-          loadLazyData();
+          invalidateCache();
         } catch (error) {
           console.error("Error deleting invoice:", error);
           toast.current.show({
@@ -261,6 +266,7 @@ const InvoiceList = ({ refreshTrigger }) => {
             ...prev,
             [`delete_${invoiceId}`]: false,
           }));
+          resetDialog();
         }
       },
       reject: () => {
@@ -277,24 +283,58 @@ const InvoiceList = ({ refreshTrigger }) => {
     finalizeAndSendInvoice(
       invoiceId,
       toast,
-      loadLazyData,
+      invalidateCache,
       setLoadingStates,
       resetDialog
     );
   };
 
   const handleVoidInvoice = (invoiceId) => {
-    voidInvoice(invoiceId, toast, loadLazyData, setLoadingStates, resetDialog);
+    confirmDialog({
+      message: "Are you sure you want to void this invoice?",
+      header: "Void Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        voidInvoice(
+          invoiceId,
+          toast,
+          invalidateCache,
+          setLoadingStates,
+          resetDialog
+        );
+      },
+      reject: () => {
+        toast.current.show({
+          severity: "info",
+          summary: "Cancelled",
+          detail: "Invoice void cancelled",
+        });
+      },
+    });
   };
 
   const handleMarkUncollectible = (invoiceId) => {
-    markUncollectible(
-      invoiceId,
-      toast,
-      loadLazyData,
-      setLoadingStates,
-      resetDialog
-    );
+    confirmDialog({
+      message: "Are you sure you want to mark this invoice as uncollectible?",
+      header: "Mark Uncollectible Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        markUncollectible(
+          invoiceId,
+          toast,
+          invalidateCache,
+          setLoadingStates,
+          resetDialog
+        );
+      },
+      reject: () => {
+        toast.current.show({
+          severity: "info",
+          summary: "Cancelled",
+          detail: "Mark uncollectible cancelled",
+        });
+      },
+    });
   };
 
   const actionBodyTemplate = (rowData) => {
@@ -422,6 +462,7 @@ const InvoiceList = ({ refreshTrigger }) => {
       });
 
       if (result.data.success) {
+        clearInvoiceCache(); // Add this line
         toast.current.show({
           severity: "success",
           summary: "Success",
@@ -443,7 +484,7 @@ const InvoiceList = ({ refreshTrigger }) => {
           invoiceItems: updatedInvoiceItems,
         });
         setEditableInvoiceItems(updatedInvoiceItems);
-        loadLazyData(); // Refresh the invoice list
+        invalidateCache();
       } else {
         throw new Error(
           result.data.message || "Failed to update invoice and items"
@@ -485,7 +526,6 @@ const InvoiceList = ({ refreshTrigger }) => {
             summary: "Success",
             detail: "Invoice item deleted successfully",
           });
-          resetDialog();
         }
       } catch (error) {
         console.error("Error deleting invoice item:", error);
@@ -500,7 +540,6 @@ const InvoiceList = ({ refreshTrigger }) => {
     } else {
       const updatedItems = editableInvoiceItems.filter((_, i) => i !== index);
       setEditableInvoiceItems(updatedItems);
-      resetDialog();
     }
   };
 
