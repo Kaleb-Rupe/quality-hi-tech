@@ -35,7 +35,7 @@ const AdminSettings = () => {
   const isMobile = useScreenSize();
 
   useEffect(() => {
-    emailjs.init("YOUR_USER_ID");
+    emailjs.init(process.env.REACT_APP_EMAILJS_INIT);
   }, []);
 
   const fetchUsers = useCallback(async () => {
@@ -162,11 +162,11 @@ const AdminSettings = () => {
   };
 
   const handleCreateUser = async () => {
-    if (editingUser.firstName.trim() === '' || editingUser.lastName.trim() === '') {
+    if (editingUser.firstName.trim() === '' || editingUser.lastName.trim() === '' || !editingUser.email) {
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "First name and last name are required",
+        detail: "First name, last name, and email are required",
       });
       return;
     }
@@ -180,7 +180,7 @@ const AdminSettings = () => {
       });
 
       // Send password reset email using EmailJS
-      await sendPasswordResetEmail(editingUser.email, result.data.passwordResetLink);
+      await sendPasswordResetEmail(editingUser.email, result.data.passwordResetLink, editingUser.firstName);
 
       toast.current.show({
         severity: "success",
@@ -204,19 +204,22 @@ const AdminSettings = () => {
     }
   };
 
- const sendPasswordResetEmail = async (email, resetLink) => {
+ const sendPasswordResetEmail = async (resetLink) => {
    try {
      await emailjs.send(
        process.env.REACT_APP_EMAILJS_SERVICEID,
        "template_doto7zf",
        {
-         to_email: email,
+         to_email: editingUser.email,
          reset_link: resetLink,
          first_name: editingUser.firstName,
        },
        process.env.REACT_APP_EMAILJS_INIT
      );
-     console.log("Password reset email sent successfully");
+     console.log(
+       "Password reset email sent successfully to",
+       editingUser.email
+     );
    } catch (error) {
      console.error("Error sending password reset email:", error);
      throw new Error("Failed to send password reset email");
