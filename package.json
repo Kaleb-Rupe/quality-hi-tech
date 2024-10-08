@@ -42,7 +42,7 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "npm run build && firebase deploy",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "serve": "serve -s build -l 3000 --config ../serve.json",

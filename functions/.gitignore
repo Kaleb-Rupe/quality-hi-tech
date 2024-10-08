@@ -1,9 +1,0 @@
-scripts/
-node_modules/
-*.local
-
-testing.js
-
-.env
-
-functions/scripts/serviceAccountKey.json
